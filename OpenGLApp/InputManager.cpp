@@ -34,6 +34,8 @@ bool InputManager::getKeyDown(GLFW_KEY key) {
 		keyDownMap[key] = true;
 		return true;
 	}
+
+	return false;
 }
 
 bool InputManager::getKey(GLFW_KEY key) {

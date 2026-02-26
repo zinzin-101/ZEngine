@@ -1,5 +1,4 @@
 #pragma once
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
 
@@ -12,7 +11,7 @@ namespace EngineConfig {
 	constexpr unsigned int DEFAULT_SCREEN_WIDTH = 1600;
 	constexpr unsigned int DEFAULT_SCREEN_HEIGHT = 900;
 	inline const char* WINDOW_NAME = "Engine";
-	constexpr SceneManagerConfig::SceneId INITIAL_SCENE_ID = SceneManagerConfig::SceneId::TEST_SCENE;
+	constexpr SceneManagerConfig::SceneId INITIAL_SCENE_ID = SceneManagerConfig::TEST_SCENE;
 }
 
 class Engine {
@@ -32,6 +31,7 @@ class Engine {
 
 	public:
 		Engine();
+		~Engine();
 		void run();
 		void switchScene(SceneManagerConfig::SceneId sceneId);
 		static Engine* getInstance();
@@ -40,6 +40,7 @@ class Engine {
 		Time* getTime();
 		Scene* getCurrentScene();
 		SceneManager* getSceneManager();
+		void terminate();
 };
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height);

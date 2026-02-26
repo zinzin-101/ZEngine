@@ -3,7 +3,6 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <iostream>
 //#include <filesystem.h>
 
 using namespace EngineConfig;
@@ -38,6 +37,9 @@ SceneManager* Engine::getSceneManager() {
 Engine::Engine(): window(nullptr) {
 	instance = this;
 	init();
+}
+Engine::~Engine() {
+	clean();
 }
 
 void Engine::init() {
@@ -74,8 +76,8 @@ void Engine::clean() {
 }
 
 void Engine::update() {
-	time.updateTime();
-	sceneManager.updateScene();
+	time.update();
+	sceneManager.update();
 }
 
 void Engine::run() {
@@ -91,6 +93,10 @@ void Engine::run() {
 
 void Engine::switchScene(SceneManagerConfig::SceneId sceneId) {
 	sceneManager.switchSceneFromId(sceneId);
+}
+
+void Engine::terminate() {
+	glfwSetWindowShouldClose(window, true);
 }
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height) {
@@ -116,6 +122,9 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 void processInput(GLFWwindow* window) {
 	Engine* engine = Engine::getInstance();
 	if (engine != nullptr) {
-		engine->getInstance()->getCurrentScene()->processInput();
+		Scene* scene = engine->getInstance()->getCurrentScene();
+		if (scene != nullptr) {
+			scene->processInput();
+		}
 	}
 }

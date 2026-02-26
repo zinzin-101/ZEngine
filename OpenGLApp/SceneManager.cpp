@@ -17,6 +17,25 @@ void SceneManager::clearCurrentScene() {
 	}
 }
 
+void SceneManager::update() {
+	managerScene();
+	updateScene();
+}
+
+void SceneManager::managerScene() {
+	if (prevSceneId != currentSceneId) {
+		clearCurrentScene();
+
+		switch (currentSceneId) {
+			case SceneId::TEST_SCENE:
+				currentScene = new TestScene();
+			}
+
+		currentScene->prepareScene();
+	}
+	prevSceneId = currentSceneId;
+}
+
 void SceneManager::updateScene() {
 	if (currentScene != nullptr) {
 		currentScene->update();
@@ -24,19 +43,8 @@ void SceneManager::updateScene() {
 }
 
 void SceneManager::switchSceneFromId(SceneId sceneId) {
+	if (sceneId < 0 || sceneId >= NONE) return;
 	currentSceneId = sceneId;
-	if (prevSceneId == currentSceneId) return;
-
-	clearCurrentScene();
-
-	switch (sceneId) {
-		case SceneId::TEST_SCENE:
-			currentScene = new TestScene();
-		default:
-			return;
-	}
-
-	currentScene->prepareScene();
 }
 
 Scene* SceneManager::getCurrentScene() {

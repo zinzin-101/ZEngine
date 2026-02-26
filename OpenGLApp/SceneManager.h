@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 namespace SceneManagerConfig {
-	enum class SceneId {
+	enum SceneId {
 		TEST_SCENE,
 		NONE
 	};
@@ -14,11 +14,13 @@ class SceneManager {
 		SceneManagerConfig::SceneId prevSceneId;
 		Scene* currentScene;
 		void clearCurrentScene();
+		void updateScene();
+		void managerScene();
 
 	public:
 		SceneManager();
 		~SceneManager();
-		void updateScene();
+		void update();
 		void switchSceneFromId(SceneManagerConfig::SceneId sceneId);
 		Scene* getCurrentScene();
 };

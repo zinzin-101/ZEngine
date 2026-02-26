@@ -8,7 +8,7 @@ class Time {
 
 	public:
 		Time();
-		void updateTime();
+		void update();
 		float getDeltaTime() const;
 		float getRealDeltaTime() const;
 		void setTimeScale(float timeScale);
