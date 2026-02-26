@@ -2,6 +2,18 @@
 #include "Engine.h"
 #include <iostream>
 
+void TestScene::setup() {
+
+}
+
+void TestScene::init() {
+
+}
+
+void TestScene::start() {
+
+}
+
 void TestScene::update() {
 	//std::cout << "test scene" << std::endl;
 }

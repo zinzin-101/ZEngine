@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "Object.h"
 
-Scene::Scene() {}
+Scene::Scene(): currentCamera(nullptr) {}
 
 Scene::~Scene() {
 	for (Object* object : objects) {
@@ -50,4 +50,18 @@ void Scene::update() {
 	}
 }
 
+void Scene::render() {
+	for (Object* object : objects) {
+		object->render();
+	}
+}
+
 void Scene::processInput() {}
+
+Object* Scene::instantiateObject(glm::vec3 position) {
+	Object* object = new Object();
+	object->setCurrentScene(this);
+	object->transform.position = position;
+	objects.emplace_back(object);
+	return object;
+}

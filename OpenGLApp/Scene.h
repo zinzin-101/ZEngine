@@ -1,4 +1,6 @@
 #pragma once
+#include "Camera.h"
+#include <glm/glm.hpp>
 #include <vector>
 
 class Object;
@@ -6,6 +8,8 @@ class Object;
 class Scene {
 	private:
 		std::vector<Object*> objects;
+		Camera* currentCamera;
+
 
 	public:
 		Scene();
@@ -15,6 +19,8 @@ class Scene {
 		virtual void init(); // for component setup
 		virtual void start(); // for object's custom behavior
 		virtual void update();
+		virtual void render();
 		void prepareScene();
 		virtual void processInput();
+		Object* instantiateObject(glm::vec3 position);
 };

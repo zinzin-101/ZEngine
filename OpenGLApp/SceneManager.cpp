@@ -39,6 +39,7 @@ void SceneManager::managerScene() {
 void SceneManager::updateScene() {
 	if (currentScene != nullptr) {
 		currentScene->update();
+		currentScene->render();
 	}
 }
 

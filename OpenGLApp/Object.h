@@ -21,8 +21,11 @@ class Object {
 
 		virtual void init(); // for initializing component 
 		virtual void start(); // for custom behavior
-		virtual void update();
+		virtual void update(); // for updating component
+		virtual void render(); // for component that can render
 		void setCurrentScene(Scene* scene);
+		void addComponent(Component* component);
+		void removeComponent(Component* component);
 		bool getCanDelete() const;
 
 		static void deleteObject(Object* object);
