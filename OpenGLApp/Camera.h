@@ -5,6 +5,8 @@
 
 namespace CameraConfig {
 	constexpr float DEFAULT_FOV = 60.0f;
+	constexpr float DEFAULT_NEAR_PLANE = 0.01f;
+	constexpr float DEFAULT_FAR_PLANE = 100.0f;
 }
 
 class Camera : public Component {
@@ -14,11 +16,16 @@ class Camera : public Component {
 		glm::vec3 up;
 		glm::vec3 worldUp;
 
+		void updateCameraVector();
+
 	public:
 		float fov;
-		Camera(Transform* transform);
+		float nearPlane;
+		float farPlane;
+		Camera();
 		void setForward(glm::vec3 forward);
 		glm::mat4 getViewMatrix() const;
 
+		virtual void init() override;
 		virtual void update() override;
 };

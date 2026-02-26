@@ -2,14 +2,13 @@
 #include <glad/glad.h>
 #include <shader.h>
 #include <GLFW/glfw3.h>
+#include "Engine.h"
+#include "Scene.h"
+#include "Object.h"
 
 Renderer::Renderer() {}
 
-Renderer::~Renderer() {
-	for (Shader* shader : shaders) {
-		delete shader;
-	}
-}
+Renderer::~Renderer() {}
 
 bool Renderer::init() {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -21,15 +20,59 @@ bool Renderer::init() {
 	return true;
 }
 
-int Renderer::addShader(Shader* shader){
-	int id = shaders.size();
-	shaders.emplace_back(shader);
-	return id;
+void Renderer::render() {
+	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Scene* scene = Engine::getInstance()->getCurrentScene();
+	if (scene != nullptr) {
+		std::vector<Object*>& objects = scene->getObjects();
+		for (Object* object : objects) {
+			object->render();
+		}
+	}
 }
 
-Shader* Renderer::getShader(int id){
-	assert(id >= 0 && id < shaders.size() && "Invalid shader id");
-	return shaders.at(id);
+void Renderer::addMesh(std::string name, MeshPrimitive* meshPrimitive) {
+	assert(!nameToMeshPrimitive.contains(name) && "Trying to add an already existing mesh primitive");
+	nameToMeshPrimitive[name] = meshPrimitive;
+}
+
+MeshPrimitive* Renderer::getMesh(std::string name) {
+	assert(nameToMeshPrimitive.contains(name) && "Mesh with this name does not exist");
+	return nameToMeshPrimitive.at(name);
+}
+
+void Renderer::clearMesh() {
+	for (std::pair<std::string, MeshPrimitive*> pair : nameToMeshPrimitive) {
+		delete pair.second;
+	}
+
+	nameToMeshPrimitive.clear();
+}
+
+void Renderer::addShader(std::string name, Shader* shader) {
+	assert(!nameToShader.contains(name) && "Trying to add an already existing shader");
+	nameToShader[name] = shader;
+}
+
+
+Shader* Renderer::getShader(std::string name) {
+	assert(nameToShader.contains(name) && "shader with this name does not exist");
+	return nameToShader.at(name);
+}
+
+void Renderer::clearShader() {
+	for (std::pair<std::string, Shader*> pair : nameToShader) {
+		delete pair.second;
+	}
+
+	nameToShader.clear();
+}
+
+void Renderer::clear() {
+	clearMesh();
+	clearShader();
 }
 
 void Renderer::setViewPort(int x, int y, int width, int height) {

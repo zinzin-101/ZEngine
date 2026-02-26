@@ -1,9 +1,11 @@
 #pragma once
 #include <map>
 #include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
+
 
 using GLFW_KEY = unsigned int;
+
+struct GLFWwindow;
 
 class InputManager {
 	private:

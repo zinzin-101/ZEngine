@@ -6,7 +6,7 @@ int Component::getComponentPriority() const {
 	return priority;
 }
 
-Component::Component(Transform* transform): priority(DEFAULT_PRIORITY), transform(transform) {}
+Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr) {}
 Component::~Component() {}
 
 void Component::setTransform(Transform* transform) {
@@ -14,6 +14,9 @@ void Component::setTransform(Transform* transform) {
 	this->transform = transform;
 }
 
+void Component::init() {}
+void Component::start() {}
+void Component::update() {}
 void Component::render() {}
 
 bool compareComponentPriority(const Component* const c1, const Component* const c2) {

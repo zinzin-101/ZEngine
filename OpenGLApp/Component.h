@@ -11,12 +11,13 @@ class Component {
 		Transform* transform;
 
 	public:
-		Component(Transform* transform);
+		Component();
 		virtual ~Component();
 		void setTransform(Transform* transform);
 		int getComponentPriority() const;
-		virtual void start() = 0;
-		virtual void update() = 0;
+		virtual void init();
+		virtual void start();
+		virtual void update();
 		virtual void render();
 };
 

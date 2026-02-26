@@ -15,7 +15,7 @@ class SceneManager {
 		Scene* currentScene;
 		void clearCurrentScene();
 		void updateScene();
-		void managerScene();
+		void manageScene();
 
 	public:
 		SceneManager();

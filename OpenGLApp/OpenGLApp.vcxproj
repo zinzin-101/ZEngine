@@ -137,11 +137,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CubePrimitive.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeshPrimitive.cpp" />
+    <ClCompile Include="PrimitiveMeshRenderer.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -156,12 +160,17 @@
     <None Include="1.2.pbr.vs" />
     <None Include="1.model_loading.fs" />
     <None Include="1.model_loading.vs" />
+    <None Include="shaders\primitive.frag" />
+    <None Include="shaders\primitive.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="CubePrimitive.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MeshPrimitive.h" />
+    <ClInclude Include="PrimitiveMeshRenderer.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />

@@ -8,11 +8,15 @@ Scene::~Scene() {
 	for (Object* object : objects) {
 		delete object;
 	}
+
+	Engine::getInstance()->getRenderer()->clear();
 }
 
 std::vector<Object*>& Scene::getObjects() {
 	return objects;
 }
+
+void Scene::loadMeshData() {}
 
 void Scene::setup() {}
 
@@ -30,6 +34,7 @@ void Scene::start() {
 }
 
 void Scene::prepareScene() {
+	loadMeshData();
 	setup();
 	init();
 	start();
@@ -64,4 +69,8 @@ Object* Scene::instantiateObject(glm::vec3 position) {
 	object->transform.position = position;
 	objects.emplace_back(object);
 	return object;
+}
+
+Camera* Scene::getCurrentCamera() {
+	return currentCamera;
 }

@@ -1,17 +1,31 @@
 #pragma once
-#include <vector>
+#include <map>
+#include <string>
+#include <shader.h>
+#include "MeshPrimitive.h"
 
 class Shader;
 
 class Renderer {
 	private:
-		std::vector<Shader*> shaders;
+		std::map<std::string, Shader*> nameToShader;
+		std::map<std::string, MeshPrimitive*> nameToMeshPrimitive;
+		void clearMesh();
+		void clearShader();
+
 	public:
 		Renderer();
 		~Renderer();
 		bool init();
-		int addShader(Shader* shader);
-		Shader* getShader(int id);
+		void render();
+
+		void addMesh(std::string name, MeshPrimitive* meshPrimitive);
+		MeshPrimitive* getMesh(std::string name);
+
+		void addShader(std::string name, Shader* shader);
+		Shader* getShader(std::string name);
+
+		void clear();
 
 		void setViewPort(int x, int y, int width, int height);
 };

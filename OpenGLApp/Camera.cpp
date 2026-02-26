@@ -1,10 +1,11 @@
 #include "Camera.h"
 
-Camera::Camera(Transform* transform): Component(transform) {
+using namespace CameraConfig;
+
+Camera::Camera(): fov(DEFAULT_FOV), nearPlane(DEFAULT_NEAR_PLANE), farPlane(DEFAULT_FAR_PLANE) {
 	forward = glm::vec3(0.0f, 0.0f, -1.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 	worldUp = up;
-	update();
 }
 
 void Camera::setForward(glm::vec3 forward) {
@@ -18,7 +19,7 @@ glm::mat4 Camera::getViewMatrix() const {
 	return glm::lookAt(position, position + forward, up);
 }
 
-void Camera::update() {
+void Camera::updateCameraVector() {
 	assert(transform != nullptr && "Transform is null in camera");
 
 	glm::vec3 tempForward;
@@ -33,4 +34,12 @@ void Camera::update() {
 
 	right = glm::normalize(glm::cross(forward, worldUp));
 	up = glm::normalize(glm::cross(right, forward));
+}
+
+void Camera::init() {
+	updateCameraVector();
+}
+
+void Camera::update() {
+	updateCameraVector();
 }

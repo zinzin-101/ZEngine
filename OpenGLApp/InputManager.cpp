@@ -1,5 +1,6 @@
 #include "InputManager.h"
 #include "Engine.h"
+#include <GLFW/glfw3.h>
 #include <cassert>
 
 InputManager::InputManager(): window(nullptr) {

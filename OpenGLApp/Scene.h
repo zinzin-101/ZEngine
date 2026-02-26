@@ -6,15 +6,15 @@
 class Object;
 
 class Scene {
-	private:
+	protected:
 		std::vector<Object*> objects;
 		Camera* currentCamera;
-
 
 	public:
 		Scene();
 		virtual ~Scene();
 		std::vector<Object*>& getObjects();
+		virtual void loadMeshData();
 		virtual void setup(); // for adding objects
 		virtual void init(); // for component setup
 		virtual void start(); // for object's custom behavior
@@ -23,4 +23,5 @@ class Scene {
 		void prepareScene();
 		virtual void processInput();
 		Object* instantiateObject(glm::vec3 position);
+		Camera* getCurrentCamera();
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 #include <string>
 
 #include "Renderer.h"
@@ -14,6 +14,8 @@ namespace EngineConfig {
 	constexpr SceneManagerConfig::SceneId INITIAL_SCENE_ID = SceneManagerConfig::TEST_SCENE;
 }
 
+struct GLFWwindow;
+
 class Engine {
 	private:
 		static Engine* instance;
@@ -22,6 +24,9 @@ class Engine {
 		InputManager inputManager;
 		Time time;
 		SceneManager sceneManager;
+
+		unsigned int screenWidth;
+		unsigned int screenHeight;
 
 		void initWindow();
 		void clean();
@@ -40,6 +45,7 @@ class Engine {
 		Time* getTime();
 		Scene* getCurrentScene();
 		SceneManager* getSceneManager();
+		glm::vec2 getScreenDimension() const;
 		void terminate();
 };
 

@@ -1,5 +1,7 @@
 #include "Engine.h"
 #include "SceneManager.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <cassert>
 #include <stdexcept>
 
@@ -34,7 +36,7 @@ SceneManager* Engine::getSceneManager() {
 	return &sceneManager;
 }
 
-Engine::Engine(): window(nullptr) {
+Engine::Engine(): window(nullptr), screenWidth(DEFAULT_SCREEN_WIDTH), screenHeight(DEFAULT_SCREEN_HEIGHT) {
 	instance = this;
 	init();
 }
@@ -58,7 +60,7 @@ void Engine::initWindow() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-	window = glfwCreateWindow(DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, WINDOW_NAME, NULL, NULL);
+	window = glfwCreateWindow(screenWidth, screenHeight, WINDOW_NAME, NULL, NULL);
 	if (window == nullptr) {
 		glfwTerminate();
 		throw std::runtime_error("Failed to create GLFW window");
@@ -78,6 +80,7 @@ void Engine::clean() {
 void Engine::update() {
 	time.update();
 	sceneManager.update();
+	renderer.render();
 }
 
 void Engine::run() {
@@ -93,6 +96,10 @@ void Engine::run() {
 
 void Engine::switchScene(SceneManagerConfig::SceneId sceneId) {
 	sceneManager.switchSceneFromId(sceneId);
+}
+
+glm::vec2 Engine::getScreenDimension() const {
+	return glm::vec2(screenWidth, screenHeight);
 }
 
 void Engine::terminate() {

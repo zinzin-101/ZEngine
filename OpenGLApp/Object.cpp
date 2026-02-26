@@ -1,6 +1,5 @@
 #include "Object.h"
 #include "Scene.h"
-#include <algorithm>
 
 Object::Object(): currentScene(nullptr), transform(this), name("Object"), canDelete(false) {}
 
@@ -13,10 +12,16 @@ Object::~Object() {
 }
 
 void Object::init() {
-	start();
+	for (Component* component : components) {
+		component->init();
+	}
 }
 
-void Object::start() {}
+void Object::start() {
+	for (Component* component : components) {
+		component->start();
+	}
+}
 
 void Object::update() {
 	for (Component* component : components) {

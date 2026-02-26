@@ -18,18 +18,18 @@ void SceneManager::clearCurrentScene() {
 }
 
 void SceneManager::update() {
-	managerScene();
+	manageScene();
 	updateScene();
 }
 
-void SceneManager::managerScene() {
+void SceneManager::manageScene() {
 	if (prevSceneId != currentSceneId) {
 		clearCurrentScene();
 
 		switch (currentSceneId) {
 			case SceneId::TEST_SCENE:
 				currentScene = new TestScene();
-			}
+		}
 
 		currentScene->prepareScene();
 	}
@@ -39,7 +39,6 @@ void SceneManager::managerScene() {
 void SceneManager::updateScene() {
 	if (currentScene != nullptr) {
 		currentScene->update();
-		currentScene->render();
 	}
 }
 
