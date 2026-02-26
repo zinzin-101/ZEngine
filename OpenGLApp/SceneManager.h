@@ -4,6 +4,7 @@
 namespace SceneManagerConfig {
 	enum SceneId {
 		TEST_SCENE,
+		TEST_SCENE2,
 		NONE
 	};
 }
@@ -22,5 +23,7 @@ class SceneManager {
 		~SceneManager();
 		void update();
 		void switchSceneFromId(SceneManagerConfig::SceneId sceneId);
+		void resetCurrentScene();
 		Scene* getCurrentScene();
+		SceneManagerConfig::SceneId getCurrentSceneId() const;
 };

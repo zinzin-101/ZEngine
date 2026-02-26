@@ -66,8 +66,12 @@ void TestScene::processInput() {
 	glm::vec2 mouseOffset = inputManager.getMouseOffset();
 	currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * dt;
 	currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * dt;
-	if (currentCamera->getTransform()->eulerRotation.y > 89.0f)
-		currentCamera->getTransform()->eulerRotation.y = 89.0f;
-	if (currentCamera->getTransform()->eulerRotation.y < -89.0f)
-		currentCamera->getTransform()->eulerRotation.y = -89.0f;
+	if (currentCamera->getTransform()->eulerRotation.x > 89.0f)
+		currentCamera->getTransform()->eulerRotation.x = 89.0f;
+	if (currentCamera->getTransform()->eulerRotation.x < -89.0f)
+		currentCamera->getTransform()->eulerRotation.x = -89.0f;
+
+	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
+		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
 }

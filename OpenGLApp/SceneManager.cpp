@@ -29,6 +29,10 @@ void SceneManager::manageScene() {
 		switch (currentSceneId) {
 			case SceneId::TEST_SCENE:
 				currentScene = new TestScene();
+				break;
+			case SceneId::TEST_SCENE2:
+				currentScene = new TestScene();
+				break;
 		}
 
 		currentScene->prepareScene();
@@ -47,6 +51,14 @@ void SceneManager::switchSceneFromId(SceneId sceneId) {
 	currentSceneId = sceneId;
 }
 
+void SceneManager::resetCurrentScene() {
+	prevSceneId = NONE;
+}
+
 Scene* SceneManager::getCurrentScene() {
 	return currentScene;
+}
+
+SceneManagerConfig::SceneId SceneManager::getCurrentSceneId() const {
+	return currentSceneId;
 }
