@@ -41,4 +41,33 @@ void TestScene::processInput() {
 	if (inputManager.getKeyDown(GLFW_KEY_ESCAPE)) {
 		Engine::getInstance()->terminate();
 	}
+
+	float dt = Engine::getInstance()->getTime()->getDeltaTime();
+	glm::vec3 movement(0.0f);
+	if (inputManager.getKey(GLFW_KEY_W)) {
+		movement += currentCamera->getFoward() * 2.5f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_S)) {
+		movement += -currentCamera->getFoward() * 2.5f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_A)) {
+		movement += -currentCamera->getRight() * 2.5f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_D)) {
+		movement += currentCamera->getRight() * 2.5f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_E)) {
+		movement += currentCamera->getUp() * 2.5f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_Q)) {
+		movement += -currentCamera->getUp() * 2.5f * dt;
+	}
+	currentCamera->getTransform()->position += movement;
+	glm::vec2 mouseOffset = inputManager.getMouseOffset();
+	currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * dt;
+	currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * dt;
+	if (currentCamera->getTransform()->eulerRotation.y > 89.0f)
+		currentCamera->getTransform()->eulerRotation.y = 89.0f;
+	if (currentCamera->getTransform()->eulerRotation.y < -89.0f)
+		currentCamera->getTransform()->eulerRotation.y = -89.0f;
 }

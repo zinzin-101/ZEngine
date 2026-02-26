@@ -44,10 +44,8 @@ bool InputManager::getKey(GLFW_KEY key) {
 	return glfwGetKey(window, key) == GLFW_PRESS;
 }
 
-void InputManager::updateMousePosition(glm::vec2 position) {
+void InputManager::update() {
 	static bool firstMouseMovement = true;
-
-	mousePosition = position;
 
 	if (firstMouseMovement) {
 		firstMouseMovement = false;
@@ -58,6 +56,10 @@ void InputManager::updateMousePosition(glm::vec2 position) {
 	mouseOffset.y = mousePosition.y - lastMousePosition.y; // reversed since y-coordinates go from bottom to top
 
 	lastMousePosition = mousePosition;
+}
+
+void InputManager::updateMousePosition(glm::vec2 position) {
+	mousePosition = position;
 }
 
 glm::vec2 InputManager::getMouseOffset() const {

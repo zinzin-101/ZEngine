@@ -66,11 +66,13 @@ void Engine::initWindow() {
 		throw std::runtime_error("Failed to create GLFW window");
 	}
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
+	glfwSetCursorPosCallback(window, mouseCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 }
 
 void Engine::clean() {
@@ -78,6 +80,7 @@ void Engine::clean() {
 }
 
 void Engine::update() {
+	inputManager.update();
 	time.update();
 	sceneManager.update();
 	renderer.render();

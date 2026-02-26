@@ -18,6 +18,7 @@ class InputManager {
 	public:
 		InputManager();
 		void init(GLFWwindow* window);
+		void update();
 		bool getKeyDown(GLFW_KEY key);
 		bool getKey(GLFW_KEY key);
 		void updateMousePosition(glm::vec2 position);

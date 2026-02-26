@@ -14,6 +14,7 @@ class Component {
 		Component();
 		virtual ~Component();
 		void setTransform(Transform* transform);
+		Transform* getTransform();
 		int getComponentPriority() const;
 		virtual void init();
 		virtual void start();

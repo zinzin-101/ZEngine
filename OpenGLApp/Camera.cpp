@@ -15,8 +15,20 @@ void Camera::setForward(glm::vec3 forward) {
 }
 
 glm::mat4 Camera::getViewMatrix() const {
-	glm::vec3 position = transform->position;
+	glm::vec3 position = transform->getGlobalPosition();
 	return glm::lookAt(position, position + forward, up);
+}
+
+glm::vec3 Camera::getFoward() const {
+	return forward;
+}
+
+glm::vec3 Camera::getRight() const {
+	return right;
+}
+
+glm::vec3 Camera::getUp() const {
+	return up;
 }
 
 void Camera::updateCameraVector() {
@@ -25,7 +37,7 @@ void Camera::updateCameraVector() {
 	glm::vec3 tempForward;
 	// x: pitch, y: yaw, z: roll
 	float pitch = transform->eulerRotation.x;
-	float yaw = transform->eulerRotation.y;
+	float yaw = transform->eulerRotation.y - 90.0f;
 	float roll = transform->eulerRotation.z;
 	tempForward.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	tempForward.y = sin(glm::radians(pitch));

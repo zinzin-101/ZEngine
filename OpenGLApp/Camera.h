@@ -25,6 +25,9 @@ class Camera : public Component {
 		Camera();
 		void setForward(glm::vec3 forward);
 		glm::mat4 getViewMatrix() const;
+		glm::vec3 getFoward() const;
+		glm::vec3 getRight() const;
+		glm::vec3 getUp() const;
 
 		virtual void init() override;
 		virtual void update() override;

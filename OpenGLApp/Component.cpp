@@ -14,6 +14,10 @@ void Component::setTransform(Transform* transform) {
 	this->transform = transform;
 }
 
+Transform* Component::getTransform() {
+	return transform;
+}
+
 void Component::init() {}
 void Component::start() {}
 void Component::update() {}

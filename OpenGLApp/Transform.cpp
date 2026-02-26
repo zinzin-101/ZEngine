@@ -27,7 +27,7 @@ glm::vec3 Transform::getGlobalEulerRotation() const {
 
 glm::vec3 Transform::getGlobalScale() const {
 	if (parent != nullptr) {
-		return scale + parent->getGlobalScale();
+		return scale * parent->getGlobalScale();
 	}
 	return scale;
 }
