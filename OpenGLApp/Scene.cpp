@@ -25,6 +25,10 @@ void Scene::init() {
 		object->setCurrentScene(this);
 		object->init();
 	}
+
+	if (currentCamera == nullptr) {
+		currentCamera = getCurrentCamera();
+	}
 }
 
 void Scene::start() {
@@ -42,7 +46,9 @@ void Scene::prepareScene() {
 
 void Scene::update() {
 	for (Object* object : objects) {
-		object->update();
+		if (object->isActive) {
+			object->update();
+		}
 	}
 
 	for (std::vector<Object*>::iterator itr = objects.end(); itr != objects.begin();) {
@@ -57,7 +63,9 @@ void Scene::update() {
 
 void Scene::render() {
 	for (Object* object : objects) {
-		object->render();
+		if (object->isActive) {
+			object->render();
+		}
 	}
 }
 

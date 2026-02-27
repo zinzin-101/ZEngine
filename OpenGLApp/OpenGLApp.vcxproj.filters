@@ -66,6 +66,15 @@
     <ClCompile Include="PrimitiveMeshRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TetrahedronSoftBodyMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftBodyMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftBodyTestScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.model_loading.fs" />
@@ -116,6 +125,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PrimitiveMeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftBodyMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TetrahedronSoftBodyMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftBodyTestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,6 +11,8 @@ class Component {
 		Transform* transform;
 
 	public:
+		bool isActive;
+
 		Component();
 		virtual ~Component();
 		void setTransform(Transform* transform);

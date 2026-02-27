@@ -6,7 +6,7 @@ int Component::getComponentPriority() const {
 	return priority;
 }
 
-Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr) {}
+Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr), isActive(true) {}
 Component::~Component() {}
 
 void Component::setTransform(Transform* transform) {

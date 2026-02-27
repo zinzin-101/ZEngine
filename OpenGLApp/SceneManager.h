@@ -4,7 +4,7 @@
 namespace SceneManagerConfig {
 	enum SceneId {
 		TEST_SCENE,
-		TEST_SCENE2,
+		SOFT_BODY_TEST_SCENE,
 		NONE
 	};
 }

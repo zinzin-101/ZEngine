@@ -150,8 +150,11 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SoftBodyMesh.cpp" />
+    <ClCompile Include="SoftBodyTestScene.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="TetrahedronSoftBodyMesh.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
@@ -175,7 +178,10 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SoftBodyMesh.h" />
+    <ClInclude Include="SoftBodyTestScene.h" />
     <ClInclude Include="TestScene.h" />
+    <ClInclude Include="TetrahedronSoftBodyMesh.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>

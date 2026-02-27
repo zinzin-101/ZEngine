@@ -31,6 +31,7 @@ void PrimitiveMeshRenderer::render() {
 	shader->setMat4("view", view);
 	shader->setMat4("projection", projection);
 	shader->setVec3("color", color);
+	shader->setVec3("camPos", camera->getTransform()->getGlobalPosition());
 
 	meshPrimitive->render();
 }

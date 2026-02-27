@@ -1,9 +1,9 @@
 #include "Object.h"
 #include "Scene.h"
 
-Object::Object(): currentScene(nullptr), transform(this), name("Object"), canDelete(false) {}
+Object::Object(): currentScene(nullptr), transform(this), name("Object"), canDelete(false), isActive(true) {}
 
-Object::Object(std::string name): currentScene(nullptr), transform(this), name(name), canDelete(false) {}
+Object::Object(std::string name): currentScene(nullptr), transform(this), name(name), canDelete(false), isActive(true) {}
 
 Object::~Object() {
 	for (Component* component : components) {
@@ -25,13 +25,17 @@ void Object::start() {
 
 void Object::update() {
 	for (Component* component : components) {
-		component->update();
+		if (component->isActive) {
+			component->update();
+		}
 	}
 }
 
 void Object::render() {
 	for (Component* component : components) {
-		component->render();
+		if (component->isActive) {
+			component->render();
+		}
 	}
 }
 

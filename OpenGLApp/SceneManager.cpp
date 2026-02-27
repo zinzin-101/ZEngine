@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "TestScene.h"
+#include "SoftBodyTestScene.h"
 
 using namespace SceneManagerConfig;
 
@@ -30,8 +31,8 @@ void SceneManager::manageScene() {
 			case SceneId::TEST_SCENE:
 				currentScene = new TestScene();
 				break;
-			case SceneId::TEST_SCENE2:
-				currentScene = new TestScene();
+			case SceneId::SOFT_BODY_TEST_SCENE:
+				currentScene = new SoftBodyTestScene();
 				break;
 		}
 

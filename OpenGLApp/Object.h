@@ -19,6 +19,7 @@ class Object {
 		virtual ~Object();
 		Transform transform;
 		std::string name;
+		bool isActive;
 
 		virtual void init(); // for initializing component 
 		virtual void start(); // for custom behavior
@@ -28,7 +29,7 @@ class Object {
 		void addComponent(Component* component);
 
 		template <class T>
-		void addComponent();
+		T* addComponent();
 
 		template <class T>
 		T* getFirstComponentOfType();
@@ -40,7 +41,7 @@ class Object {
 };
 
 template <class T>
-void Object::addComponent() {
+T* Object::addComponent() {
 	T* componentType = new T();
 	Component* component = dynamic_cast<Component*>(componentType);
 
@@ -48,6 +49,8 @@ void Object::addComponent() {
 	component->setTransform(&transform);
 	components.emplace_back(component);
 	std::sort(components.begin(), components.end(), compareComponentPriority);
+
+	return componentType;
 }
 
 template <class T>

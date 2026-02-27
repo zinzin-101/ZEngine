@@ -6,7 +6,7 @@ CubePrimitive::CubePrimitive() {
 }
 
 void CubePrimitive::init() {
-	const float vertices[] = {
+	float vertices[] = {
 		// positions          // normals
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -71,6 +71,9 @@ void CubePrimitive::init() {
 		indices,
 		GL_STATIC_DRAW
 	);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 void CubePrimitive::render() {
