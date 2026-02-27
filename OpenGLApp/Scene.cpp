@@ -8,7 +8,7 @@ Scene::~Scene() {
 	for (Object* object : objects) {
 		delete object;
 	}
-
+	currentCamera = nullptr;
 	Engine::getInstance()->getRenderer()->clear();
 }
 
@@ -72,5 +72,15 @@ Object* Scene::instantiateObject(glm::vec3 position) {
 }
 
 Camera* Scene::getCurrentCamera() {
+	if (currentCamera == nullptr) {
+		for (Object* object : objects) {
+			Camera* camera = object->getFirstComponentOfType<Camera>();
+			if (camera != nullptr) {
+				currentCamera = camera;
+				break;
+			}
+		}
+	}
+
 	return currentCamera;
 }

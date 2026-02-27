@@ -25,7 +25,7 @@ void TestScene::setup() {
 
 	Object* cam = instantiateObject(glm::vec3(0.0f));
 	cam->addComponent<Camera>();
-	currentCamera = cam->getFirstComponentOfType<Camera>();
+	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
 	Object* cube = instantiateObject(glm::vec3(0.0f, 0.0f, -5.0f));
 	cube->addComponent<PrimitiveMeshRenderer>();
@@ -62,6 +62,9 @@ void TestScene::processInput() {
 	if (inputManager.getKey(GLFW_KEY_Q)) {
 		movement += -currentCamera->getUp() * 2.5f * dt;
 	}
+
+	getCurrentCamera();
+
 	currentCamera->getTransform()->position += movement;
 	glm::vec2 mouseOffset = inputManager.getMouseOffset();
 	currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * dt;
