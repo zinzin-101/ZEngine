@@ -18,13 +18,20 @@ TetrahedronSoftBodyMesh::TetrahedronSoftBodyMesh() {
         1, 3, 2
     };
 
-    unsigned int edgeIds[] = {
+    unsigned int edgeIdx[] = {
         0, 1,
         0, 2,
         0, 3,
         1, 2,
         1, 3,
         2, 3
+    };
+
+    unsigned int volumeIdx[] = {
+        1, 3, 2,
+        0, 2, 3,
+        0, 3, 1,
+        0, 1, 2
     };
 
     int n = 4 * 6;
@@ -37,7 +44,13 @@ TetrahedronSoftBodyMesh::TetrahedronSoftBodyMesh() {
     }
     n = 12;
     for (int i = 0; i < n; i++) {
-        tetrahedronEdgeId[i] = edgeIds[i];
+        tetrahedronEdgeId[i] = edgeIdx[i];
+    }
+
+    for (int i = 0; i < 4; i++) {
+        volumeIdxOrder[i][0] = volumeIdx[3 * i + 0];
+        volumeIdxOrder[i][1] = volumeIdx[3 * i + 1];
+        volumeIdxOrder[i][2] = volumeIdx[3 * i + 2];
     }
 
     glGenVertexArrays(1, &vao);
@@ -185,7 +198,11 @@ void TetrahedronSoftBodyMesh::solveVolumes(float compliance, float dt) {
     for (int i = 0; i < numberOfTetrahedrons; i++) {
         float w = 0.0f;
         for (int j = 0; j < 4; j++) {
-            int idx0 = 
+            int idx0 = tetrahedronIndices[3 * j * volumeIdxOrder[j][0]];
+            int idx1 = tetrahedronIndices[3 * j * volumeIdxOrder[j][1]];
+            int idx2 = tetrahedronIndices[3 * j * volumeIdxOrder[j][2]];
+
+
         }
     }
 }

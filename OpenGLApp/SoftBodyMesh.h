@@ -16,9 +16,6 @@ class SoftBodyMesh : public Component {
 		std::vector<float> edgeLengths;
 		std::vector<float> invMasses;
 
-		glm::vec3 tempVectors[4];
-		glm::vec3 gradientVectors[4];
-
 		unsigned int vao;
 		unsigned int vbo;
 		unsigned int ebo;

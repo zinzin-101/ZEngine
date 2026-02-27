@@ -4,7 +4,8 @@
 class TetrahedronSoftBodyMesh : public SoftBodyMesh {
 	private:
 		float tetrahedronVertices[4 * 6];
-		float tetrahedronIndices[4 * 3];
+		unsigned int tetrahedronIndices[4 * 3];
+		unsigned int volumeIdxOrder[4][3];
 		float tetrahedronEdgeId[12];
 		float getTetrahedronVolume() const;
 		glm::vec3 getPosFromIdx(int idx) const;
