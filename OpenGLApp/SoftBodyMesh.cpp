@@ -1,6 +1,11 @@
 #include "SoftBodyMesh.h"
 
-SoftBodyMesh::SoftBodyMesh() {}
+SoftBodyMesh::SoftBodyMesh() 
+	: numberOfParticles{}, numberOfTetrahedrons(0), numberOfEdges(0), 
+	vao(0), vbo(0), ebo(0), 
+	edgeCompliance(100.0f), volumeCompliance(0.0f), 
+	color(0.0f), shader(nullptr),
+	groundHeight(0.0f), substeps(10) { }
 
 SoftBodyMesh::~SoftBodyMesh(){
 	glDeleteVertexArrays(1, &vao);
@@ -9,7 +14,7 @@ SoftBodyMesh::~SoftBodyMesh(){
 }
 
 void SoftBodyMesh::translate(glm::vec3 v) {
-	for (int i = 0; i < numberOfParticles; i++) {
+	for (unsigned int i = 0; i < numberOfParticles; i++) {
 		particlePositions[i] += v;
 		previousParticlePositions[i] += v;
 	}

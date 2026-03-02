@@ -24,10 +24,12 @@ class SoftBodyMesh : public Component {
 		glm::vec3 computeFaceNormal(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2);
 
 	public:
+		SoftBodyMesh();
+		~SoftBodyMesh();
 		float edgeCompliance;
 		float volumeCompliance;
 		glm::vec3 color;
 		Shader* shader;
-
 		float groundHeight; // temp
+		unsigned int substeps;
 };

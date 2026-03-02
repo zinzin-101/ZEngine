@@ -24,7 +24,10 @@ void SoftBodyTestScene::loadMeshData() {
 void SoftBodyTestScene::setup() {
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
-	Object* cam = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	Engine::getInstance()->getTime()->timeScale = 0.0f;
+
+	Object* cam = instantiateObject(glm::vec3(0.0f, 5.0f, 5.0f));
+	cam->transform.eulerRotation.x = -30.0f;
 	cam->addComponent<Camera>();
 	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
@@ -40,12 +43,13 @@ void SoftBodyTestScene::setup() {
 
 	Object* softbody = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
+	softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>()->groundHeight = 0.5f;
 
 }
 
 void SoftBodyTestScene::processInput() {
-	float fps = 1.0f / Engine::getInstance()->getTime()->getRealDeltaTime();
-	//std::cout << fps << std::endl;
+	float dtRealTime =  Engine::getInstance()->getTime()->getRealDeltaTime();
+	//std::cout << "realtime: " << dtRealTime << std::endl;
 
 	InputManager& inputManager = *Engine::getInstance()->getInputManager();
 	if (inputManager.getKeyDown(GLFW_KEY_ESCAPE)) {
@@ -53,6 +57,7 @@ void SoftBodyTestScene::processInput() {
 	}
 
 	float dt = Engine::getInstance()->getTime()->getDeltaTime();
+	//std::cout << "game time: " << dt << std::endl;
 	glm::vec3 movement(0.0f);
 	if (inputManager.getKey(GLFW_KEY_W)) {
 		movement += currentCamera->getFoward() * 2.5f * dt;
@@ -84,5 +89,15 @@ void SoftBodyTestScene::processInput() {
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_X)) {
+		Time* time = Engine::getInstance()->getTime();
+		if (time->timeScale > 0.5f) {
+			time->timeScale = 0.0f;
+		}
+		else {
+			time->timeScale = 1.0f;
+		}
 	}
 }

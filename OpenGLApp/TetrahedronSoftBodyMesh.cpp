@@ -80,7 +80,6 @@ TetrahedronSoftBodyMesh::TetrahedronSoftBodyMesh() : tempVerticesData{ 0.0f } {
     glBindVertexArray(0);
 
     color = glm::vec3(1.0f);
-    groundHeight = 0.0f;
 }
 
 float TetrahedronSoftBodyMesh::getTetrahedronVolume() const {
@@ -103,35 +102,29 @@ float TetrahedronSoftBodyMesh::getTetrahedronVolume() const {
 }
 
 glm::vec3 TetrahedronSoftBodyMesh::getPosFromIdx(int idx) const {
-    int base = idx * 6; // 6 floats per vertex
-    return glm::vec3(
-        tetrahedronVertices[base],
-        tetrahedronVertices[base + 1],
-        tetrahedronVertices[base + 2]
-    );
+    //int base = idx * 6; // 6 floats per vertex
+    //return glm::vec3(
+    //    tetrahedronVertices[base],
+    //    tetrahedronVertices[base + 1],
+    //    tetrahedronVertices[base + 2]
+    //);
+    return particlePositions[idx];
 }
 
 void TetrahedronSoftBodyMesh::computeNormal() {
-    for (int i = 0; i < numberOfParticles; i++) {
+    for (glm::vec3& normal : tetrahedronNormals) {
+        normal = glm::vec3(0.0f);
+    }
+
+    for (int i = 0; i < 4; i++) {
         unsigned int idx0 = tetrahedronIndices[3 * i + 0];
         unsigned int idx1 = tetrahedronIndices[3 * i + 1];
         unsigned int idx2 = tetrahedronIndices[3 * i + 2];
 
-        glm::vec3 p0 = glm::vec3(
-            tempVerticesData[6 * idx0 + 0],
-            tempVerticesData[6 * idx0 + 1],
-            tempVerticesData[6 * idx0 + 2]
-        );
-        glm::vec3 p1 = glm::vec3(
-            tempVerticesData[6 * idx1 + 0],
-            tempVerticesData[6 * idx1 + 1],
-            tempVerticesData[6 * idx1 + 2]
-        );
-        glm::vec3 p2 = glm::vec3(
-            tempVerticesData[6 * idx2 + 0],
-            tempVerticesData[6 * idx2 + 1],
-            tempVerticesData[6 * idx2 + 2]
-        );
+        glm::vec3 p0 = particlePositions[idx0];
+        glm::vec3 p1 = particlePositions[idx1];
+        glm::vec3 p2 = particlePositions[idx2];
+
         glm::vec3 normal = computeFaceNormal(p0, p1, p2);
         tetrahedronNormals[idx0] += normal;
         tetrahedronNormals[idx1] += normal;
@@ -148,7 +141,7 @@ void TetrahedronSoftBodyMesh::preSolve(float dt, glm::vec3 gravity) {
         if (invMasses[i] == 0.0f) continue;
         particleVelocities[i] += gravity * dt;
         previousParticlePositions[i] = particlePositions[i];
-        particlePositions[i] += particleVelocities[i];
+        particlePositions[i] += particleVelocities[i] * dt;
         if (particlePositions[i].y < groundHeight) {
             particlePositions[i] = previousParticlePositions[i];
             particlePositions[i].y = groundHeight;
@@ -197,13 +190,50 @@ void TetrahedronSoftBodyMesh::solveVolumes(float compliance, float dt) {
     float alpha = compliance / (dt * dt);
     for (int i = 0; i < numberOfTetrahedrons; i++) {
         float w = 0.0f;
+        //int indices[4] = { 0, 1, 2, 3, };
+        glm::vec3 p0 = particlePositions[0];
+        glm::vec3 p1 = particlePositions[1];
+        glm::vec3 p2 = particlePositions[2];
+        glm::vec3 p3 = particlePositions[3];
+        glm::vec3 grads[4];
+        grads[0] = -glm::cross(p1 - p2, p3 - p2) / 6.0f;
+        grads[1] = glm::cross(p2 - p0, p3 - p0) / 6.0f;
+        grads[2] = glm::cross(p3 - p0, p1 - p0) / 6.0f;
+        grads[3] = glm::cross(p1 - p0, p2 - p0) / 6.0f;
         for (int j = 0; j < 4; j++) {
-            int idx0 = tetrahedronIndices[3 * j * volumeIdxOrder[j][0]];
-            int idx1 = tetrahedronIndices[3 * j * volumeIdxOrder[j][1]];
-            int idx2 = tetrahedronIndices[3 * j * volumeIdxOrder[j][2]];
+            //int idx0 = indices[volumeIdxOrder[j][0]];
+            //int idx1 = indices[volumeIdxOrder[j][1]];
+            //int idx2 = indices[volumeIdxOrder[j][2]];
 
+            //glm::vec3 p0 = particlePositions[idx0];
+            //glm::vec3 p1 = particlePositions[idx1];
+            //glm::vec3 p2 = particlePositions[idx2];
 
+            //glm::vec3 edge1 = p1 - p0;
+            //glm::vec3 edge2 = p2 - p0;
+
+            //grads[j] = glm::cross(edge1, edge2) / 6.0f;
+            //w += invMasses[indices[j]] * glm::dot(grads[j], grads[j]);
+            w += invMasses[j] * glm::dot(grads[j], grads[j]);
         }
+
+        if (w == 0.0f) continue;
+
+        float volume = getTetrahedronVolume();
+        float restVolume = restVolumes[i];
+        float c = volume - restVolume;
+        float s = -c / (w + alpha);
+        for (int j = 0; j < 4; j++) {
+            //int idx = indices[j];
+            //particlePositions[idx] += grads[j] * s * invMasses[idx];
+            particlePositions[j] += grads[j] * s * invMasses[j];
+        }
+
+        glm::vec3 sum = grads[0] + grads[1] + grads[2] + grads[3];
+        std::cout << "Grad sum: "
+            << sum.x << " "
+            << sum.y << " "
+            << sum.z << std::endl;
     }
 }
 
@@ -223,12 +253,7 @@ void TetrahedronSoftBodyMesh::updateMesh() {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    float* data = (float*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-    for (int i = 0; i < (4 * 6); i++) {
-        data[i] = tempVerticesData[i];
-    }
-
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, numberOfParticles * 6 * sizeof(float), tempVerticesData);
 }
 
 void TetrahedronSoftBodyMesh::init() {
@@ -260,6 +285,7 @@ void TetrahedronSoftBodyMesh::init() {
         edgeLengths.emplace_back(0.0f);
     }
 
+
     float volume = getTetrahedronVolume();
     float pInvMass = volume > 0.0f ? (1.0f / (volume / 4.0f)) : 0.0f;
     invMasses[0] += pInvMass;
@@ -272,11 +298,29 @@ void TetrahedronSoftBodyMesh::init() {
         int idx1 = tetrahedronEdgeId[2 * i + 1];
         edgeLengths[i] = glm::length(particlePositions[idx0] - particlePositions[idx1]);
     }
+
+    restVolumes[0] = volume;
 }
 
 void TetrahedronSoftBodyMesh::update() {
-
-
+    float dt = Engine::getInstance()->getTime()->getDeltaTime();
+    if (dt <= 0.001f) return;
+    //glm::vec3 gravity = glm::vec3(0.0f, -9.81f, 0.0f);
+    glm::vec3 gravity = glm::vec3(0.0f, -1.0f, 0.0f);
+    float subDt = dt / substeps;
+    for (unsigned int i = 0; i < substeps; i++) {
+        preSolve(subDt, gravity);
+        solve(subDt);
+        postSolve(subDt);
+        for (int i = 0; i < numberOfParticles; i++) {
+            if (glm::any(glm::isnan(particlePositions[i]))) {
+                //std::cout << "NaN position!\n";
+            }
+            else {
+                //std::cout << i << ": " << particlePositions[i].x << " " << particlePositions[i].y << " " << particlePositions[i].z << std::endl;
+            }
+        }
+    }
 }
 
 void TetrahedronSoftBodyMesh::render() {
@@ -301,10 +345,10 @@ void TetrahedronSoftBodyMesh::render() {
     shader->setVec3("color", color);
     shader->setVec3("camPos", camera->getTransform()->getGlobalPosition());
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
