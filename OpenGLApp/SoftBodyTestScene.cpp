@@ -43,8 +43,12 @@ void SoftBodyTestScene::setup() {
 
 	Object* softbody = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
-	softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>()->groundHeight = 0.5f;
-
+	softbodymesh = softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>();
+	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	softbodymesh->groundHeight = 0.5f;
+	softbodymesh->edgeCompliance = 0.172566f;
+	softbodymesh->volumeCompliance = 0.0408936f;
+	//softbodyMesh->edgeCompliance;
 }
 
 void SoftBodyTestScene::processInput() {
@@ -100,4 +104,27 @@ void SoftBodyTestScene::processInput() {
 			time->timeScale = 1.0f;
 		}
 	}
+
+	if (inputManager.getKey(GLFW_KEY_UP)) {
+		softbodymesh->volumeCompliance += 1.0f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_DOWN)) {
+		softbodymesh->volumeCompliance -= 1.0f * dt;
+	}
+
+	if (inputManager.getKey(GLFW_KEY_RIGHT)) {
+		softbodymesh->edgeCompliance += 1.0f * dt;
+	}
+	if (inputManager.getKey(GLFW_KEY_LEFT)) {
+		softbodymesh->edgeCompliance -= 1.0f * dt;
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_R)) {
+		softbodymesh->reset();
+	}
+
+	softbodymesh->volumeCompliance = glm::clamp(softbodymesh->volumeCompliance, 0.0f, 100.0f);
+	softbodymesh->edgeCompliance = glm::clamp(softbodymesh->edgeCompliance, 0.0f, 100.0f);
+	std::cout << "volume compliance: " << softbodymesh->volumeCompliance << std::endl;
+	std::cout << "edge compliance: " << softbodymesh->edgeCompliance << std::endl;
 }

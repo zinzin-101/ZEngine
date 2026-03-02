@@ -6,6 +6,9 @@
 class Object;
 
 class Scene {
+	private:
+		bool hasInitialized;
+
 	protected:
 		std::vector<Object*> objects;
 		Camera* currentCamera;
@@ -24,4 +27,5 @@ class Scene {
 		virtual void processInput();
 		Object* instantiateObject(glm::vec3 position);
 		Camera* getCurrentCamera();
+		bool hasBeenInitialized() const;
 };

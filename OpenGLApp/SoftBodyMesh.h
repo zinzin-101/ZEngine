@@ -32,6 +32,7 @@ class SoftBodyMesh : public Component {
 	public:
 		SoftBodyMesh();
 		~SoftBodyMesh();
+		virtual void reset() = 0;
 		float edgeCompliance;
 		float volumeCompliance;
 		glm::vec3 color;

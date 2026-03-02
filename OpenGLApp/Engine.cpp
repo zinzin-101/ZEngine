@@ -133,7 +133,7 @@ void processInput(GLFWwindow* window) {
 	Engine* engine = Engine::getInstance();
 	if (engine != nullptr) {
 		Scene* scene = engine->getInstance()->getCurrentScene();
-		if (scene != nullptr) {
+		if (scene != nullptr && scene->hasBeenInitialized()) {
 			scene->processInput();
 		}
 	}

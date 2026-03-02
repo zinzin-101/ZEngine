@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "Object.h"
 
-Scene::Scene(): currentCamera(nullptr) {}
+Scene::Scene(): hasInitialized(false), currentCamera(nullptr) {}
 
 Scene::~Scene() {
 	for (Object* object : objects) {
@@ -38,10 +38,12 @@ void Scene::start() {
 }
 
 void Scene::prepareScene() {
+	hasInitialized = false;
 	loadMeshData();
 	setup();
 	init();
 	start();
+	hasInitialized = true;
 }
 
 void Scene::update() {
@@ -91,4 +93,8 @@ Camera* Scene::getCurrentCamera() {
 	}
 
 	return currentCamera;
+}
+
+bool Scene::hasBeenInitialized() const {
+	return hasInitialized;
 }

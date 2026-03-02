@@ -17,6 +17,7 @@ class TetrahedronSoftBodyMesh : public SoftBodyMesh {
 
 	public:
 		TetrahedronSoftBodyMesh();
+		virtual void reset() override;
 		virtual void init() override;
 		virtual void update() override;
 		virtual void render() override;
