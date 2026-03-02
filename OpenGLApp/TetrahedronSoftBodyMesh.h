@@ -3,13 +3,8 @@
 
 class TetrahedronSoftBodyMesh : public SoftBodyMesh {
 	private:
-		float tetrahedronVertices[4 * 6];
-		unsigned int tetrahedronIndices[4 * 3];
-		unsigned int volumeIdxOrder[4][3];
-		float tetrahedronEdgeId[12];
-		float getTetrahedronVolume() const;
-		glm::vec3 getPosFromIdx(int idx) const;
-		void computeNormal();
+		float getTetrahedronVolume(int nr);
+		void computeRenderingNormal();
 
 		float tempVerticesData[4 * 6]; // and normal
 
