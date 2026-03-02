@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include <glad/glad.h>
 
-TetrahedronSoftBodyMesh::TetrahedronSoftBodyMesh() {
+TetrahedronSoftBodyMesh::TetrahedronSoftBodyMesh() : tempVerticesData{ 0.0f } {
 	float vertices[] = {
         // Position            // Normal
         -1.0f, -1.0f,  1.0f,   -0.577f, -0.577f,  0.577f,  // v0

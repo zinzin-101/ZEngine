@@ -1,5 +1,13 @@
 #include "SoftBodyMesh.h"
 
+SoftBodyMesh::SoftBodyMesh() {}
+
+SoftBodyMesh::~SoftBodyMesh(){
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ebo);
+}
+
 void SoftBodyMesh::translate(glm::vec3 v) {
 	for (int i = 0; i < numberOfParticles; i++) {
 		particlePositions[i] += v;
