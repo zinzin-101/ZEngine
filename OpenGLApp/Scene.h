@@ -8,19 +8,20 @@ class Object;
 class Scene {
 	private:
 		bool hasInitialized;
+		virtual void init(); // for component setup
+		virtual void start(); // for object's custom behavior
 
 	protected:
 		std::vector<Object*> objects;
 		Camera* currentCamera;
 
+		virtual void loadMeshData();
+		virtual void setup(); // for adding objects
+
 	public:
 		Scene();
 		virtual ~Scene();
 		std::vector<Object*>& getObjects();
-		virtual void loadMeshData();
-		virtual void setup(); // for adding objects
-		virtual void init(); // for component setup
-		virtual void start(); // for object's custom behavior
 		virtual void update();
 		virtual void render();
 		void prepareScene();
