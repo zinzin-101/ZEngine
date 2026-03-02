@@ -11,4 +11,5 @@ class Time {
 		void update();
 		float getDeltaTime() const;
 		float getRealDeltaTime() const;
+		float getFixedDeltaTime() const;
 };

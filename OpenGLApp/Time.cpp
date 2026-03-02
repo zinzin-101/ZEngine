@@ -1,4 +1,5 @@
 #include "Time.h"
+#include "Engine.h"
 #include "GLFW/glfw3.h"
 
 Time::Time(): timeScale(1.0f), lastTimeElapsed(0.0f), deltaTime(0.0f) {}
@@ -15,4 +16,8 @@ float Time::getDeltaTime() const{
 
 float Time::getRealDeltaTime() const {
     return deltaTime;
+}
+
+float Time::getFixedDeltaTime() const {
+    return EngineConfig::FIXED_DT;
 }

@@ -12,6 +12,7 @@ namespace EngineConfig {
 	constexpr unsigned int DEFAULT_SCREEN_HEIGHT = 900;
 	inline const char* WINDOW_NAME = "ZEngine";
 	constexpr SceneManagerConfig::SceneId INITIAL_SCENE_ID = SceneManagerConfig::SOFT_BODY_TEST_SCENE;
+	constexpr float FIXED_DT = 1.0f / 144.0f;
 }
 
 struct GLFWwindow;

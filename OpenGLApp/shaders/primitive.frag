@@ -11,9 +11,9 @@ uniform vec3 camPos;
 vec3 lightDir = normalize(vec3(-0.0, -1.0, -0.0));
 
 float shininess = 48;
-vec3 ambient = vec3(0.8);
-vec3 diffuse = vec3(1.5);
-vec3 specular = vec3(0.0);
+vec3 ambient = vec3(0.3);
+vec3 diffuse = vec3(0.9);
+vec3 specular = vec3(0.6);
 
 vec3 CalcDirLight(vec3 lightDir, vec3 normal, vec3 viewDir);
 
