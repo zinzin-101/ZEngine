@@ -31,3 +31,35 @@ glm::vec3 Transform::getGlobalScale() const {
 	}
 	return scale;
 }
+
+void Transform::removeSelfFromParent(Transform* parent) {
+	assert(parent != nullptr && "Trying to remove from a null parent");
+	for (std::vector<Transform*>::iterator itr = parent->children.begin(); itr != parent->children.begin();) {
+		itr--;
+		Transform* child = *itr;
+		if (child == this) {
+			parent->children.erase(itr);
+			break;
+		}
+	}
+}
+
+void Transform::setParent(Transform* parent) {
+	if (this->parent == parent) return;
+
+	if (parent == nullptr) {
+		if (this->parent != nullptr) {
+			removeSelfFromParent(this->parent);
+		}
+		this->parent = nullptr;
+		return;
+	}
+
+	if (this->parent != nullptr) {
+		removeSelfFromParent(this->parent);
+		this->parent = nullptr;
+	}
+
+	this->parent = parent;
+	parent->children.emplace_back(this);
+}
