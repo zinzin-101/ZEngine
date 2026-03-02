@@ -16,7 +16,3 @@ float Time::getDeltaTime() const{
 float Time::getRealDeltaTime() const {
     return deltaTime;
 }
-
-void Time::setTimeScale(float timeScale) {
-    this->timeScale = timeScale;
-}

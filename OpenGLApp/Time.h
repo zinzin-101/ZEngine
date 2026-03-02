@@ -2,14 +2,13 @@
 
 class Time {
 	private:
-		float timeScale;
 		float lastTimeElapsed;
 		float deltaTime;
 
 	public:
+		float timeScale;
 		Time();
 		void update();
 		float getDeltaTime() const;
 		float getRealDeltaTime() const;
-		void setTimeScale(float timeScale);
 };
