@@ -37,7 +37,7 @@ void SoftBodyTestScene::setup() {
 	PrimitiveMeshRenderer* meshRenderer = cube->getFirstComponentOfType<PrimitiveMeshRenderer>();
 	meshRenderer->meshPrimitive = renderer->getMesh(CUBE_MESH_NAME);
 	meshRenderer->shader = renderer->getShader(SHADER_NAME);
-	meshRenderer->color = glm::vec3(0.5f);
+	meshRenderer->color = glm::vec3(1.0f);
 
 	//meshRenderer->isActive = false;
 

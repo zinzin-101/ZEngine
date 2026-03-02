@@ -81,8 +81,7 @@ namespace SoftBodyVectorOperation {
 
 	float vecDot(float* a, int anr, float* b, int bnr){
 		anr *= 3; bnr *= 3;
-		float result = a[anr] * b[bnr] + a[anr + 1] * b[bnr + 1] + a[anr + 2] * b[bnr + 2];
-		return result;
+		return a[anr] * b[bnr] + a[anr + 1] * b[bnr + 1] + a[anr + 2] * b[bnr + 2];
 	}
 
 	void vecSetCross(float* a, int anr, float* b, int bnr, float* c, int cnr){
