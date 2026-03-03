@@ -61,7 +61,17 @@ void Engine::initWindow() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-	window = glfwCreateWindow(screenWidth, screenHeight, WINDOW_NAME, NULL, NULL);
+	if (INIT_IN_FULL_SCREEN) {
+		GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+		screenWidth = mode->width;
+		screenHeight = mode->height;
+		window = glfwCreateWindow(screenWidth, screenHeight, WINDOW_NAME, primaryMonitor, NULL);
+	}
+	else {
+		window = glfwCreateWindow(screenWidth, screenHeight, WINDOW_NAME, NULL, NULL);
+	}
+
 	if (window == nullptr) {
 		glfwTerminate();
 		throw std::runtime_error("Failed to create GLFW window");
