@@ -37,6 +37,7 @@ SceneManager* Engine::getSceneManager() {
 }
 
 Engine::Engine(): window(nullptr), screenWidth(DEFAULT_SCREEN_WIDTH), screenHeight(DEFAULT_SCREEN_HEIGHT) {
+	assert(instance == nullptr && "Trying to create more than one Engine instance");
 	instance = this;
 	init();
 }
