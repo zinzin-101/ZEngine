@@ -16,15 +16,6 @@ SoftBodyMesh::~SoftBodyMesh(){
 	//glDeleteBuffers(1, &ebo);
 }
 
-void SoftBodyMesh::translate(glm::vec3 v) {
-	float vec[] = { v.x, v.y, v.z };
-	for (unsigned int i = 0; i < numberOfParticles; i++) {
-		vecAdd(particlePositions.data(), i, vec, 0);
-		vecAdd(previousParticlePositions.data(), i, vec, 0);
-	}
-}
-
-
 glm::vec3 SoftBodyMesh::computeFaceNormal(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2) {
 	glm::vec3 edge1 = p1 - p0;
 	glm::vec3 edge2 = p2 - p0;
