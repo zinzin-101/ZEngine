@@ -4,7 +4,7 @@
 
 class SoftBodyTestScene : public Scene {
 	private:
-		TetrahedronSoftBodyMesh* softbodymesh;
+		SoftBodyMesh* softbodymesh;
 
 	protected:
 		virtual void loadMeshData() override;

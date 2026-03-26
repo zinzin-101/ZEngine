@@ -1,5 +1,6 @@
 #pragma once
 #include "Camera.h"
+#include "Renderer.h"
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -14,6 +15,7 @@ class Scene {
 	protected:
 		std::vector<Object*> objects;
 		Camera* currentCamera;
+		Renderer* renderer;
 
 		virtual void loadMeshData();
 		virtual void setup(); // for adding objects

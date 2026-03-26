@@ -2,14 +2,14 @@
 #include "Engine.h"
 #include "Object.h"
 
-Scene::Scene(): hasInitialized(false), currentCamera(nullptr) {}
+Scene::Scene(): hasInitialized(false), currentCamera(nullptr), renderer(Engine::getInstance()->getRenderer()) {}
 
 Scene::~Scene() {
 	for (Object* object : objects) {
 		delete object;
 	}
 	currentCamera = nullptr;
-	Engine::getInstance()->getRenderer()->clear();
+	renderer->clear();
 }
 
 std::vector<Object*>& Scene::getObjects() {
