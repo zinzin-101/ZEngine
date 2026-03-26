@@ -11,7 +11,7 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
     std::vector<tinyobj::material_t> materials;
     std::string err;
     
-    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filepath.c_str())) {
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filepath.c_str(), nullptr, false)) {
         throw std::runtime_error("Softbody mesh constructor failed to load: " + err);
     }
 
@@ -37,10 +37,13 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
         for (int f = 0; f < n; f++) {
             int fv = shape.mesh.num_face_vertices[f];
 
-            for (int v = 0; v < fv; v++) {
-                tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
-                tetrahedronIndices.push_back(idx.vertex_index);
+            if (fv == 4) {
+                for (int v = 0; v < 4; v++) { // v < fv and fv should be 4
+                    tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                    tetrahedronIndices.push_back(idx.vertex_index);
+                }
             }
+
             index_offset += fv;
         }
     }
@@ -76,33 +79,33 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
     };
 
     for (int i = 0; i < numberOfTetrahedrons; i++) {
-        int idx[4];
-        idx[0] = tetrahedronIndices[4 * i + 0];
-        idx[1] = tetrahedronIndices[4 * i + 1];
-        idx[2] = tetrahedronIndices[4 * i + 2];
-        idx[3] = tetrahedronIndices[4 * i + 3];
+        int tet[4] = { tetrahedronIndices[4 * i], tetrahedronIndices[4 * i + 1],
+                       tetrahedronIndices[4 * i + 2], tetrahedronIndices[4 * i + 3] };
 
-        for (int j = 0; j < 12; j++) {
-            int particleIdx = idx[volumeIdxOrder[j]];
+        for (int f = 0; f < 4; f++) { // For each of the 4 faces
+            int idx0 = tet[volumeIdxOrder[3 * f + 0]];
+            int idx1 = tet[volumeIdxOrder[3 * f + 1]];
+            int idx2 = tet[volumeIdxOrder[3 * f + 2]];
 
-            renderVertices.emplace_back(particlePositions[3 * particleIdx + 0]);
-            renderVertices.emplace_back(particlePositions[3 * particleIdx + 1]);
-            renderVertices.emplace_back(particlePositions[3 * particleIdx + 2]);
+            volumeIndicesOrder.push_back(idx0);
+            volumeIndicesOrder.push_back(idx1);
+            volumeIndicesOrder.push_back(idx2);
 
-            // default normal
-            renderVertices.emplace_back(0.0f);
-            renderVertices.emplace_back(1.0f);
-            renderVertices.emplace_back(0.0f);
-        }
-    }
-    
-    /// TODO
-    for (int i = 0; i < numberOfTetrahedrons; i++) {
+            glm::vec3 p0(particlePositions[3 * idx0], particlePositions[3 * idx0 + 1], particlePositions[3 * idx0 + 2]);
+            glm::vec3 p1(particlePositions[3 * idx1], particlePositions[3 * idx1 + 1], particlePositions[3 * idx1 + 2]);
+            glm::vec3 p2(particlePositions[3 * idx2], particlePositions[3 * idx2 + 1], particlePositions[3 * idx2 + 2]);
 
-        for (int j = 0; j < 12; j++) {
-            volumeIndicesOrder.emplace_back(volumeIdxOrder[3 * i + 0]);
-            volumeIndicesOrder.emplace_back(volumeIdxOrder[3 * i + 1]);
-            volumeIndicesOrder.emplace_back(volumeIdxOrder[3 * i + 2]);
+            glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+
+            float vData[3][6] = {
+                {p0.x, p0.y, p0.z, normal.x, normal.y, normal.z},
+                {p1.x, p1.y, p1.z, normal.x, normal.y, normal.z},
+                {p2.x, p2.y, p2.z, normal.x, normal.y, normal.z}
+            };
+
+            for (int v = 0; v < 3; v++)
+                for (int d = 0; d < 6; d++)
+                    renderVertices.push_back(vData[v][d]);
         }
     }
 
@@ -221,12 +224,15 @@ void GeneralSoftBodyMesh::solveEdges(float compliance, float dt) {
 
 void GeneralSoftBodyMesh::solveVolumes(float compliance, float dt) {
     float alpha = compliance / (dt * dt);
+
+    unsigned int volIdx[] = { 1, 3, 2, 0, 2, 3, 0, 3, 1, 0, 1, 2 };
+
     for (int i = 0; i < numberOfTetrahedrons; i++) {
         float w = 0.0f;
         for (int j = 0; j < 4; j++) {
-            int idx0 = tetrahedronIndices[4 * i + volumeIndicesOrder[3 * j + 0]];
-            int idx1 = tetrahedronIndices[4 * i + volumeIndicesOrder[3 * j + 1]];
-            int idx2 = tetrahedronIndices[4 * i + volumeIndicesOrder[3 * j + 2]];
+            int idx0 = tetrahedronIndices[4 * i + volIdx[3 * j + 0]];
+            int idx1 = tetrahedronIndices[4 * i + volIdx[3 * j + 1]];
+            int idx2 = tetrahedronIndices[4 * i + volIdx[3 * j + 2]];
 
             vecSetDiff(temp, 0, particlePositions.data(), idx1, particlePositions.data(), idx0);
             vecSetDiff(temp, 1, particlePositions.data(), idx2, particlePositions.data(), idx0);
@@ -250,7 +256,10 @@ void GeneralSoftBodyMesh::solveVolumes(float compliance, float dt) {
 }
 
 void GeneralSoftBodyMesh::computeRenderingNormal() {
-    for (int face = 0; face < 4; face++) {
+    int totalVertices = (int)renderVertices.size() / 6;
+    int totalFaces = totalVertices / 3;
+
+    for (int face = 0; face < totalFaces; face++) {
         int base = face * 3;
 
         glm::vec3 v0(
@@ -284,7 +293,7 @@ void GeneralSoftBodyMesh::computeRenderingNormal() {
 
 void GeneralSoftBodyMesh::updateMesh() {
     //glm::vec3 position = transform->getGlobalPosition();
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < volumeIndicesOrder.size(); i++) {
         int index = volumeIndicesOrder[i];
         renderVertices[i * 6 + 0] = particlePositions[index * 3 + 0];// + position.x;
         renderVertices[i * 6 + 1] = particlePositions[index * 3 + 1];// + position.y;
