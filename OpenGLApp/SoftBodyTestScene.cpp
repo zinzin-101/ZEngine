@@ -99,8 +99,8 @@ void SoftBodyTestScene::processInput() {
 		currentCamera->getTransform()->eulerRotation.x = -89.0f;
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
-		//Engine::getInstance()->getSceneManager()->resetCurrentScene();
-		softbodymesh->pauseSimulation = !softbodymesh->pauseSimulation;
+		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+		//softbodymesh->pauseSimulation = !softbodymesh->pauseSimulation;
 	}
 
 	if (inputManager.getKeyDown(GLFW_KEY_X)) {
