@@ -50,8 +50,10 @@ void SoftBodyTestScene::setup() {
 	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;
-	softbodymesh->edgeCompliance = 0.172566f;
-	softbodymesh->volumeCompliance = 0.0408936f;
+	//softbodymesh->edgeCompliance = 0.172566f;
+	//softbodymesh->volumeCompliance = 0.0408936f;
+	softbodymesh->edgeCompliance = 5.0f;
+	softbodymesh->volumeCompliance = 5.0f;
 	//softbodyMesh->edgeCompliance;
 }
 
@@ -96,7 +98,8 @@ void SoftBodyTestScene::processInput() {
 		currentCamera->getTransform()->eulerRotation.x = -89.0f;
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
-		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+		//Engine::getInstance()->getSceneManager()->resetCurrentScene();
+		softbodymesh->pauseSimulation = !softbodymesh->pauseSimulation;
 	}
 
 	if (inputManager.getKeyDown(GLFW_KEY_X)) {

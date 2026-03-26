@@ -3,6 +3,12 @@
 
 class GeneralSoftBodyMesh : public SoftBodyMesh {
 private:
+	struct TriangleFace {
+		unsigned int indices[3];
+		TriangleFace(unsigned int idx0, unsigned int idx1, unsigned int idx2);
+		bool operator<(const TriangleFace& other) const;
+	};
+
 	float getTetrahedronVolume(int nr);
 	void computeRenderingNormal();
 

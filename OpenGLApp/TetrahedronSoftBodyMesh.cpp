@@ -331,7 +331,7 @@ void TetrahedronSoftBodyMesh::init() {
 
 void TetrahedronSoftBodyMesh::update() {
     float dt = Engine::getInstance()->getTime()->getDeltaTime();
-    if (dt <= 0.001f) return;
+    if (dt <= 0.001f || pauseSimulation) return;
 
     dt = Engine::getInstance()->getTime()->getFixedDeltaTime();
 

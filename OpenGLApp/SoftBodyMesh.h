@@ -38,6 +38,7 @@ class SoftBodyMesh : public Component {
 		Shader* shader;
 		float groundHeight; // temp
 		unsigned int substeps;
+		bool pauseSimulation;
 };
 
 namespace SoftBodyVectorOperation {

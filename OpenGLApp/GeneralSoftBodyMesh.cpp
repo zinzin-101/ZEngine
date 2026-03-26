@@ -2,8 +2,24 @@
 #include "Engine.h"
 #include <tiny_obj_loader.h>
 #include <glad/glad.h>
+#include <algorithm>
+#include <map>
 
 using namespace SoftBodyVectorOperation;
+
+GeneralSoftBodyMesh::TriangleFace::TriangleFace(unsigned int idx0, unsigned int idx1, unsigned int idx2) {
+    indices[0] = idx0;
+    indices[1] = idx1;
+    indices[2] = idx2;
+
+    std::sort(indices, indices + 3);
+}
+
+bool GeneralSoftBodyMesh::TriangleFace::operator<(const TriangleFace& other) const {
+    if (indices[0] != other.indices[0]) return indices[0] < other.indices[0];
+    if (indices[1] != other.indices[1]) return indices[1] < other.indices[1];
+    return indices[2] < other.indices[2];
+}
 
 GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesData{ 0.0f } {
     tinyobj::attrib_t attrib;
@@ -78,34 +94,62 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
         0, 1, 2
     };
 
+    std::map<TriangleFace, int> faceCount; // count number of faces that are used by tetrahedron
     for (int i = 0; i < numberOfTetrahedrons; i++) {
-        int tet[4] = { tetrahedronIndices[4 * i], tetrahedronIndices[4 * i + 1],
-                       tetrahedronIndices[4 * i + 2], tetrahedronIndices[4 * i + 3] };
+        int tet[4] = { 
+            tetrahedronIndices[4 * i],
+            tetrahedronIndices[4 * i + 1],
+            tetrahedronIndices[4 * i + 2], 
+            tetrahedronIndices[4 * i + 3] 
+        };
+
+        for (int f = 0; f < 4; f++) {
+            int idx0 = tet[volumeIdxOrder[3 * f + 0]];
+            int idx1 = tet[volumeIdxOrder[3 * f + 1]];
+            int idx2 = tet[volumeIdxOrder[3 * f + 2]];
+            faceCount[TriangleFace(idx0, idx1, idx2)]++;
+        }
+    }
+
+    for (int i = 0; i < numberOfTetrahedrons; i++) {
+        int tet[4] = {
+            tetrahedronIndices[4 * i],
+            tetrahedronIndices[4 * i + 1],
+            tetrahedronIndices[4 * i + 2],
+            tetrahedronIndices[4 * i + 3]
+        };
+
 
         for (int f = 0; f < 4; f++) { // For each of the 4 faces
             int idx0 = tet[volumeIdxOrder[3 * f + 0]];
             int idx1 = tet[volumeIdxOrder[3 * f + 1]];
             int idx2 = tet[volumeIdxOrder[3 * f + 2]];
 
-            volumeIndicesOrder.push_back(idx0);
-            volumeIndicesOrder.push_back(idx1);
-            volumeIndicesOrder.push_back(idx2);
+            // if a face is only connected to one tetrahedron then it's on the surface
+            if (faceCount.at(TriangleFace(idx0, idx1, idx2)) == 1) {
+                volumeIndicesOrder.push_back(idx0);
+                volumeIndicesOrder.push_back(idx1);
+                volumeIndicesOrder.push_back(idx2);
 
-            glm::vec3 p0(particlePositions[3 * idx0], particlePositions[3 * idx0 + 1], particlePositions[3 * idx0 + 2]);
-            glm::vec3 p1(particlePositions[3 * idx1], particlePositions[3 * idx1 + 1], particlePositions[3 * idx1 + 2]);
-            glm::vec3 p2(particlePositions[3 * idx2], particlePositions[3 * idx2 + 1], particlePositions[3 * idx2 + 2]);
+                glm::vec3 p0(particlePositions[3 * idx0], particlePositions[3 * idx0 + 1], particlePositions[3 * idx0 + 2]);
+                glm::vec3 p1(particlePositions[3 * idx1], particlePositions[3 * idx1 + 1], particlePositions[3 * idx1 + 2]);
+                glm::vec3 p2(particlePositions[3 * idx2], particlePositions[3 * idx2 + 1], particlePositions[3 * idx2 + 2]);
 
-            glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+                glm::vec3 normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
 
-            float vData[3][6] = {
-                {p0.x, p0.y, p0.z, normal.x, normal.y, normal.z},
-                {p1.x, p1.y, p1.z, normal.x, normal.y, normal.z},
-                {p2.x, p2.y, p2.z, normal.x, normal.y, normal.z}
-            };
+                float vData[3][6] = {
+                    {p0.x, p0.y, p0.z, normal.x, normal.y, normal.z},
+                    {p1.x, p1.y, p1.z, normal.x, normal.y, normal.z},
+                    {p2.x, p2.y, p2.z, normal.x, normal.y, normal.z}
+                };
 
-            for (int v = 0; v < 3; v++)
-                for (int d = 0; d < 6; d++)
-                    renderVertices.push_back(vData[v][d]);
+                for (int v = 0; v < 3; v++){
+                    for (int d = 0; d < 6; d++) {
+                        renderVertices.push_back(vData[v][d]);
+                    }
+                }
+            }
+
         }
     }
 
@@ -349,7 +393,7 @@ void GeneralSoftBodyMesh::init() {
 
 void GeneralSoftBodyMesh::update() {
     float dt = Engine::getInstance()->getTime()->getDeltaTime();
-    if (dt <= 0.001f) return;
+    if (dt <= 0.001f || pauseSimulation) return;
 
     dt = Engine::getInstance()->getTime()->getFixedDeltaTime();
 
@@ -392,8 +436,14 @@ void GeneralSoftBodyMesh::render() {
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, (unsigned int)renderVertices.size() / 6);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    glCullFace(GL_BACK);
+    glDisable(GL_CULL_FACE);
 }
