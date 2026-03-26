@@ -46,7 +46,8 @@ void SoftBodyTestScene::setup() {
 	Object* softbody = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	//softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
 	//softbodymesh = softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>();
-	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
 	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;

@@ -94,7 +94,7 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
         0, 1, 2
     };
 
-    std::map<TriangleFace, int> faceCount; // count number of faces that are used by tetrahedron
+    std::map<TriangleFace, int> faceToTetCount; // count number of faces that are used by tetrahedron
     for (int i = 0; i < numberOfTetrahedrons; i++) {
         int tet[4] = { 
             tetrahedronIndices[4 * i],
@@ -107,7 +107,7 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
             int idx0 = tet[volumeIdxOrder[3 * f + 0]];
             int idx1 = tet[volumeIdxOrder[3 * f + 1]];
             int idx2 = tet[volumeIdxOrder[3 * f + 2]];
-            faceCount[TriangleFace(idx0, idx1, idx2)]++;
+            faceToTetCount[TriangleFace(idx0, idx1, idx2)]++;
         }
     }
 
@@ -119,14 +119,13 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
             tetrahedronIndices[4 * i + 3]
         };
 
-
         for (int f = 0; f < 4; f++) { // For each of the 4 faces
             int idx0 = tet[volumeIdxOrder[3 * f + 0]];
             int idx1 = tet[volumeIdxOrder[3 * f + 1]];
             int idx2 = tet[volumeIdxOrder[3 * f + 2]];
 
             // if a face is only connected to one tetrahedron then it's on the surface
-            if (faceCount.at(TriangleFace(idx0, idx1, idx2)) == 1) {
+            if (faceToTetCount.at(TriangleFace(idx0, idx1, idx2)) == 1) {
                 volumeIndicesOrder.push_back(idx0);
                 volumeIndicesOrder.push_back(idx1);
                 volumeIndicesOrder.push_back(idx2);
