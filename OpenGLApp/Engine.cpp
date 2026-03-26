@@ -43,6 +43,7 @@ Engine::Engine(): window(nullptr), screenWidth(DEFAULT_SCREEN_WIDTH), screenHeig
 }
 Engine::~Engine() {
 	clean();
+	instance = nullptr;
 }
 
 void Engine::init() {
