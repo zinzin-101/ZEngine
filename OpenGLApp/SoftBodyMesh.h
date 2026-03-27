@@ -11,9 +11,9 @@ class SoftBodyMesh : public Component {
 		std::vector<float> particlePositions;
 		std::vector<float> renderVertices;
 		std::vector<float> previousParticlePositions;
-		std::vector<unsigned int> tetrahedronIndices;
-		std::vector<unsigned int> edgeIndices;
-		std::vector<unsigned int> volumeIndicesOrder;
+		std::vector<int> tetrahedronIndices;
+		std::vector<int> edgeIndices;
+		std::vector<int> volumeIndicesOrder;
 		std::vector<float> particleVelocities;
 		std::vector<float> restVolumes;
 		std::vector<float> edgeLengths;

@@ -44,17 +44,26 @@ void SoftBodyTestScene::setup() {
 	//meshRenderer->isActive = false;
 
 	Object* softbody = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	//Object* softbody2 = instantiateObject(glm::vec3(0.0f, 5.0f, 5.0f));
+	//softbody2->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbodymesh = softbody2->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	//softbodymesh->color = glm::vec3(0.0f, 0.0f, 1.0f);
+	//softbodymesh->groundHeight = 0.5f;
+	//softbodymesh->edgeCompliance = 50.0f;
+	//softbodymesh->volumeCompliance = 50.0f;
+
 	//softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
 	//softbodymesh = softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>();
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
 	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;
 	//softbodymesh->edgeCompliance = 0.172566f;
 	//softbodymesh->volumeCompliance = 0.0408936f;
-	softbodymesh->edgeCompliance = 5.0f;
-	softbodymesh->volumeCompliance = 5.0f;
+	softbodymesh->edgeCompliance = 50.0f;
+	softbodymesh->volumeCompliance = 50.0f;
 	//softbodyMesh->edgeCompliance;
 }
 
@@ -99,8 +108,8 @@ void SoftBodyTestScene::processInput() {
 		currentCamera->getTransform()->eulerRotation.x = -89.0f;
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
-		Engine::getInstance()->getSceneManager()->resetCurrentScene();
-		//softbodymesh->pauseSimulation = !softbodymesh->pauseSimulation;
+		//Engine::getInstance()->getSceneManager()->resetCurrentScene();
+		softbodymesh->pauseSimulation = !softbodymesh->pauseSimulation;
 	}
 
 	if (inputManager.getKeyDown(GLFW_KEY_X)) {
@@ -133,6 +142,6 @@ void SoftBodyTestScene::processInput() {
 
 	softbodymesh->volumeCompliance = glm::clamp(softbodymesh->volumeCompliance, 0.0f, 100.0f);
 	softbodymesh->edgeCompliance = glm::clamp(softbodymesh->edgeCompliance, 0.0f, 100.0f);
-	std::cout << "volume compliance: " << softbodymesh->volumeCompliance << std::endl;
-	std::cout << "edge compliance: " << softbodymesh->edgeCompliance << std::endl;
+	//std::cout << "volume compliance: " << softbodymesh->volumeCompliance << std::endl;
+	//std::cout << "edge compliance: " << softbodymesh->edgeCompliance << std::endl;
 }
