@@ -24,6 +24,8 @@ void SoftBodyTestScene::loadMeshData() {
 }
 
 void SoftBodyTestScene::setup() {
+	Engine::getInstance()->setEnableCursor(false);
+
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
 	Engine::getInstance()->getTime()->timeScale = 0.0f;

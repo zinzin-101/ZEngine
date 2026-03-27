@@ -78,7 +78,6 @@ void Engine::initWindow() {
 		throw std::runtime_error("Failed to create GLFW window");
 	}
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
@@ -115,6 +114,10 @@ void Engine::switchScene(SceneManagerConfig::SceneId sceneId) {
 
 glm::vec2 Engine::getScreenDimension() const {
 	return glm::vec2(screenWidth, screenHeight);
+}
+
+void Engine::setEnableCursor(bool value) {
+	glfwSetInputMode(window, GLFW_CURSOR, value ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 
 void Engine::terminate() {

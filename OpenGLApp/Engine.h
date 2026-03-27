@@ -48,6 +48,7 @@ class Engine {
 		Scene* getCurrentScene();
 		SceneManager* getSceneManager();
 		glm::vec2 getScreenDimension() const;
+		void setEnableCursor(bool value);
 		void terminate();
 };
 
