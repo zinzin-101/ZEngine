@@ -44,6 +44,37 @@ bool InputManager::getKey(GLFW_KEY key) {
 	return glfwGetKey(window, key) == GLFW_PRESS;
 }
 
+bool InputManager::getMouseDown(GLFW_KEY button) {
+	assert(window != nullptr && "window is null in input manager");
+
+	// init
+	if (mouseDownMap.count(button) == 0) {
+		mouseDownMap[button] = false;
+		return false;
+	}
+
+	if (glfwGetKey(window, button) == GLFW_PRESS && mouseDownMap.at(button)) {
+		return false;
+	}
+
+	if (glfwGetKey(window, button) == GLFW_RELEASE && mouseDownMap.at(button)) {
+		mouseDownMap[button] = false;
+		return false;
+	}
+
+	if (glfwGetKey(window, button) == GLFW_PRESS && !mouseDownMap.at(button)) {
+		mouseDownMap[button] = true;
+		return true;
+	}
+
+	return false;
+}
+
+bool InputManager::getMouse(GLFW_KEY button) {
+	assert(window != nullptr && "window is null in input manager");
+	return glfwGetMouseButton(window, button) == GLFW_PRESS;
+}
+
 void InputManager::update() {
 	static bool firstMouseMovement = true;
 
@@ -56,6 +87,14 @@ void InputManager::update() {
 	mouseOffset.y = mousePosition.y - lastMousePosition.y; // reversed since y-coordinates go from bottom to top
 
 	lastMousePosition = mousePosition;
+
+	for (const std::pair<GLFW_KEY, bool>& mouseUpPair : mouseUpMap) {
+		GLFW_KEY button = mouseUpPair.first;
+		bool isButtonUp = mouseUpPair.second;
+		if (isButtonUp) {
+			mouseUpMap[button] = false;
+		}
+	}
 }
 
 void InputManager::updateMousePosition(glm::vec2 position) {

@@ -24,7 +24,7 @@ void SoftBodyTestScene::loadMeshData() {
 }
 
 void SoftBodyTestScene::setup() {
-	Engine::getInstance()->setEnableCursor(false);
+	Engine::getInstance()->setEnableCursor(true);
 
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
@@ -101,13 +101,21 @@ void SoftBodyTestScene::processInput() {
 	}
 
 	currentCamera->getTransform()->position += movement * 5.0f;
-	glm::vec2 mouseOffset = inputManager.getMouseOffset();
-	currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * 5.0f * dt;
-	currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * 5.0f * dt;
-	if (currentCamera->getTransform()->eulerRotation.x > 89.0f)
-		currentCamera->getTransform()->eulerRotation.x = 89.0f;
-	if (currentCamera->getTransform()->eulerRotation.x < -89.0f)
-		currentCamera->getTransform()->eulerRotation.x = -89.0f;
+
+	if (inputManager.getMouse(GLFW_MOUSE_BUTTON_RIGHT)) {
+		Engine::getInstance()->setEnableCursor(false);
+
+		glm::vec2 mouseOffset = inputManager.getMouseOffset();
+		currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * 5.0f * dt;
+		currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * 5.0f * dt;
+		if (currentCamera->getTransform()->eulerRotation.x > 89.0f)
+			currentCamera->getTransform()->eulerRotation.x = 89.0f;
+		if (currentCamera->getTransform()->eulerRotation.x < -89.0f)
+			currentCamera->getTransform()->eulerRotation.x = -89.0f;
+	}
+	else {
+		Engine::getInstance()->setEnableCursor(true);
+	}
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
 		//Engine::getInstance()->getSceneManager()->resetCurrentScene();
