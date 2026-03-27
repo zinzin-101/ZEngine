@@ -36,6 +36,8 @@ class Engine {
 		void init();
 		void update();
 
+		friend void frameBufferSizeCallback(GLFWwindow* window, int width, int height);
+
 	public:
 		Engine();
 		~Engine();
@@ -47,9 +49,12 @@ class Engine {
 		Time* getTime();
 		Scene* getCurrentScene();
 		SceneManager* getSceneManager();
+		GLFWwindow* getWindow();
 		glm::vec2 getScreenDimension() const;
 		void setEnableCursor(bool value);
 		void terminate();
+
+		glm::vec3 screenToWorld(glm::vec2 screenPosition, float depth, glm::mat4 projection, glm::mat4 view);
 };
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height);

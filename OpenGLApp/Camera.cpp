@@ -1,4 +1,8 @@
 #include "Camera.h"
+#include "Engine.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace CameraConfig;
 
@@ -6,6 +10,7 @@ Camera::Camera(): fov(DEFAULT_FOV), nearPlane(DEFAULT_NEAR_PLANE), farPlane(DEFA
 	forward = glm::vec3(0.0f, 0.0f, -1.0f);
 	up = glm::vec3(0.0f, 1.0f, 0.0f);
 	worldUp = up;
+	right = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
 void Camera::setForward(glm::vec3 forward) {
@@ -17,6 +22,13 @@ void Camera::setForward(glm::vec3 forward) {
 glm::mat4 Camera::getViewMatrix() const {
 	glm::vec3 position = transform->getGlobalPosition();
 	return glm::lookAt(position, position + forward, up);
+}
+
+glm::mat4 Camera::getProjectionMatrix() const {
+	glm::vec2 screenDimension = Engine::getInstance()->getScreenDimension();
+	return glm::perspective(glm::radians(fov),
+		(float)screenDimension.x / (float)screenDimension.y,
+		nearPlane, farPlane);
 }
 
 glm::vec3 Camera::getFoward() const {

@@ -22,6 +22,25 @@ glm::vec3 SoftBodyMesh::computeFaceNormal(glm::vec3 p0, glm::vec3 p1, glm::vec3 
 	return glm::normalize(glm::cross(edge1, edge2));
 }
 
+void SoftBodyMesh::setParticlePosition(int index, glm::vec3 position) {
+	float v[3] = { position.x, position.y, position.z };
+	vecCopy(particlePositions.data(), index, v, 0);
+	vecCopy(previousParticlePositions.data(), index, v, 0);
+	vecSetZero(particleVelocities.data(), index);
+}
+
+void SoftBodyMesh::setInverseMass(int index, float mass) {
+	invMasses[index] = mass;
+}
+
+float SoftBodyMesh::getInverseMass(int index) const {
+	return invMasses.at(index);
+}
+
+const std::vector<float>& SoftBodyMesh::getParticlePositionsData() const {
+	return particlePositions;
+}
+
 namespace SoftBodyVectorOperation {
 	void vecSetZero(float* a, int anr){
 		anr *= 3;

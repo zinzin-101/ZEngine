@@ -5,6 +5,9 @@
 class SoftBodyTestScene : public Scene {
 	private:
 		SoftBodyMesh* softbodymesh;
+		int dragIndex;
+		float lastInvMass;
+		float dragDepth;
 
 	protected:
 		virtual void loadMeshData() override;

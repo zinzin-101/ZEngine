@@ -39,6 +39,11 @@ class SoftBodyMesh : public Component {
 		float groundHeight; // temp
 		unsigned int substeps;
 		bool pauseSimulation;
+
+		void setParticlePosition(int index, glm::vec3 position);
+		void setInverseMass(int index, float mass);
+		float getInverseMass(int index) const;
+		const std::vector<float>& getParticlePositionsData() const;
 };
 
 namespace SoftBodyVectorOperation {

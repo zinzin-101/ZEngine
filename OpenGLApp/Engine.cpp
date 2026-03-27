@@ -36,6 +36,10 @@ SceneManager* Engine::getSceneManager() {
 	return &sceneManager;
 }
 
+GLFWwindow* Engine::getWindow() {
+	return window;
+}
+
 Engine::Engine(): window(nullptr), screenWidth(DEFAULT_SCREEN_WIDTH), screenHeight(DEFAULT_SCREEN_HEIGHT) {
 	assert(instance == nullptr && "Trying to create more than one Engine instance");
 	instance = this;
@@ -124,10 +128,31 @@ void Engine::terminate() {
 	glfwSetWindowShouldClose(window, true);
 }
 
+glm::vec3 Engine::screenToWorld(glm::vec2 screenPosition, float depth, glm::mat4 projection, glm::mat4 view) {
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+
+	int windowWidth, windowHeight;
+	glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+	// Convert to framebuffer scale
+	float scaleX = (float)width / windowWidth;
+	float scaleY = (float)height / windowHeight;
+
+	float x = screenPosition.x * scaleX;
+	float y = (float)height - (screenPosition.y * scaleY);
+	glm::vec4 viewport = glm::vec4(0, 0, width, height);
+	glm::vec3 screenPos = glm::vec3(x, y, depth);
+
+	return glm::unProject(screenPos, view, projection, viewport);
+}
+
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height) {
 	Engine* engine = Engine::getInstance();
 	if (engine != nullptr) {
 		engine->getRenderer()->setViewPort(0, 0, width, height);
+		engine->screenWidth = width;
+		engine->screenHeight = height;
 	}
 }
 

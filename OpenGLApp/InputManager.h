@@ -26,5 +26,6 @@ class InputManager {
 		bool getMouseDown(GLFW_KEY button);
 		bool getMouse(GLFW_KEY button);
 		void updateMousePosition(glm::vec2 position);
+		glm::vec2 getMousePosition() const;
 		glm::vec2 getMouseOffset() const;
 };

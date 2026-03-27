@@ -148,6 +148,7 @@
     <ClCompile Include="MeshPrimitive.cpp" />
     <ClCompile Include="PrimitiveMeshRenderer.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="MeshPrimitive.h" />
     <ClInclude Include="PrimitiveMeshRenderer.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

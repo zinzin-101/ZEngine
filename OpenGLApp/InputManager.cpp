@@ -53,16 +53,16 @@ bool InputManager::getMouseDown(GLFW_KEY button) {
 		return false;
 	}
 
-	if (glfwGetKey(window, button) == GLFW_PRESS && mouseDownMap.at(button)) {
+	if (glfwGetMouseButton(window, button) == GLFW_PRESS && mouseDownMap.at(button)) {
 		return false;
 	}
 
-	if (glfwGetKey(window, button) == GLFW_RELEASE && mouseDownMap.at(button)) {
+	if (glfwGetMouseButton(window, button) == GLFW_RELEASE && mouseDownMap.at(button)) {
 		mouseDownMap[button] = false;
 		return false;
 	}
 
-	if (glfwGetKey(window, button) == GLFW_PRESS && !mouseDownMap.at(button)) {
+	if (glfwGetMouseButton(window, button) == GLFW_PRESS && !mouseDownMap.at(button)) {
 		mouseDownMap[button] = true;
 		return true;
 	}
@@ -99,6 +99,10 @@ void InputManager::update() {
 
 void InputManager::updateMousePosition(glm::vec2 position) {
 	mousePosition = position;
+}
+
+glm::vec2 InputManager::getMousePosition() const {
+	return glm::vec2(mousePosition.x, mousePosition.y);
 }
 
 glm::vec2 InputManager::getMouseOffset() const {
