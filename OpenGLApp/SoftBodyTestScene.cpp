@@ -3,8 +3,10 @@
 #include "Engine.h"
 #include "Object.h"
 #include "CubePrimitive.h"
+#include <filesystem.h>
 #include "PrimitiveMeshRenderer.h"
 #include "TetrahedronSoftBodyMesh.h"
+#include "GeneralSoftBodyMesh.h"
 #include "GLFW/glfw3.h"
 #include <iostream>
 
@@ -42,12 +44,17 @@ void SoftBodyTestScene::setup() {
 	//meshRenderer->isActive = false;
 
 	Object* softbody = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
-	softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
-	softbodymesh = softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>();
+	//softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
+	//softbodymesh = softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>();
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;
-	softbodymesh->edgeCompliance = 0.172566f;
-	softbodymesh->volumeCompliance = 0.0408936f;
+	//softbodymesh->edgeCompliance = 0.172566f;
+	//softbodymesh->volumeCompliance = 0.0408936f;
+	softbodymesh->edgeCompliance = 5.0f;
+	softbodymesh->volumeCompliance = 5.0f;
 	//softbodyMesh->edgeCompliance;
 }
 
@@ -93,6 +100,7 @@ void SoftBodyTestScene::processInput() {
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+		//softbodymesh->pauseSimulation = !softbodymesh->pauseSimulation;
 	}
 
 	if (inputManager.getKeyDown(GLFW_KEY_X)) {

@@ -8,7 +8,9 @@
 
 Renderer::Renderer() {}
 
-Renderer::~Renderer() {}
+Renderer::~Renderer() {
+	clear();
+}
 
 bool Renderer::init() {
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

@@ -26,7 +26,6 @@ class SoftBodyMesh : public Component {
 		unsigned int vbo;
 		//unsigned int ebo;
 
-		void translate(glm::vec3 v);
 		glm::vec3 computeFaceNormal(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2);
 
 	public:
@@ -39,6 +38,7 @@ class SoftBodyMesh : public Component {
 		Shader* shader;
 		float groundHeight; // temp
 		unsigned int substeps;
+		bool pauseSimulation;
 };
 
 namespace SoftBodyVectorOperation {

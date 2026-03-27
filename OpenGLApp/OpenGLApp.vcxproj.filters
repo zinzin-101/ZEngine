@@ -75,6 +75,12 @@
     <ClCompile Include="SoftBodyTestScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneralSoftBodyMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyObjLoaderImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.model_loading.fs" />
@@ -134,6 +140,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SoftBodyTestScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralSoftBodyMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
