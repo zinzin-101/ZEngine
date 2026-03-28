@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include "EngineConfig.h"
 #include "Engine.h"
 #include <GLFW/glfw3.h>
 #include <cassert>

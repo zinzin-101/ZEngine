@@ -14,6 +14,8 @@
 const std::string CUBE_MESH_NAME = "cube";
 const std::string SHADER_NAME = "primitive_shader";
 
+SoftBodyTestScene::ModelSelect SoftBodyTestScene::modelSelect = SoftBodyTestScene::ModelSelect ::ICOSPHERE;
+
 void SoftBodyTestScene::loadMeshData() {
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
@@ -22,6 +24,16 @@ void SoftBodyTestScene::loadMeshData() {
 
 	Shader* shader = new Shader("shaders/primitive.vert", "shaders/primitive.frag");
 	renderer->addShader(SHADER_NAME, shader);
+
+	modelPaths[ICOSPHERE] = FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj");
+	modelPaths[ARMADILLO] = FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/armadillo_tetra_20k.obj");
+	modelPaths[MONKEY] = FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/tetrahedron_monkey.obj");
+	modelPaths[COW] = FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj");
+
+	constraints[ICOSPHERE] = { 0.0408936f, 0.172566f };
+	constraints[ARMADILLO] = { 0.0001f, 0.0001f};
+	constraints[MONKEY] = { 2.5f, 2.5f };
+	constraints[COW] = { 7.5f, 7.5f };
 }
 
 void SoftBodyTestScene::setup() {
@@ -39,7 +51,7 @@ void SoftBodyTestScene::setup() {
 	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
 	Object* cube = instantiateObject(glm::vec3(0.0f, 0.0f, 0.0f));
-	cube->transform.scale = glm::vec3(10.0f, 1.0f, 10.0f);
+	cube->transform.scale = glm::vec3(50.0f, 1.0f, 50.0f);
 	cube->addComponent<PrimitiveMeshRenderer>();
 	PrimitiveMeshRenderer* meshRenderer = cube->getFirstComponentOfType<PrimitiveMeshRenderer>();
 	meshRenderer->meshPrimitive = renderer->getMesh(CUBE_MESH_NAME);
@@ -59,9 +71,11 @@ void SoftBodyTestScene::setup() {
 
 	//softbody->addComponent<TetrahedronSoftBodyMesh>()->shader = renderer->getShader(SHADER_NAME);
 	//softbodymesh = softbody->getFirstComponentOfType<TetrahedronSoftBodyMesh>();
-	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
-	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/tetrahedron_monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody->addComponent<GeneralSoftBodyMesh>(modelPaths[modelSelect])->shader = renderer->getShader(SHADER_NAME);
 	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;
@@ -69,8 +83,11 @@ void SoftBodyTestScene::setup() {
 	//softbodymesh->volumeCompliance = 0.0408936f;
 	//softbodymesh->edgeCompliance = 50.0f;
 	//softbodymesh->volumeCompliance = 50.0f;
-	softbodymesh->edgeCompliance = 0.00001f;
-	softbodymesh->volumeCompliance = 0.00001f;
+	//softbodymesh->edgeCompliance = 0.00001f;
+	//softbodymesh->volumeCompliance = 0.00001f;
+
+	softbodymesh->volumeCompliance = constraints[modelSelect].volumeCompliance;
+	softbodymesh->edgeCompliance = constraints[modelSelect].edgeCompliance;
 
 	//softbodyMesh->edgeCompliance;
 }
@@ -157,6 +174,27 @@ void SoftBodyTestScene::processInput() {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
 	}
 
+	if (inputManager.getKeyDown(GLFW_KEY_1)) {
+		modelSelect = ModelSelect::ICOSPHERE;
+		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+	else if (inputManager.getKeyDown(GLFW_KEY_2)) {
+		modelSelect = ModelSelect::ARMADILLO;
+		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+	else if (inputManager.getKeyDown(GLFW_KEY_3)) {
+		modelSelect = ModelSelect::MONKEY;
+		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+	else if (inputManager.getKeyDown(GLFW_KEY_4)) {
+		modelSelect = ModelSelect::COW;
+		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_V)) {
+		softbodymesh->renderAsWireframe = !softbodymesh->renderAsWireframe;
+	}
+
 	softbodymesh->volumeCompliance = glm::clamp(softbodymesh->volumeCompliance, 0.0f, 100.0f);
 	softbodymesh->edgeCompliance = glm::clamp(softbodymesh->edgeCompliance, 0.0f, 100.0f);
 	//std::cout << "volume compliance: " << softbodymesh->volumeCompliance << std::endl;
@@ -173,7 +211,7 @@ void SoftBodyTestScene::processInput() {
 	model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, -1.0f));
 
 	if (dragIndex == -1 && inputManager.getMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
-		std::cout << "enter" << std::endl;
+		//std::cout << "enter" << std::endl;
 		const std::vector<float>& softbodyPositionData = softbodymesh->getParticlePositionsData();
 		int n = softbodyPositionData.size() / 3;
 		glm::vec2 mousePosition = inputManager.getMousePosition();
@@ -217,7 +255,7 @@ void SoftBodyTestScene::processInput() {
 	}
 
 	if (dragIndex >= 0 && inputManager.getMouse(GLFW_MOUSE_BUTTON_LEFT)) {
-		std::cout << "stay index: " << dragIndex << std::endl;
+		//std::cout << "stay index: " << dragIndex << std::endl;
 		glm::vec2 mousePos = inputManager.getMousePosition();
 
 		const std::vector<float>& softbodyPositionData = softbodymesh->getParticlePositionsData();
@@ -240,5 +278,5 @@ void SoftBodyTestScene::processInput() {
 		dragIndex = -1;
 	}
 
-	std::cout << dragIndex << std::endl;
+	//std::cout << dragIndex << std::endl;
 }

@@ -8,7 +8,7 @@ SoftBodyMesh::SoftBodyMesh()
 	vao(0), vbo(0), 
 	edgeCompliance(100.0f), volumeCompliance(0.0f), 
 	color(0.0f), shader(nullptr),
-	groundHeight(0.0f), substeps(10), pauseSimulation(false) { }
+	groundHeight(0.0f), substeps(10), pauseSimulation(false), renderAsWireframe(false) { }
 
 SoftBodyMesh::~SoftBodyMesh(){
 	glDeleteVertexArrays(1, &vao);

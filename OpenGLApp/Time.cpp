@@ -1,5 +1,5 @@
 #include "Time.h"
-#include "Engine.h"
+#include "EngineConfig.h"
 #include "GLFW/glfw3.h"
 
 Time::Time(): timeScale(1.0f), lastTimeElapsed(0.0f), deltaTime(0.0f) {}

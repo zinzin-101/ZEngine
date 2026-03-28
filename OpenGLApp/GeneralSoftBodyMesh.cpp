@@ -433,7 +433,9 @@ void GeneralSoftBodyMesh::render() {
     shader->setVec3("color", color);
     shader->setVec3("camPos", camera->getTransform()->getGlobalPosition());
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (renderAsWireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
@@ -441,7 +443,7 @@ void GeneralSoftBodyMesh::render() {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, (unsigned int)renderVertices.size() / 6);
 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
      
     glCullFace(GL_BACK);
     //glDisable(GL_CULL_FACE);

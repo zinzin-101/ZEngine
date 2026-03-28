@@ -39,6 +39,7 @@ class SoftBodyMesh : public Component {
 		float groundHeight; // temp
 		unsigned int substeps;
 		bool pauseSimulation;
+		bool renderAsWireframe;
 
 		void setParticlePosition(int index, glm::vec3 position);
 		void setInverseMass(int index, float mass);
