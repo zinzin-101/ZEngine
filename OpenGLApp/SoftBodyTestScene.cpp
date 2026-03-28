@@ -67,8 +67,11 @@ void SoftBodyTestScene::setup() {
 	softbodymesh->groundHeight = 0.5f;
 	//softbodymesh->edgeCompliance = 0.172566f;
 	//softbodymesh->volumeCompliance = 0.0408936f;
-	softbodymesh->edgeCompliance = 50.0f;
-	softbodymesh->volumeCompliance = 50.0f;
+	//softbodymesh->edgeCompliance = 50.0f;
+	//softbodymesh->volumeCompliance = 50.0f;
+	softbodymesh->edgeCompliance = 0.00001f;
+	softbodymesh->volumeCompliance = 0.00001f;
+
 	//softbodyMesh->edgeCompliance;
 }
 
@@ -159,6 +162,16 @@ void SoftBodyTestScene::processInput() {
 	//std::cout << "volume compliance: " << softbodymesh->volumeCompliance << std::endl;
 	//std::cout << "edge compliance: " << softbodymesh->edgeCompliance << std::endl;
 
+	glm::vec3 position = softbodymesh->getTransform()->getGlobalPosition();
+	glm::vec3 rotation = softbodymesh->getTransform()->getGlobalEulerRotation();
+	glm::vec3 scale = softbodymesh->getTransform()->getGlobalScale();
+	glm::mat4 model(1.0f);
+	model = glm::translate(model, position);
+	model = glm::scale(model, scale);
+	model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, -1.0f));
+
 	if (dragIndex == -1 && inputManager.getMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
 		std::cout << "enter" << std::endl;
 		const std::vector<float>& softbodyPositionData = softbodymesh->getParticlePositionsData();
@@ -175,6 +188,8 @@ void SoftBodyTestScene::processInput() {
 				softbodyPositionData.at(i * 3 + 1),
 				softbodyPositionData.at(i * 3 + 2)
 			);
+
+			pos = model * glm::vec4(pos, 1.0f);
 
 			float distance = ray.getDistanceFromPoint(pos);
 			if (distance < closestDistance) {
@@ -193,13 +208,11 @@ void SoftBodyTestScene::processInput() {
 				softbodyPositionData.at(dragIndex * 3 + 0),
 				softbodyPositionData.at(dragIndex * 3 + 1),
 				softbodyPositionData.at(dragIndex * 3 + 2));
+
+			pos = model * glm::vec4(pos, 1.0f);
+
 			glm::vec4 clipPos = currentCamera->getProjectionMatrix() * currentCamera->getViewMatrix() * glm::vec4(pos, 1.0f);
 			dragDepth = (clipPos.z / clipPos.w) * 0.5f + 0.5f;
-
-			glm::vec3 clickWorldPos = Engine::getInstance()->screenToWorld(
-				mousePosition, dragDepth,
-				currentCamera->getProjectionMatrix(), currentCamera->getViewMatrix()
-			);
 		}
 	}
 
@@ -215,7 +228,11 @@ void SoftBodyTestScene::processInput() {
 		);
 
 		worldPos = Engine::getInstance()->screenToWorld(mousePos, dragDepth, currentCamera->getProjectionMatrix(), currentCamera->getViewMatrix());
-		softbodymesh->setParticlePosition(dragIndex, worldPos);
+
+		glm::mat4 invModel = glm::inverse(model);
+		glm::vec3 pos = glm::vec3(invModel * glm::vec4(worldPos, 1.0f));
+
+		softbodymesh->setParticlePosition(dragIndex, pos);
 	}
 
 	if (dragIndex >= 0 && glfwGetMouseButton(Engine::getInstance()->getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {

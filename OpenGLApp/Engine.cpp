@@ -141,6 +141,7 @@ glm::vec3 Engine::screenToWorld(glm::vec2 screenPosition, float depth, glm::mat4
 
 	float x = screenPosition.x * scaleX;
 	float y = (float)height - (screenPosition.y * scaleY);
+	//float y = (screenPosition.y * scaleY);
 	glm::vec4 viewport = glm::vec4(0, 0, width, height);
 	glm::vec3 screenPos = glm::vec3(x, y, depth);
 
