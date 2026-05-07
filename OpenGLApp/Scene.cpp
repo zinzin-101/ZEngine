@@ -49,7 +49,19 @@ void Scene::prepareScene() {
 void Scene::update() {
 	for (Object* object : objects) {
 		if (object->isActive) {
+			object->preUpdate();
+		}
+	}
+
+	for (Object* object : objects) {
+		if (object->isActive) {
 			object->update();
+		}
+	}
+
+	for (Object* object : objects) {
+		if (object->isActive) {
+			object->postUpdate();
 		}
 	}
 
@@ -73,11 +85,18 @@ void Scene::render() {
 
 void Scene::processInput() {}
 
-Object* Scene::instantiateObject(glm::vec3 position) {
+Object* Scene::createObject(glm::vec3 position) {
 	Object* object = new Object();
 	object->setCurrentScene(this);
 	object->transform.position = position;
 	objects.emplace_back(object);
+	return object;
+}
+
+Object* Scene::instantiateObject(glm::vec3 position) {
+	Object* object = createObject(position);
+	object->init();
+	object->start();
 	return object;
 }
 

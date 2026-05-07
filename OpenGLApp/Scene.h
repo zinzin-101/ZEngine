@@ -28,6 +28,7 @@ class Scene {
 		virtual void render();
 		void prepareScene();
 		virtual void processInput();
+		Object* createObject(glm::vec3 position);
 		Object* instantiateObject(glm::vec3 position);
 		Camera* getCurrentCamera();
 		bool hasBeenInitialized() const;
