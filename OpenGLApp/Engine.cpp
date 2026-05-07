@@ -64,7 +64,7 @@ void Engine::init() {
 void Engine::initWindow() {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	if (INIT_IN_FULL_SCREEN) {
@@ -127,6 +127,18 @@ void Engine::setEnableCursor(bool value) {
 
 void Engine::terminate() {
 	glfwSetWindowShouldClose(window, true);
+}
+
+float Engine::getDeltaTime() const {
+	return time.getDeltaTime();
+}
+
+float Engine::getRealDeltaTime() const {
+	return time.getRealDeltaTime();
+}
+
+float Engine::getFixedDeltaTime() const {
+	return time.getFixedDeltaTime();
 }
 
 glm::vec3 Engine::screenToWorld(glm::vec2 screenPosition, float depth, glm::mat4 projection, glm::mat4 view) {

@@ -45,6 +45,10 @@ class Engine {
 		void setEnableCursor(bool value);
 		void terminate();
 
+		float getDeltaTime() const;
+		float getRealDeltaTime() const;
+		float getFixedDeltaTime() const;
+
 		glm::vec3 screenToWorld(glm::vec2 screenPosition, float depth, glm::mat4 projection, glm::mat4 view);
 };
 
