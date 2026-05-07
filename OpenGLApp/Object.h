@@ -31,8 +31,8 @@ class Object {
 		template <class T>
 		T* addComponent();
 
-		template <class T>
-		T* addComponent(std::string arg);
+		template <class T, class... Args>
+		T* addComponent(Args... args);
 
 		template <class T>
 		T* getFirstComponentOfType();
@@ -56,9 +56,9 @@ T* Object::addComponent() {
 	return componentType;
 }
 
-template <class T>
-T* Object::addComponent(std::string arg) {
-	T* componentType = new T(arg);
+template <class T, class... Args>
+T* Object::addComponent(Args... args) {
+	T* componentType = new T(args...);
 	Component* component = dynamic_cast<Component*>(componentType);
 
 	assert(component != nullptr && "Trying to add a non-component type");
