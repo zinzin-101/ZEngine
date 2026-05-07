@@ -23,7 +23,9 @@ class Object {
 
 		virtual void init(); // for initializing component 
 		virtual void start(); // for custom behavior
+		virtual void preUpdate(); // for updating component
 		virtual void update(); // for updating component
+		virtual void postUpdate(); // for updating component
 		virtual void render(); // for component that can render
 		void setCurrentScene(Scene* scene);
 		void addComponent(Component* component);

@@ -20,7 +20,9 @@ Transform* Component::getTransform() {
 
 void Component::init() {}
 void Component::start() {}
+void Component::preUpdate() {}
 void Component::update() {}
+void Component::postUpdate() {}
 void Component::render() {}
 
 bool compareComponentPriority(const Component* const c1, const Component* const c2) {

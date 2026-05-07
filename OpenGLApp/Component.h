@@ -20,7 +20,9 @@ class Component {
 		int getComponentPriority() const;
 		virtual void init();
 		virtual void start();
+		virtual void preUpdate();
 		virtual void update();
+		virtual void postUpdate();
 		virtual void render();
 };
 

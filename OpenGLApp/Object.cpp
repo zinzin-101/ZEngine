@@ -23,10 +23,26 @@ void Object::start() {
 	}
 }
 
+void Object::preUpdate() {
+	for (Component* component : components) {
+		if (component->isActive) {
+			component->preUpdate();
+		}
+	}
+}
+
 void Object::update() {
 	for (Component* component : components) {
 		if (component->isActive) {
 			component->update();
+		}
+	}
+}
+
+void Object::postUpdate() {
+	for (Component* component : components) {
+		if (component->isActive) {
+			component->postUpdate();
 		}
 	}
 }
