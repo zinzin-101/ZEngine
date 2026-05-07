@@ -1,0 +1,73 @@
+#version 430 core
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
+
+uniform sampler3D smokeTexture;    
+uniform sampler3D velocityTexture; 
+
+layout(r32f, binding = 0) uniform image3D smokeWrite;
+layout(r32f, binding = 1) uniform image3D freeSpaceImage;
+
+uniform float dt;
+uniform float spacing;
+uniform ivec3 gridSize;
+
+float sampleSmoke3D(sampler3D tex, vec3 worldPos, float spacing, ivec3 gridSize) {
+    float spacing1 = 1.0 / spacing;
+    
+    vec3 offset = vec3(0.5 * spacing);
+
+    vec3 g = (worldPos - offset) * spacing1;
+    ivec3 i0 = ivec3(floor(g));
+    vec3 f = g - vec3(i0);
+
+    i0 = clamp(i0, ivec3(0), gridSize - 1);
+    ivec3 i1 = min(i0 + 1, gridSize - 1);
+
+    float v000 = texelFetch(tex, i0, 0).r;
+    float v100 = texelFetch(tex, ivec3(i1.x, i0.y, i0.z), 0).r;
+    float v010 = texelFetch(tex, ivec3(i0.x, i1.y, i0.z), 0).r;
+    float v110 = texelFetch(tex, ivec3(i1.x, i1.y, i0.z), 0).r;
+    float v001 = texelFetch(tex, ivec3(i0.x, i0.y, i1.z), 0).r;
+    float v101 = texelFetch(tex, ivec3(i1.x, i0.y, i1.z), 0).r;
+    float v011 = texelFetch(tex, ivec3(i0.x, i1.y, i1.z), 0).r;
+    float v111 = texelFetch(tex, i1, 0).r;
+
+    float x00 = mix(v000, v100, f.x);
+    float x10 = mix(v010, v110, f.x);
+    float x01 = mix(v001, v101, f.x);
+    float x11 = mix(v011, v111, f.x);
+    
+    float y0 = mix(x00, x10, f.y);
+    float y1 = mix(x01, x11, f.y);
+
+    return mix(y0, y1, f.z);
+}
+
+void main() {
+    ivec3 id = ivec3(gl_GlobalInvocationID.xyz);
+    
+    if (any(greaterThanEqual(id, gridSize))) return;
+
+    float currentS = texelFetch(smokeTexture, id, 0).r;
+
+    if (all(greaterThanEqual(id, ivec3(1))) && all(lessThan(id, gridSize - 1))) {
+        
+        float s = imageLoad(freeSpaceImage, id).r;
+        if (s >= 0.05) {
+            float spacing2 = 0.5 * spacing;
+            float u = 0.5 * (texelFetch(velocityTexture, id, 0).r + texelFetch(velocityTexture, id + ivec3(1,0,0), 0).r);
+            float v = 0.5 * (texelFetch(velocityTexture, id, 0).g + texelFetch(velocityTexture, id + ivec3(0,1,0), 0).g);
+            float w = 0.5 * (texelFetch(velocityTexture, id, 0).b + texelFetch(velocityTexture, id + ivec3(0,0,1), 0).b);
+            
+            vec3 vAvg = vec3(u, v, w);
+            
+            vec3 pos = (vec3(id) + 0.5) * spacing;
+            vec3 backPos = pos - dt * vAvg;
+            
+            currentS = sampleSmoke3D(smokeTexture, backPos, spacing, gridSize);
+        }
+    }
+
+    imageStore(smokeWrite, id, vec4(currentS));
+}

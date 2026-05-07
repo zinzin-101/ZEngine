@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "CubePrimitive.h"
 #include "PrimitiveMeshRenderer.h"
+#include "SmokeSim.h"
 #include "GLFW/glfw3.h"
 #include <iostream>
 
@@ -27,11 +28,14 @@ void TestScene::setup() {
 	cam->addComponent<Camera>();
 	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
-	Object* cube = instantiateObject(glm::vec3(0.0f, 0.0f, -5.0f));
+	Object* cube = createObject(glm::vec3(0.0f, 0.0f, -5.0f));
 	cube->addComponent<PrimitiveMeshRenderer>();
 	PrimitiveMeshRenderer* meshRenderer = cube->getFirstComponentOfType<PrimitiveMeshRenderer>();
 	meshRenderer->meshPrimitive = renderer->getMesh(CUBE_MESH_NAME);
 	meshRenderer->shader = renderer->getShader(SHADER_NAME);
+
+	Object* smoke = createObject(glm::vec3(2.0f, 0.0f, 0.0f));
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 }
 
 void TestScene::processInput() {

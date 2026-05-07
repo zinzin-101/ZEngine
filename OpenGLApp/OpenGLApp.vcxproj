@@ -152,6 +152,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SmokeSim.cpp" />
     <ClCompile Include="SoftBodyMesh.cpp" />
     <ClCompile Include="SoftBodyTestScene.cpp" />
     <ClCompile Include="stb_image.cpp" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="CubePrimitive.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineConfig.h" />
@@ -184,6 +186,8 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SmokeSim.h" />
+    <ClInclude Include="SmokeSimConfig.h" />
     <ClInclude Include="SoftBodyMesh.h" />
     <ClInclude Include="SoftBodyTestScene.h" />
     <ClInclude Include="TestScene.h" />

@@ -1,0 +1,66 @@
+#version 430 core
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
+
+uniform sampler3D velocityTexture; 
+
+layout(rgba32f, binding = 0) uniform image3D velocityWrite;
+
+uniform float dt;
+uniform float spacing;
+uniform ivec3 gridSize;
+
+float sampleField3D(sampler3D tex, vec3 worldPos, int component, float spacing, ivec3 gridSize) {
+    float spacing1 = 1.0 / spacing;
+
+    vec3 offset = vec3(0.5 * spacing);
+    if (component == 0) offset.x = 0.0;      // u
+    else if (component == 1) offset.y = 0.0; // v
+    else if (component == 2) offset.z = 0.0; // w
+
+    vec3 g = (worldPos - offset) * spacing1;
+    ivec3 i0 = ivec3(floor(g));
+    vec3 f = g - vec3(i0);
+
+    i0 = clamp(i0, ivec3(0), gridSize - 1);
+    ivec3 i1 = min(i0 + 1, gridSize - 1);
+
+    float v000 = texelFetch(tex, i0, 0)[component];
+    float v100 = texelFetch(tex, ivec3(i1.x, i0.y, i0.z), 0)[component];
+    float v010 = texelFetch(tex, ivec3(i0.x, i1.y, i0.z), 0)[component];
+    float v110 = texelFetch(tex, ivec3(i1.x, i1.y, i0.z), 0)[component];
+    float v001 = texelFetch(tex, ivec3(i0.x, i0.y, i1.z), 0)[component];
+    float v101 = texelFetch(tex, ivec3(i1.x, i0.y, i1.z), 0)[component];
+    float v011 = texelFetch(tex, ivec3(i0.x, i1.y, i1.z), 0)[component];
+    float v111 = texelFetch(tex, i1, 0)[component];
+
+    float x00 = mix(v000, v100, f.x);
+    float x10 = mix(v010, v110, f.x);
+    float x01 = mix(v001, v101, f.x);
+    float x11 = mix(v011, v111, f.x);
+    
+    float y0 = mix(x00, x10, f.y);
+    float y1 = mix(x01, x11, f.y);
+
+    return mix(y0, y1, f.z);
+}
+
+void main() {
+    ivec3 id = ivec3(gl_GlobalInvocationID.xyz);
+    if (any(greaterThanEqual(id, gridSize))) return;
+
+    vec4 velData = texelFetch(velocityTexture, id, 0);
+    vec3 vAvg;
+    vAvg.x = 0.5 * (velData.r + texelFetch(velocityTexture, id + ivec3(1,0,0), 0).r);
+    vAvg.y = 0.5 * (velData.g + texelFetch(velocityTexture, id + ivec3(0,1,0), 0).g);
+    vAvg.z = 0.5 * (velData.b + texelFetch(velocityTexture, id + ivec3(0,0,1), 0).b);
+
+    vec3 pos = (vec3(id) + 0.5) * spacing;
+    vec3 backPos = pos - dt * vAvg;
+
+    float newU = sampleField3D(velocityTexture, backPos, 0, spacing, gridSize);
+    float newV = sampleField3D(velocityTexture, backPos, 1, spacing, gridSize);
+    float newW = sampleField3D(velocityTexture, backPos, 2, spacing, gridSize);
+
+    imageStore(velocityWrite, id, vec4(newU, newV, newW, 1.0));
+}

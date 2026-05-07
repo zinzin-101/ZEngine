@@ -1,0 +1,64 @@
+#version 430 core
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
+
+layout(rgba32f, binding = 0) uniform image3D velocityImage;
+
+uniform ivec3 gridSize;
+
+void main() {
+    ivec3 id = ivec3(gl_GlobalInvocationID.xyz);
+
+    // check only for edges of grid
+    bool leftGrid   = id.x == 0;
+    bool rightGrid  = id.x == gridSize.x - 1;
+    bool bottomGrid = id.y == 0;
+    bool topGrid    = id.y == gridSize.y - 1;
+    bool backGrid   = id.z == 0;
+    bool frontGrid  = id.z == gridSize.z - 1;
+
+    if (!leftGrid && !rightGrid && !bottomGrid && !topGrid && !backGrid && !frontGrid) return;
+
+    vec4 velocity = imageLoad(velocityImage, id);
+
+    if (bottomGrid) {
+        vec4 neighbor = imageLoad(velocityImage, ivec3(id.x, 1, id.z));
+        velocity.r = neighbor.r; 
+        velocity.b = neighbor.b; 
+        velocity.g = 0.0;        
+    }
+    else if (topGrid) {
+        vec4 neighbor = imageLoad(velocityImage, ivec3(id.x, gridSize.y - 2, id.z));
+        velocity.r = neighbor.r; 
+        velocity.b = neighbor.b; 
+        velocity.g = 0.0;        
+    }
+
+    if (leftGrid) {
+        vec4 neighbor = imageLoad(velocityImage, ivec3(1, id.y, id.z));
+        velocity.g = neighbor.g; 
+        velocity.b = neighbor.b; 
+        velocity.r = 0.0;        
+    }
+    else if (rightGrid) {
+        vec4 neighbor = imageLoad(velocityImage, ivec3(gridSize.x - 2, id.y, id.z));
+        velocity.g = neighbor.g; 
+        velocity.b = neighbor.b; 
+        velocity.r = 0.0;        
+    }
+
+    if (backGrid) {
+        vec4 neighbor = imageLoad(velocityImage, ivec3(id.x, id.y, 1));
+        velocity.r = neighbor.r; 
+        velocity.g = neighbor.g; 
+        velocity.b = 0.0;        
+    }
+    else if (frontGrid) {
+        vec4 neighbor = imageLoad(velocityImage, ivec3(id.x, id.y, gridSize.z - 2));
+        velocity.r = neighbor.r; 
+        velocity.g = neighbor.g; 
+        velocity.b = 0.0;        
+    }
+
+    imageStore(velocityImage, id, velocity);
+}

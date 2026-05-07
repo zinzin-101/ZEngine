@@ -8,6 +8,7 @@
 #include "TetrahedronSoftBodyMesh.h"
 #include "GeneralSoftBodyMesh.h"
 #include "Ray.h"
+#include "SmokeSim.h"
 #include "GLFW/glfw3.h"
 #include <iostream>
 
@@ -50,7 +51,7 @@ void SoftBodyTestScene::setup() {
 	cam->addComponent<Camera>();
 	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
-	Object* cube = instantiateObject(glm::vec3(0.0f, 0.0f, 0.0f));
+	Object* cube = createObject(glm::vec3(0.0f, 0.0f, 0.0f));
 	cube->transform.scale = glm::vec3(50.0f, 1.0f, 50.0f);
 	cube->addComponent<PrimitiveMeshRenderer>();
 	PrimitiveMeshRenderer* meshRenderer = cube->getFirstComponentOfType<PrimitiveMeshRenderer>();
@@ -60,7 +61,11 @@ void SoftBodyTestScene::setup() {
 
 	//meshRenderer->isActive = false;
 
-	Object* softbody = instantiateObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	Object* smoke = createObject(glm::vec3(2.0f, 5.0f, 0.0f));
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	smoke->transform.scale = glm::vec3(10.0f);
+
+	Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	//Object* softbody2 = instantiateObject(glm::vec3(0.0f, 5.0f, 5.0f));
 	//softbody2->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
 	//softbodymesh = softbody2->getFirstComponentOfType<GeneralSoftBodyMesh>();
@@ -76,6 +81,7 @@ void SoftBodyTestScene::setup() {
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/tetrahedron_monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
 	softbody->addComponent<GeneralSoftBodyMesh>(modelPaths[modelSelect])->shader = renderer->getShader(SHADER_NAME);
+	softbody->transform.scale = glm::vec3(0.5f);
 	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;
@@ -213,7 +219,7 @@ void SoftBodyTestScene::processInput() {
 	if (dragIndex == -1 && inputManager.getMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
 		//std::cout << "enter" << std::endl;
 		const std::vector<float>& softbodyPositionData = softbodymesh->getParticlePositionsData();
-		int n = softbodyPositionData.size() / 3;
+		int n = (int)softbodyPositionData.size() / 3;
 		glm::vec2 mousePosition = inputManager.getMousePosition();
 		glm::vec3 nearPoint = Engine::getInstance()->screenToWorld(mousePosition, 0.0f,
 			currentCamera->getProjectionMatrix(), currentCamera->getViewMatrix());
