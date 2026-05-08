@@ -9,12 +9,7 @@ struct FrameBuffer {
 };
 
 class RenderPass {
-	protected:
-		std::vector<FrameBuffer>* frameBuffers;
-
 	public:
-		RenderPass(std::vector<FrameBuffer>* frameBuffers);
-		virtual void render() = 0;
-
-		void addFrameBuffer(unsigned int fbo, std::string name);
+		virtual void render(std::vector<FrameBuffer>& frameBuffers) = 0;
+		static void addFrameBuffer(unsigned int fbo, std::string name, std::vector<FrameBuffer>& frameBuffers);
 };
