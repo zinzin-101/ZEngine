@@ -66,6 +66,21 @@ void SoftBodyTestScene::setup() {
 	smoke->transform.scale = glm::vec3(10.0f);
 	smokeSim->smokeAcceleration = 20.0f;
 
+	smoke = createObject(glm::vec3(2.0f, 5.0f, 2.0f));
+	smokeSim = smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	smoke->transform.scale = glm::vec3(10.0f);
+	smokeSim->smokeAcceleration = 20.0f;
+
+	smoke = createObject(glm::vec3(.0f, 5.0f, 2.0f));
+	smokeSim = smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	smoke->transform.scale = glm::vec3(10.0f);
+	smokeSim->smokeAcceleration = 20.0f;
+
+	smoke = createObject(glm::vec3(-2.0f, 5.0f, 0.0f));
+	smokeSim = smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	smoke->transform.scale = glm::vec3(10.0f);
+	smokeSim->smokeAcceleration = 20.0f;
+
 	Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	//Object* softbody2 = instantiateObject(glm::vec3(0.0f, 5.0f, 5.0f));
 	//softbody2->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
