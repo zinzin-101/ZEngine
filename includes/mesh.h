@@ -1,3 +1,5 @@
+#define MESH_H // to disable the class
+
 #ifndef MESH_H
 #define MESH_H
 

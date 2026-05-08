@@ -1,4 +1,5 @@
 #include "Object.h"
+#include "Engine.h"
 #include "Scene.h"
 
 Object::Object(): currentScene(nullptr), transform(this), name("Object"), canDelete(false), isActive(true) {}
@@ -48,9 +49,16 @@ void Object::postUpdate() {
 }
 
 void Object::render() {
+	Renderer* renderer = Engine::getInstance()->getRenderer();
+
 	for (Component* component : components) {
 		if (component->isActive) {
-			component->render();
+			if (component->getIsTransparent()) {
+				renderer->addToTransparencyQueue(component);
+			}
+			else {
+				component->render();
+			}
 		}
 	}
 }
@@ -79,6 +87,10 @@ void Object::removeComponent(Component* component) {
 
 bool Object::getCanDelete() const {
 	return canDelete;
+}
+
+Scene* Object::getCurrentScene() {
+	return currentScene;
 }
 
 void Object::deleteObject(Object* object) {

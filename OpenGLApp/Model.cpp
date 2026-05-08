@@ -180,7 +180,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
     return textures;
 }
 
-unsigned int Model::textureFromFile(const char* path, const std::string& directory, bool gamma = false) {
+unsigned int Model::textureFromFile(const char* path, const std::string& directory, bool gamma) {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
 

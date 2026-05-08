@@ -6,6 +6,8 @@
 #include "Scene.h"
 #include "Object.h"
 
+using namespace RendererOperation;
+
 Renderer::Renderer() {}
 
 Renderer::~Renderer() {
@@ -33,6 +35,34 @@ void Renderer::render() {
 		for (Object* object : objects) {
 			object->render();
 		}
+
+		// save previous GL states
+		GLboolean powerWasEnabled;
+		GLint prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha;
+		GLboolean prevDepthMask;
+
+		powerWasEnabled = glIsEnabled(GL_BLEND);
+		glGetIntegerv(GL_BLEND_SRC_RGB, &prevSrcRGB);
+		glGetIntegerv(GL_BLEND_DST_RGB, &prevDstRGB);
+		glGetIntegerv(GL_BLEND_SRC_ALPHA, &prevSrcAlpha);
+		glGetIntegerv(GL_BLEND_DST_ALPHA, &prevDstAlpha);
+		glGetBooleanv(GL_DEPTH_WRITEMASK, &prevDepthMask);
+
+		// apply GL states for transparency rendering
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_FALSE);
+
+		while (!transparencyRenderQueue.empty()) {
+			TransparentComponentRendering transparentComponent = transparencyRenderQueue.top();
+			transparencyRenderQueue.pop();
+			transparentComponent.component->render();
+		}
+
+		// restore previous GL states
+		powerWasEnabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+		glBlendFuncSeparate(prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha);
+		glDepthMask(prevDepthMask);
 	}
 }
 
@@ -73,6 +103,12 @@ void Renderer::clearShader() {
 	nameToShader.clear();
 }
 
+void Renderer::addToTransparencyQueue(Component* component) {
+	glm::vec3 cameraPos = component->getTransform()->getObject()->getCurrentScene()->getCurrentCamera()->getTransform()->getGlobalPosition();
+	glm::vec3 componentPos = component->getTransform()->getGlobalPosition();
+	transparencyRenderQueue.emplace(component, glm::distance(cameraPos, componentPos));
+}
+
 void Renderer::clear() {
 	clearMesh();
 	clearShader();
@@ -80,4 +116,12 @@ void Renderer::clear() {
 
 void Renderer::setViewPort(int x, int y, int width, int height) {
 	glViewport(x, y, width, height);
+}
+
+RendererOperation::TransparentComponentRendering::TransparentComponentRendering(Component* component, float distanceToCamera) :
+	component(component), distanceToCamera(distanceToCamera) {
+}
+
+bool RendererOperation::TransparencyComparator::operator()(const TransparentComponentRendering& c1, const TransparentComponentRendering& c2) {
+	return c1.distanceToCamera < c2.distanceToCamera;
 }

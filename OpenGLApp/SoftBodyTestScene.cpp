@@ -82,7 +82,7 @@ void SoftBodyTestScene::setup() {
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/armadillo_tetra_20k.obj"))->shader = renderer->getShader(SHADER_NAME);
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/tetrahedron_monkey.obj"))->shader = renderer->getShader(SHADER_NAME);
 	softbody->addComponent<GeneralSoftBodyMesh>(modelPaths[modelSelect])->shader = renderer->getShader(SHADER_NAME);
-	softbody->transform.scale = glm::vec3(0.5f);
+	softbody->transform.scale = glm::vec3(1.0f);
 	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.5f;

@@ -6,7 +6,11 @@ int Component::getComponentPriority() const {
 	return priority;
 }
 
-Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr), isActive(true) {}
+bool Component::getIsTransparent() const {
+	return isTransparent;
+}
+
+Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr), isTransparent(false), isActive(true) {}
 Component::~Component() {}
 
 void Component::setTransform(Transform* transform) {

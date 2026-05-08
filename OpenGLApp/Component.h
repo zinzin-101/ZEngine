@@ -10,6 +10,8 @@ class Component {
 		int priority;
 		Transform* transform;
 
+		bool isTransparent;
+
 	public:
 		bool isActive;
 
@@ -18,6 +20,7 @@ class Component {
 		void setTransform(Transform* transform);
 		Transform* getTransform();
 		int getComponentPriority() const;
+		bool getIsTransparent() const;
 		virtual void init();
 		virtual void start();
 		virtual void preUpdate();

@@ -1,3 +1,5 @@
+#define MODEL_H // to disable the class
+
 #ifndef MODEL_H
 #define MODEL_H
 

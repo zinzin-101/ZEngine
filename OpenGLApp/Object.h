@@ -42,6 +42,8 @@ class Object {
 		void removeComponent(Component* component);
 		bool getCanDelete() const;
 
+		Scene* getCurrentScene();
+
 		static void deleteObject(Object* object);
 };
 
