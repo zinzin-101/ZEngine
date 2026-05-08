@@ -62,8 +62,9 @@ void SoftBodyTestScene::setup() {
 	//meshRenderer->isActive = false;
 
 	Object* smoke = createObject(glm::vec3(2.0f, 5.0f, 0.0f));
-	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	SmokeSim* smokeSim = smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 	smoke->transform.scale = glm::vec3(10.0f);
+	smokeSim->smokeAcceleration = 20.0f;
 
 	Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	//Object* softbody2 = instantiateObject(glm::vec3(0.0f, 5.0f, 5.0f));
