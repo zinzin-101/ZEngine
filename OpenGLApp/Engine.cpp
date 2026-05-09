@@ -104,6 +104,7 @@ void Engine::update() {
 
 void Engine::run() {
 	switchScene(INITIAL_SCENE_ID);
+	renderer.setCurrentRenderPipeline(Renderer::getRenderPipeline(EngineConfig::INITIAL_RENDERING_PIPELINE));
 
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);

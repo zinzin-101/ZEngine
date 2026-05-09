@@ -20,6 +20,7 @@ class Transform {
 		glm::vec3 getGlobalPosition() const;
 		glm::vec3 getGlobalEulerRotation() const;
 		glm::vec3 getGlobalScale() const;
+		glm::mat4 getGlobalModelMatrix() const;
 		void setParent(Transform* parent);
 		glm::vec3 position;
 		glm::vec3 eulerRotation;

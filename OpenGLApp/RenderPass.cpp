@@ -2,24 +2,10 @@
 #include <cassert>
 #include <glad/glad.h>
 
-FrameData::FrameData() : buffer(0), name(""), type(Type::NONE) {}
+FrameData::FrameData() : buffer(0), matrix(1.0f), name(""), type(Type::NONE) {}
 
-FrameData::FrameData(std::string name, unsigned int buffer, FrameData::Type type): buffer(buffer), name(name), type(type) {}
+FrameData::FrameData(std::string name, unsigned int buffer, FrameData::Type type, bool shouldSelfClean):
+	buffer(buffer), matrix(1.0f), name(name), type(type) 
+{}
 
-FrameData::~FrameData() {
-	switch (type) {
-		case Type::TEXTURE:
-			glDeleteTextures(1, &buffer);
-			break;
-
-		case Type::FRAME_BUFFER:
-			glDeleteFramebuffers(1, &buffer);
-			break;
-		case Type::RENDER_BUFFER:
-			glDeleteRenderbuffers(1, &buffer);
-			break;
-		case Type::VAO:
-			glDeleteVertexArrays(1, &buffer);
-			break;
-	}
-}
+FrameData::FrameData(std::string name, glm::mat4 matrix): buffer(0), matrix(matrix), name(name), type(FrameData::Type::MAT4) {}

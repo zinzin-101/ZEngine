@@ -5,6 +5,7 @@ namespace SceneManagerConfig {
 	enum SceneId {
 		TEST_SCENE,
 		SOFT_BODY_TEST_SCENE,
+		PBR_SCENE,
 		NONE
 	};
 }

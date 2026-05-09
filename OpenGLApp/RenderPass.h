@@ -12,16 +12,18 @@ struct FrameData {
 		FRAME_BUFFER,
 		RENDER_BUFFER,
 		VAO,
+		MAT4,
 		NONE
 	};
 
 	unsigned int buffer;
+	glm::mat4 matrix;
 	std::string name;
 	Type type;
 
 	FrameData();
-	FrameData(std::string name, unsigned int buffer, Type type);
-	~FrameData();
+	FrameData(std::string name, unsigned int buffer, Type type, bool shouldSelfClean = true);
+	FrameData(std::string name, glm::mat4 matrix);
 };
 
 class RenderPass {

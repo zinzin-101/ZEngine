@@ -148,6 +148,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshPrimitive.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="PBRScene.cpp" />
     <ClCompile Include="PrimitiveMeshRenderer.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Ray.cpp" />
@@ -155,6 +156,8 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPipeline.cpp" />
     <ClCompile Include="render_passes\BasicRenderPass.cpp" />
+    <ClCompile Include="render_passes\PBRRenderPass.cpp" />
+    <ClCompile Include="render_passes\ShadowRenderPass.cpp" />
     <ClCompile Include="render_passes\TransparencyRenderPass.cpp" />
     <ClCompile Include="render_pipelines\PBRRenderPipeline.cpp" />
     <ClCompile Include="render_pipelines\SimpleRenderPipeline.cpp" />
@@ -191,6 +194,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshConfig.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="PBRScene.h" />
     <ClInclude Include="PrimitiveMeshRenderer.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Ray.h" />
@@ -198,6 +202,8 @@
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RenderPipeline.h" />
     <ClInclude Include="render_passes\BasicRenderPass.h" />
+    <ClInclude Include="render_passes\PBRRenderPass.h" />
+    <ClInclude Include="render_passes\ShadowRenderPass.h" />
     <ClInclude Include="render_passes\TransparencyRenderPass.h" />
     <ClInclude Include="render_pipelines\PBRRenderPipeline.h" />
     <ClInclude Include="render_pipelines\SimpleRenderPipeline.h" />

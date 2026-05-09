@@ -1,12 +1,13 @@
 #pragma once
 #include "Mesh.h"
+#include "Component.h"
 #include <stb_image.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 
-class Model {
+class Model : public Component {
 	private:
 		std::vector<Texture> loadedTextures;
 		std::vector<Mesh> meshes;

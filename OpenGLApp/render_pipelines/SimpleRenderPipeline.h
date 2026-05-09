@@ -2,6 +2,6 @@
 #include "../RenderPipeline.h"
 
 class SimpleRenderPipeline : public RenderPipeline {
-	public:
+	protected:
 		virtual void init() override;
 };

@@ -8,16 +8,19 @@
 #include <glm/glm.hpp>
 
 #include "../render_passes/ShadowRenderPass.h"
+#include "../render_passes/PBRRenderPass.h"
+#include "../render_passes/BasicRenderPass.h"
+#include "../render_passes/TransparencyRenderPass.h"
 
 PBRRenderPipeline::PBRRenderPipeline():
-	pbrShader("../shaders/pbr/2.2.2.pbr.vs", "../shaders/pbr/2.2.2.pbr.fs"),
-	equirectangularToCubemapShader("../shaders/pbr/2.2.2.cubemap.vs", "../shaders/pbr/2.2.2.equirectangular_to_cubemap.fs"),
-	irradianceShader("../shaders/pbr/2.2.2.cubemap.vs", "../shaders/pbr/2.2.2.irradiance_convolution.fs"),
-	prefilterShader("../shaders/pbr/2.2.2.cubemap.vs", "../shaders/pbr/2.2.2.prefilter.fs"),
-	brdfShader("../shaders/pbr/2.2.2.brdf.vs", "../shaders/pbr/2.2.2.brdf.fs"),
-	backgroundShader("../shaders/pbr/2.2.2.background.vs", "../shaders/pbr/2.2.2.background.fs"),
-	depthShader("../shaders/pbr/3.1.3.shadow_mapping_depth.vs", "../shaders/pbr/3.1.3.shadow_mapping_depth.fs"),
-	debugDepthQuad("../shaders/pbr/3.1.3.debug_quad.vs", "../shaders/pbr/3.1.3.debug_quad_depth.fs"),
+	pbrShader("shaders/pbr/2.2.2.pbr.vs", "shaders/pbr/2.2.2.pbr.fs"),
+	equirectangularToCubemapShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.equirectangular_to_cubemap.fs"),
+	irradianceShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.irradiance_convolution.fs"),
+	prefilterShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.prefilter.fs"),
+	brdfShader("shaders/pbr/2.2.2.brdf.vs", "shaders/pbr/2.2.2.brdf.fs"),
+	backgroundShader("shaders/pbr/2.2.2.background.vs", "shaders/pbr/2.2.2.background.fs"),
+	depthShader("shaders/pbr/3.1.3.shadow_mapping_depth.vs", "shaders/pbr/3.1.3.shadow_mapping_depth.fs"),
+	debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"),
     cubeVAO(0), cubeVBO(0),
     quadVAO(0), quadVBO(0)
 {}
@@ -31,6 +34,10 @@ PBRRenderPipeline::~PBRRenderPipeline() {
 }
 
 void PBRRenderPipeline::init() {
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
     addShader(&pbrShader, "pbrShader");
     addShader(&equirectangularToCubemapShader, "equirectangularToCubemapShader");
     addShader(&irradianceShader, "irradianceShader");
@@ -290,6 +297,7 @@ void PBRRenderPipeline::init() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     addFrameData(depthMapFBO, "depthMapFBO", FrameData::Type::FRAME_BUFFER);
+    addFrameData(depthMap, "depthMap", FrameData::Type::TEXTURE);
 
     // initialize static shader uniforms before rendering
 
@@ -305,10 +313,13 @@ void PBRRenderPipeline::init() {
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 
-    addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO);
-    addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO);
+    addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO, false);
+    addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO, false);
 
     addRenderPass(new ShadowRenderPass());
+    addRenderPass(new PBRRenderPass());
+    addRenderPass(new BasicRenderPass());
+    addRenderPass(new TransparencyRenderPass());
 }
 
 void PBRRenderPipeline::renderCube() {

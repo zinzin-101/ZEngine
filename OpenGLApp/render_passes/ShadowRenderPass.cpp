@@ -7,7 +7,6 @@ using namespace RendererOperation;
 
 void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) {
 	glm::vec3 lightPosition = glm::vec3(2.5f, 2.5f, 2.5f); // change later
-	shaders["pbrShader"]->setInt("numOfLights", 0);
     const unsigned int SHADOW_WIDTH = 4096;
     const unsigned int SHADOW_HEIGHT = 4096;
 	/////////////////////////////////////////////////
@@ -21,15 +20,16 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     lightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, nearPlane, farPlane);
     lightView = glm::lookAt(lightPosition, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     lightSpaceMatrix = lightProjection * lightView;
-    Shader depthShader = *shaders.at("depthShader");
+    Shader& depthShader = *shaders.at("depthShader");
     depthShader.use();
     depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER, frameData.at("depthMapFBO").buffer);
     glClear(GL_DEPTH_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     //glCullFace(GL_FRONT);
-    
+
     renderObjects(objects);
     renderTransparentObjects(objects);
 
@@ -40,6 +40,8 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glm::vec2 screenDimension = Engine::getInstance()->getScreenDimension();
     glViewport(0, 0, (int)screenDimension.x, (int)screenDimension.y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    frameData["lightSpaceMatrix"] = FrameData("lightSpaceMatrix", lightSpaceMatrix);
 }
 
 void ShadowRenderPass::renderObjects(std::vector<Object*>& objects) {

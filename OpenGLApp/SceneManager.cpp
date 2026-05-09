@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "TestScene.h"
 #include "SoftBodyTestScene.h"
+#include "PBRScene.h"
 
 using namespace SceneManagerConfig;
 
@@ -33,6 +34,9 @@ void SceneManager::manageScene() {
 				break;
 			case SceneId::SOFT_BODY_TEST_SCENE:
 				currentScene = new SoftBodyTestScene();
+				break;
+			case SceneId::PBR_SCENE:
+				currentScene = new PBRScene();
 				break;
 		}
 

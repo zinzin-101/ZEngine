@@ -21,10 +21,12 @@ class PBRRenderPipeline : public RenderPipeline {
         unsigned int quadVBO;
         void renderQuad();
 
+    protected:
+		virtual void init() override;
+
 	public:
         PBRRenderPipeline();
         ~PBRRenderPipeline();
-		virtual void init() override;
 
         static void renderCubeFromVAO(unsigned int vao);
         static void renderQuadFromVAO(unsigned int vao);

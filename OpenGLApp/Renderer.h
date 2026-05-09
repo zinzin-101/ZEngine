@@ -22,6 +22,7 @@ namespace RendererOperation {
 
 	enum RenderPipelines {
 		SIMPLE,
+		PBR
 	};
 }
 

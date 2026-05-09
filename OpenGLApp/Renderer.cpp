@@ -24,14 +24,16 @@ bool Renderer::init() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	setCurrentRenderPipeline(getRenderPipeline(EngineConfig::INITIAL_RENDERING_PIPELINE));
-
 	return true;
 }
 
 void Renderer::render() {
 	glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (!currentRenderPipeline->getHasInit()) {
+		currentRenderPipeline->initPipeline();
+	}
 
 	Scene* scene = Engine::getInstance()->getCurrentScene();
 	if (scene != nullptr) {
@@ -106,7 +108,6 @@ void Renderer::setCurrentRenderPipeline(RenderPipeline* pipeline) {
 	}
 
 	currentRenderPipeline = pipeline;
-	currentRenderPipeline->init();
 }
 
 void Renderer::clear() {
@@ -127,11 +128,14 @@ bool RendererOperation::TransparencyComparator::operator()(const TransparentComp
 }
 
 #include "render_pipelines/SimpleRenderPipeline.h"
+#include "render_pipelines/PBRRenderPipeline.h"
 
 RenderPipeline* Renderer::getRenderPipeline(RenderPipelines pipeline) {
 	switch (pipeline) {
 		case SIMPLE:
 			return new SimpleRenderPipeline();
+		case PBR:
+			return new PBRRenderPipeline();
 	}
 
 	return nullptr;
