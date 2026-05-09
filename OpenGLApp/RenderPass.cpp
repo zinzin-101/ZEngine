@@ -15,7 +15,3 @@ FrameData::~FrameData() {
 			break;
 	}
 }
-
-void RenderPass::addFrameBuffer(unsigned int buffer, std::string name, FrameData::Type type, std::vector<FrameData>& frameData) {
-	frameData.emplace_back(name, buffer, type);
-}

@@ -2,6 +2,7 @@
 #include "Object.h"
 #include <string>
 #include <vector>
+#include <map>
 
 struct FrameData {
 	enum Type {
@@ -19,6 +20,5 @@ struct FrameData {
 
 class RenderPass {
 	public:
-		virtual void render(std::vector<FrameData>& frameData, std::vector<Object*>& objects) = 0;
-		static void addFrameBuffer(unsigned int buffer, std::string name, FrameData::Type type, std::vector<FrameData>& frameData);
+		virtual void render(std::map<FrameData>& frameData, std::vector<Object*>& objects) = 0;
 };

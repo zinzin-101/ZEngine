@@ -5,9 +5,11 @@
 class RenderPipeline {
 	protected:
 		std::vector<RenderPass*> renderPasses;
-		std::vector<FrameData> frameData;
+		std::map<std::string, FrameData> frameData;
 
 		void addRenderPass(RenderPass* renderPass);
+		void addFrameData(unsigned int buffer, std::string name, FrameData::Type type);
+
 
 	public:
 		RenderPipeline();
