@@ -49,6 +49,8 @@ void Mesh::draw(Shader& shader) {
         glBindTexture(GL_TEXTURE_2D, defaultTex[i]);
     }
 
+    unsigned int slot = 0;
+
     for (unsigned int i = 0; i < textures.size(); i++)
     {
         glActiveTexture(STARTING_TEXTURE_GL_INDEX + i);
@@ -69,22 +71,32 @@ void Mesh::draw(Shader& shader) {
         }
         // PBR
         else if (name == "texture_PBR_diffuse") {
+            name = "albedoMap";
+            slot = ALBEDO_SLOT;
             number = std::to_string(diffuseNrPBR++);
         }
         else if (name == "texture_PBR_normal") {
+            name = "normalMap";
+            slot = NORMAL_SLOT;
             number = std::to_string(normalNrPBR++);
         }
         else if (name == "texture_PBR_metallic") {
+            name = "metallicMap";
+            slot = METALLIC_SLOT;
             number = std::to_string(metallicNrPBR++);
         }
         else if (name == "texture_PBR_roughness") {
+            name = "roughnessMap";
+            slot = ROUGHNESS_SLOT;
             number = std::to_string(roughnessNrPBR++);
         }
         else if (name == "texture_PBR_ambient_occlusion") {
+            name = "aoMap";
+            slot = AO_SLOT;
             number = std::to_string(aoNrPBR++);
-        }
+        }  
 
-        glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), STARTING_TEXTURE_INDEX + i);
+        glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), slot);
         glUniform1i(glGetUniformLocation(shader.ID, "useMR"), (metallicNrPBR != 1 && roughnessNrPBR == 1) ? 1 : 0);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
@@ -97,12 +109,19 @@ void Mesh::draw(Shader& shader) {
     glActiveTexture(GL_TEXTURE0);
 }
 
+void Mesh::drawGeometry() {
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
 void Mesh::setupMesh() {
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ebo);
 
     glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);

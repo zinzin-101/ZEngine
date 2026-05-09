@@ -1,6 +1,7 @@
 #include "ShadowRenderPass.h"
 #include "../Engine.h"
 #include "../Object.h"
+#include "../Model.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
@@ -30,8 +31,17 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glCullFace(GL_BACK);
     //glCullFace(GL_FRONT);
 
-    renderObjects(objects);
-    renderTransparentObjects(objects);
+    for (Object* object : objects) {
+        Model* objectModel = object->getFirstComponentOfType<Model>();
+        if (objectModel != nullptr) {
+            glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+            depthShader.setMat4("model", modelMat);
+            objectModel->drawGeometry();
+        }
+    }
+
+    renderObjects(depthShader, objects);
+    renderTransparentObjects(depthShader, objects);
 
     glCullFace(GL_BACK);
     glDisable(GL_CULL_FACE);
@@ -44,13 +54,14 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     frameData["lightSpaceMatrix"] = FrameData("lightSpaceMatrix", lightSpaceMatrix);
 }
 
-void ShadowRenderPass::renderObjects(std::vector<Object*>& objects) {
+void ShadowRenderPass::renderObjects(Shader& shader, std::vector<Object*>& objects) {
     for (Object* object : objects) {
+        shader.setMat4("model", object->transform.getGlobalModelMatrix());
         object->render();
     }
 }
 
-void ShadowRenderPass::renderTransparentObjects(std::vector<Object*>& objects) {
+void ShadowRenderPass::renderTransparentObjects(Shader& shader, std::vector<Object*>& objects) {
     // save previous GL states
     GLboolean powerWasEnabled;
     GLint prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha;
@@ -69,6 +80,7 @@ void ShadowRenderPass::renderTransparentObjects(std::vector<Object*>& objects) {
     glDepthMask(GL_FALSE);
 
     for (Object* object : objects) {
+        shader.setMat4("model", object->transform.getGlobalModelMatrix());
         object->render(true);
     }
 

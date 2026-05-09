@@ -12,6 +12,13 @@ void Model::draw(Shader& shader) {
 	}
 }
 
+void Model::drawGeometry() {
+    size_t n = meshes.size();
+    for (size_t i = 0; i < n; i++) {
+        meshes.at(i).drawGeometry();
+    }
+}
+
 void Model::loadModel(std::string const& path) {
     // read file via ASSIMP
     Assimp::Importer importer;
@@ -183,6 +190,8 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* material, aiTexture
 unsigned int Model::textureFromFile(const char* path, const std::string& directory, bool gamma) {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
+
+    std::cout << "Loading texture: " << filename << std::endl;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);

@@ -18,7 +18,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     glm::mat4 view = camera.getViewMatrix();
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("camPos", camera.getTransform()->getGlobalPosition());
-    pbrShader.setBool("useDiffuseShadow", true);
+    pbrShader.setBool("useDiffuseShadow", false);
     pbrShader.setBool("useCartoonShading", false);
 
     unsigned int irradianceMap = frameData.at("irradianceMap").buffer;

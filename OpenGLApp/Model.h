@@ -22,6 +22,7 @@ class Model : public Component {
 	public:
 		Model(const std::string& path, bool gamma = false);
 		void draw(Shader& shader);
+		void drawGeometry();
 
 		static unsigned int textureFromFile(const char* path, const std::string& directory, bool gamma = false);
 };

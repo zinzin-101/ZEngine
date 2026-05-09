@@ -23,6 +23,9 @@ class Transform {
 		glm::mat4 getGlobalModelMatrix() const;
 		void setParent(Transform* parent);
 		glm::vec3 position;
+
+		// Measured in degrees
 		glm::vec3 eulerRotation;
+
 		glm::vec3 scale;
 };
