@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "../render_passes/ShadowRenderPass.h"
+
 PBRRenderPipeline::PBRRenderPipeline():
 	pbrShader("../shaders/pbr/2.2.2.pbr.vs", "../shaders/pbr/2.2.2.pbr.fs"),
 	equirectangularToCubemapShader("../shaders/pbr/2.2.2.cubemap.vs", "../shaders/pbr/2.2.2.equirectangular_to_cubemap.fs"),
@@ -305,6 +307,8 @@ void PBRRenderPipeline::init() {
 
     addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO);
     addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO);
+
+    addRenderPass(new ShadowRenderPass());
 }
 
 void PBRRenderPipeline::renderCube() {

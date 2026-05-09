@@ -35,9 +35,10 @@ uniform sampler2D shadowMap;
 uniform bool useDiffuseShadow;
 
 // lights
-#define NUM_OF_LIGHTS 0
-uniform vec3 lightPositions[4];
-uniform vec3 lightColors[4];
+#define MAX_NUM_OF_LIGHTS 16
+uniform int numOfLights;
+uniform vec3 lightPositions[MAX_NUM_OF_LIGHTS];
+uniform vec3 lightColors[MAX_NUM_OF_LIGHTS];
 
 uniform vec3 camPos;
 
@@ -186,7 +187,7 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < NUM_OF_LIGHTS; ++i) 
+    for(int i = 0; i < numOfLights; ++i) 
     {
         // calculate per-light radiance
         vec3 L = normalize(lightPositions[i] - WorldPos);
