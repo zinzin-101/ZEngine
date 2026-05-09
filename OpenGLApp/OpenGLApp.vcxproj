@@ -154,6 +154,9 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPipeline.cpp" />
+    <ClCompile Include="render_passes\BasicRenderPass.cpp" />
+    <ClCompile Include="render_passes\TransparencyRenderPass.cpp" />
+    <ClCompile Include="render_pipelines\SimpleRenderPipeline.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SmokeSim.cpp" />
@@ -193,6 +196,9 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RenderPipeline.h" />
+    <ClInclude Include="render_passes\BasicRenderPass.h" />
+    <ClInclude Include="render_passes\TransparencyRenderPass.h" />
+    <ClInclude Include="render_pipelines\SimpleRenderPipeline.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SmokeSim.h" />

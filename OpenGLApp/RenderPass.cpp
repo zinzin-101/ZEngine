@@ -2,8 +2,20 @@
 #include <cassert>
 #include <glad/glad.h>
 
-FrameBuffer::FrameBuffer(std::string name, unsigned int fbo): fbo(fbo), name(name) {}
+FrameData::FrameData(std::string name, unsigned int buffer, FrameData::Type type): buffer(buffer), name(name), type(type) {}
 
-void RenderPass::addFrameBuffer(unsigned int fbo, std::string name, std::vector<FrameBuffer>& frameBuffers) {
-	frameBuffers.emplace_back(name, fbo);
+FrameData::~FrameData() {
+	switch (type) {
+		case Type::TEXTURE:
+			glDeleteTextures(1, &buffer);
+			break;
+
+		case Type::FRAME_BUFFER:
+			glDeleteFramebuffers(1, &buffer);
+			break;
+	}
+}
+
+void RenderPass::addFrameBuffer(unsigned int buffer, std::string name, FrameData::Type type, std::vector<FrameData>& frameData) {
+	frameData.emplace_back(name, buffer, type);
 }

@@ -3,12 +3,13 @@
 #include <shader.h>
 #include <GLFW/glfw3.h>
 #include "Engine.h"
+#include "EngineConfig.h"
 #include "Scene.h"
 #include "Object.h"
 
 using namespace RendererOperation;
 
-Renderer::Renderer() {}
+Renderer::Renderer(): currentRenderPipeline(nullptr) {}
 
 Renderer::~Renderer() {
 	clear();
@@ -22,6 +23,9 @@ bool Renderer::init() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	setCurrentRenderPipeline(getRenderPipeline(EngineConfig::INITIAL_RENDERING_PIPELINE));
+
 	return true;
 }
 
@@ -32,37 +36,7 @@ void Renderer::render() {
 	Scene* scene = Engine::getInstance()->getCurrentScene();
 	if (scene != nullptr) {
 		std::vector<Object*>& objects = scene->getObjects();
-		for (Object* object : objects) {
-			object->render();
-		}
-
-		// save previous GL states
-		GLboolean powerWasEnabled;
-		GLint prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha;
-		GLboolean prevDepthMask;
-
-		powerWasEnabled = glIsEnabled(GL_BLEND);
-		glGetIntegerv(GL_BLEND_SRC_RGB, &prevSrcRGB);
-		glGetIntegerv(GL_BLEND_DST_RGB, &prevDstRGB);
-		glGetIntegerv(GL_BLEND_SRC_ALPHA, &prevSrcAlpha);
-		glGetIntegerv(GL_BLEND_DST_ALPHA, &prevDstAlpha);
-		glGetBooleanv(GL_DEPTH_WRITEMASK, &prevDepthMask);
-
-		// apply GL states for transparency rendering
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDepthMask(GL_FALSE);
-
-		while (!transparencyRenderQueue.empty()) {
-			TransparentComponentRendering transparentComponent = transparencyRenderQueue.top();
-			transparencyRenderQueue.pop();
-			transparentComponent.component->render();
-		}
-
-		// restore previous GL states
-		powerWasEnabled ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
-		glBlendFuncSeparate(prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha);
-		glDepthMask(prevDepthMask);
+		currentRenderPipeline->render(objects);
 	}
 }
 
@@ -109,6 +83,32 @@ void Renderer::addToTransparencyQueue(Component* component) {
 	transparencyRenderQueue.emplace(component, glm::distance(cameraPos, componentPos));
 }
 
+void Renderer::clearTransparencyQueue() {
+	transparencyRenderQueue = std::priority_queue<
+		RendererOperation::TransparentComponentRendering,
+		std::vector<RendererOperation::TransparentComponentRendering>,
+		RendererOperation::TransparencyComparator
+	>();
+}
+
+std::priority_queue<
+	RendererOperation::TransparentComponentRendering,
+	std::vector<RendererOperation::TransparentComponentRendering>,
+	RendererOperation::TransparencyComparator
+>& Renderer::getTransparencyQueue() {
+	return transparencyRenderQueue;
+}
+
+void Renderer::setCurrentRenderPipeline(RenderPipeline* pipeline) {
+	if (currentRenderPipeline != nullptr) {
+		delete currentRenderPipeline;
+		currentRenderPipeline = nullptr;
+	}
+
+	currentRenderPipeline = pipeline;
+	currentRenderPipeline->init();
+}
+
 void Renderer::clear() {
 	clearMesh();
 	clearShader();
@@ -124,4 +124,15 @@ RendererOperation::TransparentComponentRendering::TransparentComponentRendering(
 
 bool RendererOperation::TransparencyComparator::operator()(const TransparentComponentRendering& c1, const TransparentComponentRendering& c2) {
 	return c1.distanceToCamera < c2.distanceToCamera;
+}
+
+#include "render_pipelines/SimpleRenderPipeline.h"
+
+RenderPipeline* Renderer::getRenderPipeline(RenderPipelines pipeline) {
+	switch (pipeline) {
+		case SIMPLE:
+			return new SimpleRenderPipeline();
+	}
+
+	return nullptr;
 }

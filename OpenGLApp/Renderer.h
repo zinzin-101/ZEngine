@@ -4,6 +4,7 @@
 #include <string>
 #include <shader.h>
 #include "MeshPrimitive.h"
+#include "RenderPipeline.h"
 
 class Shader;
 class Component;
@@ -17,6 +18,10 @@ namespace RendererOperation {
 
 	struct TransparencyComparator {
 		bool operator()(const TransparentComponentRendering& c1, const TransparentComponentRendering& c2);
+	};
+
+	enum RenderPipelines {
+		SIMPLE,
 	};
 }
 
@@ -34,6 +39,8 @@ class Renderer {
 			RendererOperation::TransparencyComparator
 		> transparencyRenderQueue;
 
+		RenderPipeline* currentRenderPipeline;
+
 	public:
 		Renderer();
 		~Renderer();
@@ -47,8 +54,18 @@ class Renderer {
 		Shader* getShader(std::string name);
 
 		void addToTransparencyQueue(Component* component);
+		void clearTransparencyQueue();
+		std::priority_queue<
+			RendererOperation::TransparentComponentRendering,
+			std::vector<RendererOperation::TransparentComponentRendering>,
+			RendererOperation::TransparencyComparator
+		>& getTransparencyQueue();
+
+		void setCurrentRenderPipeline(RenderPipeline* pipeline);
 
 		void clear();
 
 		void setViewPort(int x, int y, int width, int height);
+
+		static RenderPipeline* getRenderPipeline(RendererOperation::RenderPipelines pipeline);
 };

@@ -99,6 +99,15 @@
     <ClCompile Include="RenderPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render_pipelines\SimpleRenderPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render_passes\BasicRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render_passes\TransparencyRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.model_loading.fs" />
@@ -191,6 +200,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderPipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render_pipelines\SimpleRenderPipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render_passes\BasicRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render_passes\TransparencyRenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
