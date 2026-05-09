@@ -5,7 +5,7 @@
 
 using namespace RendererOperation;
 
-void BasicRenderPass::render(std::map<std::string, FrameData>& frameData, std::vector<Object*>& objects) {
+void BasicRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) {
 	for (Object* object : objects) {
 		object->render();
 	}

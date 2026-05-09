@@ -15,5 +15,11 @@ FrameData::~FrameData() {
 		case Type::FRAME_BUFFER:
 			glDeleteFramebuffers(1, &buffer);
 			break;
+		case Type::RENDER_BUFFER:
+			glDeleteRenderbuffers(1, &buffer);
+			break;
+		case Type::VAO:
+			glDeleteVertexArrays(1, &buffer);
+			break;
 	}
 }

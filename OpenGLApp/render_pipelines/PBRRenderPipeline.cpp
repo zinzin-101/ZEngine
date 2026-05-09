@@ -20,7 +20,24 @@ PBRRenderPipeline::PBRRenderPipeline():
     quadVAO(0), quadVBO(0)
 {}
 
+PBRRenderPipeline::~PBRRenderPipeline() {
+    glDeleteVertexArrays(1, &cubeVAO);
+    glDeleteBuffers(1, &cubeVBO);
+
+    glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &quadVBO);
+}
+
 void PBRRenderPipeline::init() {
+    addShader(&pbrShader, "pbrShader");
+    addShader(&equirectangularToCubemapShader, "equirectangularToCubemapShader");
+    addShader(&irradianceShader, "irradianceShader");
+    addShader(&prefilterShader, "prefilterShader");
+    addShader(&brdfShader, "brdfShader");
+    addShader(&backgroundShader, "backgroundShader");
+    addShader(&depthShader, "depthShader");
+    addShader(&debugDepthQuad, "debugDepthQuad");
+
 	pbrShader.use();
 	pbrShader.setInt("irradianceMap", 0);
 	pbrShader.setInt("prefilterMap", 1);
@@ -51,7 +68,7 @@ void PBRRenderPipeline::init() {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     addFrameData(captureFBO, "captureFBO", FrameData::Type::FRAME_BUFFER);
-    addFrameData(captureRBO, "captureRBO", FrameData::Type::FRAME_BUFFER);
+    addFrameData(captureRBO, "captureRBO", FrameData::Type::RENDER_BUFFER);
 
 	// pbr: load the HDR environment map
 	stbi_set_flip_vertically_on_load(true);
@@ -285,6 +302,9 @@ void PBRRenderPipeline::init() {
     int scrWidth, scrHeight;
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
+
+    addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO);
+    addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO);
 }
 
 void PBRRenderPipeline::renderCube() {
@@ -356,8 +376,7 @@ void PBRRenderPipeline::renderCube() {
     glBindVertexArray(0);
 }
 
-void PBRRenderPipeline::renderQuad()
-{
+void PBRRenderPipeline::renderQuad() {
     if (quadVAO == 0) {
         float quadVertices[] = {
             // positions        // texture Coords
@@ -378,6 +397,18 @@ void PBRRenderPipeline::renderQuad()
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     }
     glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+}
+
+void PBRRenderPipeline::renderCubeFromVAO(unsigned int vao) {
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+}
+
+void PBRRenderPipeline::renderQuadFromVAO(unsigned int vao) {
+    glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
 }

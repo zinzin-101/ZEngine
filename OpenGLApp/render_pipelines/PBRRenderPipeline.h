@@ -23,5 +23,9 @@ class PBRRenderPipeline : public RenderPipeline {
 
 	public:
         PBRRenderPipeline();
+        ~PBRRenderPipeline();
 		virtual void init() override;
+
+        static void renderCubeFromVAO(unsigned int vao);
+        static void renderQuadFromVAO(unsigned int vao);
 };
