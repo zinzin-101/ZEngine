@@ -82,7 +82,7 @@ void PBRRenderPipeline::init() {
 	// pbr: load the HDR environment map
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float* data = stbi_loadf(FileSystem::getPath("resources/textures/hdr/puresky.hdr").c_str(), &width, &height, &nrComponents, 0);
+	float* data = stbi_loadf(FileSystem::getPath("resources/textures/hdr/morning_2k.hdr").c_str(), &width, &height, &nrComponents, 0);
 
     unsigned int hdrTexture{};
 	if (data)
@@ -186,6 +186,7 @@ void PBRRenderPipeline::init() {
 
     glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
     for (unsigned int i = 0; i < 6; ++i)
     {
         irradianceShader.setMat4("view", captureViews[i]);

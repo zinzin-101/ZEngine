@@ -8,9 +8,18 @@
 using namespace RendererOperation;
 
 void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) {
+
 	Shader& pbrShader = *shaders.at("pbrShader");
     pbrShader.use();
-	pbrShader.setInt("numOfLights", 0);
+    pbrShader.setInt("numOfLights", 0);
+    pbrShader.setVec3("lightPositions[0]", glm::vec3(2.5f, 0.5f, 2.0f));
+    pbrShader.setVec3("lightPositions[1]", glm::vec3(2.5f, 0.5f, 2.0f));
+    pbrShader.setVec3("lightPositions[2]", glm::vec3(2.5f, 0.5f, 2.0f));
+    pbrShader.setVec3("lightPositions[3]", glm::vec3(2.5f, 0.5f, 2.0f));
+    pbrShader.setVec3("lightColors[0]", glm::vec3(2000.0f, 2000.0f, 2000.0f));
+    pbrShader.setVec3("lightColors[1]", glm::vec3(2000.0f, 2000.0f, 2000.0f));
+    pbrShader.setVec3("lightColors[2]", glm::vec3(2000.0f, 2000.0f, 2000.0f));
+    pbrShader.setVec3("lightColors[3]", glm::vec3(2000.0f, 2000.0f, 2000.0f));
 
     Camera& camera = *Engine::getInstance()->getCurrentScene()->getCurrentCamera();
 
@@ -18,7 +27,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     glm::mat4 view = camera.getViewMatrix();
     pbrShader.setMat4("view", view);
     pbrShader.setVec3("camPos", camera.getTransform()->getGlobalPosition());
-    pbrShader.setBool("useDiffuseShadow", false);
+    pbrShader.setBool("useDiffuseShadow", true);
     pbrShader.setBool("useCartoonShading", false);
 
     unsigned int irradianceMap = frameData.at("irradianceMap").buffer;

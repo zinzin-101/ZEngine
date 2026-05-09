@@ -7,20 +7,10 @@ in vec4 FragPosLightSpace;
 
 // material parameters
 uniform sampler2D albedoMap1;
-uniform sampler2D albedoMap2;
-uniform sampler2D albedoMap3;
 uniform sampler2D normalMap1;
-uniform sampler2D normalMap2;
-uniform sampler2D normalMap3;
 uniform sampler2D metallicMap1;
-uniform sampler2D metallicMap2;
-uniform sampler2D metallicMap3;
 uniform sampler2D roughnessMap1;
-uniform sampler2D roughnessMap2;
-uniform sampler2D roughnessMap3;
 uniform sampler2D aoMap1;
-uniform sampler2D aoMap2;
-uniform sampler2D aoMap3;
 
 uniform bool useMR;
 
@@ -164,19 +154,19 @@ vec3 GetSaturation(vec3 rgb, float adjustment) {
 }
 
 void main()
-{		
+{	
     // material properties
     vec3 albedo = pow(texture(albedoMap1, TexCoords).rgb, vec3(2.2));
     float metallic = texture(metallicMap1, TexCoords).r;
-    float roughness = useMR ? texture(metallicMap1, TexCoords).g : texture(roughnessMap1, TexCoords).r;
+    float roughness = useMR ? texture(metallicMap1, TexCoords).g : texture(roughnessMap1, TexCoords).g;
     float ao = texture(aoMap1, TexCoords).r;
        
     // input lighting data
     vec3 N = getNormalFromMap();
-    vec4 temp = envMapRotation * vec4(N, 1.0);
+    vec4 temp = envMapRotation * vec4(N, 0.0);
     N = normalize(temp.xyz);
     vec3 V = normalize(camPos - WorldPos);
-    temp = envMapRotation * vec4(V, 1.0);
+    temp = envMapRotation * vec4(V, 0.0);
     V = normalize(temp.xyz);
     vec3 R = reflect(-V, N); 
 
@@ -191,7 +181,7 @@ void main()
     {
         // calculate per-light radiance
         vec3 L = normalize(lightPositions[i] - WorldPos);
-        vec4 tempL = envMapRotation * vec4(L, 1.0);
+        vec4 tempL = envMapRotation * vec4(L, 0.0);
         L = normalize(tempL.xyz);
         vec3 H = normalize(V + L);
         float distance = length(lightPositions[i] - WorldPos);

@@ -53,7 +53,6 @@ void Mesh::draw(Shader& shader) {
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(STARTING_TEXTURE_GL_INDEX + i);
         std::string number;
         std::string name = textures[i].type;
         if (name == "texture_diffuse") {
@@ -96,6 +95,7 @@ void Mesh::draw(Shader& shader) {
             number = std::to_string(aoNrPBR++);
         }  
 
+        glActiveTexture(GL_TEXTURE0 + slot);
         glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), slot);
         glUniform1i(glGetUniformLocation(shader.ID, "useMR"), (metallicNrPBR != 1 && roughnessNrPBR == 1) ? 1 : 0);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);

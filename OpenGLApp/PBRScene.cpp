@@ -9,6 +9,7 @@
 #include "SmokeSim.h"
 #include "Model.h"
 #include "GLFW/glfw3.h"
+#include "stb_image.h"
 #include <iostream>
 #include <filesystem.h>
 
@@ -42,14 +43,15 @@ void PBRScene::setup() {
 	//smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
 	Object* scythe = createObject(glm::vec3());
+	stbi_set_flip_vertically_on_load(false);
 	scythe->addComponent<Model>(FileSystem::getPath("resources/objects/scythe/scene.gltf"));
 	scythe->transform.eulerRotation.x = -90.0f;
 	scythe->transform.scale = glm::vec3(0.0075f);
 
-	Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
-	chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));
-	chisa->transform.eulerRotation.x = -90.0f;
-	chisa->transform.scale = glm::vec3(0.0075f);
+	//Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
+	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));
+	//chisa->transform.eulerRotation.x = -90.0f;
+	//chisa->transform.scale = glm::vec3(0.0075f);
 }
 
 void PBRScene::processInput() {
