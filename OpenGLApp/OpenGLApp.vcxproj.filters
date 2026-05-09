@@ -108,6 +108,9 @@
     <ClCompile Include="render_passes\TransparencyRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render_pipelines\PBRRenderPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.model_loading.fs" />
@@ -181,9 +184,6 @@
     <ClInclude Include="SmokeSim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeShader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="SmokeSimConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -209,6 +209,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="render_passes\TransparencyRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render_pipelines\PBRRenderPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

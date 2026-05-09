@@ -48,16 +48,23 @@ void Object::postUpdate() {
 	}
 }
 
-void Object::render() {
+void Object::render(bool isRenderingTransparent) {
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
 	for (Component* component : components) {
 		if (component->isActive) {
-			if (component->getIsTransparent()) {
-				renderer->addToTransparencyQueue(component);
-			}
-			else {
-				component->render();
+			switch (isRenderingTransparent) {
+				case true:
+					if (component->getIsTransparent()) {
+						renderer->addToTransparencyQueue(component);
+					}
+					break;
+
+				case false:
+					if (!component->getIsTransparent()) {
+						component->render();
+					}
+					break;
 			}
 		}
 	}

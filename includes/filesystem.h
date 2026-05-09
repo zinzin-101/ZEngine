@@ -4,7 +4,7 @@
 #include <string>
 #include <cstdlib>
 
-const char* logl_root = "..";
+static const char* logl_root = "..";
 
 class FileSystem
 {

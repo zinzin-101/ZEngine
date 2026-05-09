@@ -1,10 +1,11 @@
 #include "BasicRenderPass.h"
 #include "../Engine.h"
+#include "../Object.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
 
-void BasicRenderPass::render(std::vector<FrameData>& frameData, std::vector<Object*>& objects) {
+void BasicRenderPass::render(std::map<std::string, FrameData>& frameData, std::vector<Object*>& objects) {
 	for (Object* object : objects) {
 		object->render();
 	}

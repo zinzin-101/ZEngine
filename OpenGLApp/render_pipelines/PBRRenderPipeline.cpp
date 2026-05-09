@@ -58,7 +58,7 @@ void PBRRenderPipeline::init() {
 	int width, height, nrComponents;
 	float* data = stbi_loadf(FileSystem::getPath("resources/textures/hdr/newport_loft.hdr").c_str(), &width, &height, &nrComponents, 0);
 
-	unsigned int hdrTexture = 0;
+    unsigned int hdrTexture{};
 	if (data)
 	{
 		glGenTextures(1, &hdrTexture);

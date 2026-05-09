@@ -1,10 +1,11 @@
 #include "TransparencyRenderPass.h"
 #include "../Engine.h"
+#include "../Object.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
 
-void TransparencyRenderPass::render(std::vector<FrameData>& frameData, std::vector<Object*>& objects) {
+void TransparencyRenderPass::render(std::map<std::string, FrameData>& frameData, std::vector<Object*>& objects) {
 	// save previous GL states
 	GLboolean powerWasEnabled;
 	GLint prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha;
@@ -21,6 +22,10 @@ void TransparencyRenderPass::render(std::vector<FrameData>& frameData, std::vect
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
+
+	for (Object* object : objects) {
+		object->render(true);
+	}
 
 	auto& transparencyRenderQueue = Engine::getInstance()->getRenderer()->getTransparencyQueue();
 

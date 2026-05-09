@@ -2,6 +2,8 @@
 #include <cassert>
 #include <glad/glad.h>
 
+FrameData::FrameData() : buffer(0), name(""), type(Type::NONE) {}
+
 FrameData::FrameData(std::string name, unsigned int buffer, FrameData::Type type): buffer(buffer), name(name), type(type) {}
 
 FrameData::~FrameData() {

@@ -26,7 +26,7 @@ class Object {
 		virtual void preUpdate(); // for updating component
 		virtual void update(); // for updating component
 		virtual void postUpdate(); // for updating component
-		virtual void render(); // for component that can render
+		virtual void render(bool isRenderingTransparent = false); // for component that can render
 		void setCurrentScene(Scene* scene);
 		void addComponent(Component* component);
 
