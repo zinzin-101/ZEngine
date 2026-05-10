@@ -11,8 +11,6 @@ void PrimitiveMeshRenderer::render() {
 }
 
 void PrimitiveMeshRenderer::render(Shader* shader) {
-	if (shader != this->shader) return;
-
 	shader->use();
 	Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
 	glm::vec3 position = transform->getGlobalPosition();
