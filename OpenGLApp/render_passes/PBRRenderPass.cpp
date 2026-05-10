@@ -43,6 +43,8 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
+    std::cout << "brdf render: " << brdfLUTTexture << std::endl;
+
     // bind shadow map
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, depthMap);

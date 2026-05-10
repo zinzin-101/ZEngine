@@ -61,13 +61,13 @@ void RenderPipeline::addShader(Shader* shader, std::string name) {
 	shaders[name] = shader;
 }
 
-void RenderPipeline::addFrameData(unsigned int buffer, std::string name, FrameData::Type type, bool shouldSelfClean) {
+void RenderPipeline::addFrameData(unsigned int buffer, std::string name, FrameData::Type type) {
 	if (frameData.contains(name)) {
 		std::cout << "Frame data with the same name already exists" << std::endl;
 		return;
 	}
 
-	frameData[name] = FrameData(name, buffer, type, shouldSelfClean);
+	frameData[name] = FrameData(name, buffer, type);
 }
 
 void RenderPipeline::addFrameData(glm::mat4 matrix, std::string name) {

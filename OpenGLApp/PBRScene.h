@@ -2,6 +2,9 @@
 #include "Scene.h"
 
 class PBRScene : public Scene {
+	private:
+		Object* root;
+
 	protected:
 		virtual void loadMeshData() override;
 		virtual void setup() override;

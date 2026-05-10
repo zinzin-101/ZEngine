@@ -22,7 +22,7 @@ struct FrameData {
 	Type type;
 
 	FrameData();
-	FrameData(std::string name, unsigned int buffer, Type type, bool shouldSelfClean = true);
+	FrameData(std::string name, unsigned int buffer, Type type);
 	FrameData(std::string name, glm::mat4 matrix);
 };
 

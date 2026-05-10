@@ -4,7 +4,7 @@
 
 FrameData::FrameData() : buffer(0), matrix(1.0f), name(""), type(Type::NONE) {}
 
-FrameData::FrameData(std::string name, unsigned int buffer, FrameData::Type type, bool shouldSelfClean):
+FrameData::FrameData(std::string name, unsigned int buffer, FrameData::Type type):
 	buffer(buffer), matrix(1.0f), name(name), type(type) 
 {}
 

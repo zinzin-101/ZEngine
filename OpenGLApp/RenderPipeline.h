@@ -13,7 +13,7 @@ class RenderPipeline {
 
 		void addRenderPass(RenderPass* renderPass);
 		void addShader(Shader* shader, std::string name);
-		void addFrameData(unsigned int buffer, std::string name, FrameData::Type type, bool shouldSelfClean = true);
+		void addFrameData(unsigned int buffer, std::string name, FrameData::Type type);
 		void addFrameData(glm::mat4 matrix, std::string name);
 
 		virtual void init(); // set render passes in individual pipeline class

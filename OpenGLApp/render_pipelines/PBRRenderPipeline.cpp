@@ -25,13 +25,7 @@ PBRRenderPipeline::PBRRenderPipeline():
     quadVAO(0), quadVBO(0)
 {}
 
-PBRRenderPipeline::~PBRRenderPipeline() {
-    glDeleteVertexArrays(1, &cubeVAO);
-    glDeleteBuffers(1, &cubeVBO);
-
-    glDeleteVertexArrays(1, &quadVAO);
-    glDeleteBuffers(1, &quadVBO);
-}
+PBRRenderPipeline::~PBRRenderPipeline() {}
 
 void PBRRenderPipeline::init() {
     glEnable(GL_DEPTH_TEST);
@@ -82,7 +76,7 @@ void PBRRenderPipeline::init() {
 	// pbr: load the HDR environment map
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float* data = stbi_loadf(FileSystem::getPath("resources/textures/hdr/morning_2k.hdr").c_str(), &width, &height, &nrComponents, 0);
+	float* data = stbi_loadf(FileSystem::getPath("resources/textures/hdr/puresky_2k.hdr").c_str(), &width, &height, &nrComponents, 0);
 
     unsigned int hdrTexture{};
 	if (data)
@@ -272,6 +266,7 @@ void PBRRenderPipeline::init() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    std::cout << "brdf init: " << brdfLUTTexture << std::endl;
     addFrameData(brdfLUTTexture, "brdfLUTTexture", FrameData::Type::TEXTURE);
 
     // shadow map: configure FBO
@@ -314,8 +309,8 @@ void PBRRenderPipeline::init() {
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 
-    addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO, false);
-    addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO, false);
+    addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO);
+    addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO);
 
     addRenderPass(new ShadowRenderPass());
     addRenderPass(new PBRRenderPass());
