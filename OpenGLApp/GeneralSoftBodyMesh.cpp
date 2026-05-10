@@ -456,5 +456,5 @@ void GeneralSoftBodyMesh::render(Shader* shader) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
      
     glCullFace(GL_BACK);
-    //glDisable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
 }
