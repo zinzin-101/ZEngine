@@ -78,9 +78,9 @@ void PBRScene::setup() {
 	softbodymesh->groundHeight = 0.0f;
 
 	Object* softbody1 = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
-	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody->transform.scale = glm::vec3(1.0f);
-	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody1->transform.scale = glm::vec3(1.0f);
+	softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	softbodymesh->groundHeight = 0.0f;
 
