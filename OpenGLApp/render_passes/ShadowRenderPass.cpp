@@ -77,7 +77,7 @@ void ShadowRenderPass::renderTransparentObjects(Shader& shader, std::vector<Obje
     // apply GL states for transparency rendering
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDepthMask(GL_FALSE);
+    glDepthMask(GL_TRUE);
 
     for (Object* object : objects) {
         shader.setMat4("model", object->transform.getGlobalModelMatrix());
