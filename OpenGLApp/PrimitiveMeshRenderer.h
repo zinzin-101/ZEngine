@@ -10,4 +10,5 @@ class PrimitiveMeshRenderer : public Component {
 		glm::vec3 color;
 		PrimitiveMeshRenderer();
 		virtual void render() override;
+		virtual void render(Shader* shader) override;
 };

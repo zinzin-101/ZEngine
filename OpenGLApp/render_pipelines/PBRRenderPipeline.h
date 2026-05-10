@@ -27,6 +27,8 @@ class PBRRenderPipeline : public RenderPipeline {
 
         bool useDepthOfField;
 
+        void loadIBL();
+
     protected:
 		virtual void init() override;
 

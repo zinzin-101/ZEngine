@@ -1,11 +1,16 @@
 #include "PrimitiveMeshRenderer.h"
 #include "Engine.h"
+#include "render_pipelines/PBRRenderPipeline.h"
 
 PrimitiveMeshRenderer::PrimitiveMeshRenderer(): meshPrimitive(nullptr), shader(nullptr) {
 	color = glm::vec3(1.0f);
 }
 
 void PrimitiveMeshRenderer::render() {
+	render(shader);
+}
+
+void PrimitiveMeshRenderer::render(Shader* shader) {
 	shader->use();
 	Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
 	glm::vec3 position = transform->getGlobalPosition();
@@ -32,6 +37,11 @@ void PrimitiveMeshRenderer::render() {
 	shader->setMat4("projection", projection);
 	shader->setVec3("color", color);
 	shader->setVec3("camPos", camera->getTransform()->getGlobalPosition());
+
+	PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+	if (pbrPipeline != nullptr) {
+		shader->setBool("useDepthOfField", pbrPipeline->isUsingDepthOfField());
+	}
 
 	meshPrimitive->render();
 }

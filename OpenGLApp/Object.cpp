@@ -70,6 +70,16 @@ void Object::render(bool isRenderingTransparent) {
 	}
 }
 
+void Object::render(Shader* shader) {
+	Renderer* renderer = Engine::getInstance()->getRenderer();
+
+	for (Component* component : components) {
+		if (component->isActive) {
+			component->render(shader);
+		}
+	}
+}
+
 void Object::setCurrentScene(Scene* scene) {
 	currentScene = scene;
 }

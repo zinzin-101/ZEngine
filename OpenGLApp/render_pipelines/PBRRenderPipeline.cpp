@@ -32,164 +32,75 @@ PBRRenderPipeline::PBRRenderPipeline() :
 
 PBRRenderPipeline::~PBRRenderPipeline() {}
 
-void PBRRenderPipeline::setEnvironmentMap(std::string path) {
-    envMapPath = path;
+void PBRRenderPipeline::loadIBL() {
+    // pbr: setup framebuffer
+    unsigned int captureFBO = 0;
+    unsigned int captureRBO = 0;
+    glGenFramebuffers(1, &captureFBO);
+    glGenRenderbuffers(1, &captureRBO);
 
-    for (RenderPass* pass : renderPasses) {
-        delete pass;
-    }
-    renderPasses.clear();
-
-    for (const std::pair<std::string, FrameData>& nameToFrameData : frameData) {
-        FrameData data = nameToFrameData.second;
-        FrameData::Type type = data.type;
-        unsigned int buffer = data.buffer;
-        switch (type) {
-        case FrameData::Type::TEXTURE:
-            glDeleteTextures(1, &buffer);
-            break;
-
-        case FrameData::Type::FRAME_BUFFER:
-            glDeleteFramebuffers(1, &buffer);
-            break;
-
-        case FrameData::Type::RENDER_BUFFER:
-            glDeleteRenderbuffers(1, &buffer);
-            break;
-
-        // do not delete vao since it can be reused
-        //case FrameData::Type::VAO:
-        //    glDeleteVertexArrays(1, &buffer);
-        //    break;
-        }
-    }
-
-    frameData.clear();
-    shaders.clear();
-
-    init();
-}
-
-void PBRRenderPipeline::setUseDepthOfField(bool value) {
-    useDepthOfField = value;
-    FrameData dofData = FrameData();
-    dofData.buffer = (unsigned int)useDepthOfField;
-    frameData["useDepthOfField"] = dofData;
-}
-
-bool PBRRenderPipeline::isUsingDepthOfField() const {
-    return useDepthOfField;
-}
-
-void PBRRenderPipeline::init() {
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-    addShader(&pbrShader, "pbrShader");
-    addShader(&equirectangularToCubemapShader, "equirectangularToCubemapShader");
-    addShader(&irradianceShader, "irradianceShader");
-    addShader(&prefilterShader, "prefilterShader");
-    addShader(&brdfShader, "brdfShader");
-    addShader(&backgroundShader, "backgroundShader");
-    addShader(&depthShader, "depthShader");
-    addShader(&debugDepthQuad, "debugDepthQuad");
-    addShader(&blurShader, "blurShader");
-    addShader(&blurFinalShader, "blurFinalShader");
-
-	pbrShader.use();
-	pbrShader.setInt("irradianceMap", 0);
-	pbrShader.setInt("prefilterMap", 1);
-	pbrShader.setInt("brdfLUT", 2);
-	pbrShader.setInt("albedoMap1", 4);
-	pbrShader.setInt("normalMap1", 5);
-	pbrShader.setInt("metallicMap1", 6);
-	pbrShader.setInt("roughnessMap1", 7);
-	pbrShader.setInt("aoMap1", 8);
-
-	// shadow map shader
-	pbrShader.setInt("shadowMap", 3);
-	debugDepthQuad.use();
-	debugDepthQuad.setInt("depthMap", 3);
-
-	backgroundShader.use();
-	backgroundShader.setInt("environmentMap", 0);
-
-    blurFinalShader.use();
-    blurFinalShader.setInt("scene", 0);
-    blurFinalShader.setInt("blur", 1);
-
-    blurShader.use();
-    blurShader.setInt("image", 0);
-
-	// pbr: setup framebuffer
-	unsigned int captureFBO = 0;
-	unsigned int captureRBO = 0;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     addFrameData(captureFBO, "captureFBO", FrameData::Type::FRAME_BUFFER);
     addFrameData(captureRBO, "captureRBO", FrameData::Type::RENDER_BUFFER);
 
-	// pbr: load the HDR environment map
-	stbi_set_flip_vertically_on_load(true);
-	int width, height, nrComponents;
-	float* data = stbi_loadf(FileSystem::getPath(envMapPath).c_str(), &width, &height, &nrComponents, 0);
+    // pbr: load the HDR environment map
+    stbi_set_flip_vertically_on_load(true);
+    int width, height, nrComponents;
+    float* data = stbi_loadf(FileSystem::getPath(envMapPath).c_str(), &width, &height, &nrComponents, 0);
 
     unsigned int hdrTexture{};
-	if (data)
-	{
-		glGenTextures(1, &hdrTexture);
-		glBindTexture(GL_TEXTURE_2D, hdrTexture);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); // note how we specify the texture's data value to be float
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGB, GL_FLOAT, data);
+    if (data)
+    {
+        glGenTextures(1, &hdrTexture);
+        glBindTexture(GL_TEXTURE_2D, hdrTexture);
+        //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); // note how we specify the texture's data value to be float
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGB, GL_FLOAT, data);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Failed to load HDR image." << std::endl;
-	}
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "Failed to load HDR image." << std::endl;
+    }
 
     addFrameData(hdrTexture, "hdrTexture", FrameData::Type::TEXTURE);
 
-	// pbr: setup cubemap to render to and attach to framebuffer
-	unsigned int envCubemap;
-	glGenTextures(1, &envCubemap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // enable pre-filter mipmap sampling (combatting visible dots artifact)
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // pbr: setup cubemap to render to and attach to framebuffer
+    unsigned int envCubemap;
+    glGenTextures(1, &envCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // enable pre-filter mipmap sampling (combatting visible dots artifact)
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     addFrameData(envCubemap, "envCubemap", FrameData::Type::TEXTURE);
 
-	// pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
-	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-	glm::mat4 captureViews[] =
-	{
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-	};
+    // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
+    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+    glm::mat4 captureViews[] =
+    {
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+    };
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     equirectangularToCubemapShader.use();
@@ -330,6 +241,94 @@ void PBRRenderPipeline::init() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     addFrameData(brdfLUTTexture, "brdfLUTTexture", FrameData::Type::TEXTURE);
+}
+
+void PBRRenderPipeline::setEnvironmentMap(std::string path) {
+    envMapPath = path;
+
+    // delete IBL textures
+    for (const std::string& key : { "hdrTexture", "envCubemap", "irradianceMap", "prefilterMap", "brdfLUTTexture" }) {
+        auto it = frameData.find(key);
+        if (it != frameData.end()) {
+            glDeleteTextures(1, &it->second.buffer);
+            frameData.erase(it);
+        }
+    }
+
+    auto deleteFBO = [&](const std::string& key) {
+        auto it = frameData.find(key);
+        if (it != frameData.end()) {
+            glDeleteFramebuffers(1, &it->second.buffer);
+            frameData.erase(it);
+        }
+    };
+
+    auto deleteRBO = [&](const std::string& key) {
+        auto it = frameData.find(key);
+        if (it != frameData.end()) {
+            glDeleteRenderbuffers(1, &it->second.buffer);
+            frameData.erase(it);
+        }
+    };
+    deleteFBO("captureFBO");
+    deleteRBO("captureRBO");
+
+    loadIBL();
+}
+
+void PBRRenderPipeline::setUseDepthOfField(bool value) {
+    useDepthOfField = value;
+    FrameData dofData = FrameData();
+    dofData.buffer = (unsigned int)useDepthOfField;
+    frameData["useDepthOfField"] = dofData;
+}
+
+bool PBRRenderPipeline::isUsingDepthOfField() const {
+    return useDepthOfField;
+}
+
+void PBRRenderPipeline::init() {
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    addShader(&pbrShader, "pbrShader");
+    addShader(&equirectangularToCubemapShader, "equirectangularToCubemapShader");
+    addShader(&irradianceShader, "irradianceShader");
+    addShader(&prefilterShader, "prefilterShader");
+    addShader(&brdfShader, "brdfShader");
+    addShader(&backgroundShader, "backgroundShader");
+    addShader(&depthShader, "depthShader");
+    addShader(&debugDepthQuad, "debugDepthQuad");
+    addShader(&blurShader, "blurShader");
+    addShader(&blurFinalShader, "blurFinalShader");
+
+	pbrShader.use();
+	pbrShader.setInt("irradianceMap", 0);
+	pbrShader.setInt("prefilterMap", 1);
+	pbrShader.setInt("brdfLUT", 2);
+	pbrShader.setInt("albedoMap1", 4);
+	pbrShader.setInt("normalMap1", 5);
+	pbrShader.setInt("metallicMap1", 6);
+	pbrShader.setInt("roughnessMap1", 7);
+	pbrShader.setInt("aoMap1", 8);
+
+	// shadow map shader
+	pbrShader.setInt("shadowMap", 3);
+	debugDepthQuad.use();
+	debugDepthQuad.setInt("depthMap", 3);
+
+	backgroundShader.use();
+	backgroundShader.setInt("environmentMap", 0);
+
+    blurFinalShader.use();
+    blurFinalShader.setInt("scene", 0);
+    blurFinalShader.setInt("blur", 1);
+
+    blurShader.use();
+    blurShader.setInt("image", 0);
+
+    loadIBL();
 
     // shadow map: configure FBO
     const unsigned int SHADOW_WIDTH = 4096;
