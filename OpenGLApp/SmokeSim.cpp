@@ -2,6 +2,7 @@
 #include "SmokeSimConfig.h"
 #include "Engine.h"
 #include <glad/glad.h>
+#include "render_pipelines/PBRRenderPipeline.h"
 
 bool SmokeSimOperation::isNear(float a, float b) {
 	return std::abs(a - b) < 1e-9;
@@ -499,6 +500,12 @@ void SmokeSim::renderVolume(glm::mat4 projection, glm::mat4 view, glm::mat4 mode
 	volumeShader.use();
 	volumeShader.setMat4("mvp", mvp);
 	volumeShader.setInt("volume", 0);
+
+	PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+	if (pbrPipeline != nullptr) {
+		volumeShader.setBool("useDepthOfField", pbrPipeline->isUsingDepthOfField());
+	}
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_3D, smokeTexture);
 

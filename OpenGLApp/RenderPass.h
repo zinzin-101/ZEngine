@@ -28,5 +28,5 @@ struct FrameData {
 
 class RenderPass {
 	public:
-		virtual void render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) = 0;
+		virtual void render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) = 0;
 };

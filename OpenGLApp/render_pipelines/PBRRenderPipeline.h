@@ -12,6 +12,8 @@ class PBRRenderPipeline : public RenderPipeline {
         Shader backgroundShader;
         Shader depthShader;
         Shader debugDepthQuad;
+        Shader blurShader;
+        Shader blurFinalShader;
 
         unsigned int cubeVAO;
         unsigned int cubeVBO;
@@ -23,6 +25,8 @@ class PBRRenderPipeline : public RenderPipeline {
 
         std::string envMapPath;
 
+        bool useDepthOfField;
+
     protected:
 		virtual void init() override;
 
@@ -31,6 +35,9 @@ class PBRRenderPipeline : public RenderPipeline {
         ~PBRRenderPipeline();
 
         void setEnvironmentMap(std::string path);
+        void setUseDepthOfField(bool value);
+
+        bool isUsingDepthOfField() const;
 
         static void renderCubeFromVAO(unsigned int vao);
         static void renderQuadFromVAO(unsigned int vao);

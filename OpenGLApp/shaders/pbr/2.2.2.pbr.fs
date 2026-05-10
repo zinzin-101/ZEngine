@@ -1,5 +1,7 @@
 #version 330 core
 out vec4 FragColor;
+out vec4 BlurColor;
+
 in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
@@ -33,6 +35,8 @@ uniform vec3 lightColors[MAX_NUM_OF_LIGHTS];
 uniform vec3 camPos;
 
 uniform bool useCartoonShading;
+
+uniform bool useDepthOfField;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -151,6 +155,14 @@ vec3 GetSaturation(vec3 rgb, float adjustment) {
     vec3 intensity = vec3(dot(rgb, W));
     // 0 -> greyscale, 1 -> original color
     return mix(intensity, rgb, adjustment);
+}
+
+float LinearizeDepth(float depth) {
+    float far_plane = 1.0;
+    float near_plane = 0.01;
+
+    float z = depth * 2.0 - 1.0; // Back to NDC 
+    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
 }
 
 void main()
@@ -272,6 +284,19 @@ void main()
     //float shadow = ShadowCalculation(FragPosLightSpace);
     //color *= (1.0 - shadow);
     FragColor = vec4(color, 1.0);
+
+    if (!useDepthOfField) return;
+
+    float depth = LinearizeDepth(gl_FragCoord.z);
+    BlurColor = vec4(color, 1.0);
+    if (depth <= 0.5){
+        BlurColor = vec4(vec3(0.0), 1.0);
+    }
+    else{
+        FragColor = vec4(vec3(0.0), 1.0);
+    }
+
+
     //FragColor = vec4(vec3(ShadowCalculation(FragPosLightSpace)),1.0);
     //float shadow = 1.0 - ShadowCalculation(FragPosLightSpace);
     //FragColor = vec4(vec3(shadow), 1.0);

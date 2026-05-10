@@ -7,7 +7,7 @@
 
 using namespace RendererOperation;
 
-void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) {
+void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) {
 
 	Shader& pbrShader = *shaders.at("pbrShader");
     pbrShader.use();
@@ -47,9 +47,18 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, depthMap);
 
+    bool useDepthOfField = (bool)frameData.at("useDepthOfField").buffer;
+
+    // bind frame buffer
+    if (useDepthOfField) {
+        unsigned int sceneFBO = frameData.at("sceneFBO").buffer;
+        glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
     glm::mat4 lightSpaceMatrix = frameData.at("lightSpaceMatrix").matrix;
     pbrShader.setMat4("envMapRotation", glm::mat4(1.0f));
     pbrShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    pbrShader.setBool("useDepthOfField", useDepthOfField);
     for (Object* object : objects) {
         Model* objectModel = object->getFirstComponentOfType<Model>();
         if (objectModel != nullptr) {

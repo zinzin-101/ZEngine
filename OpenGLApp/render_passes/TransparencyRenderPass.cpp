@@ -5,7 +5,7 @@
 
 using namespace RendererOperation;
 
-void TransparencyRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) {
+void TransparencyRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) {
 	// save previous GL states
 	GLboolean powerWasEnabled;
 	GLint prevSrcRGB, prevDstRGB, prevSrcAlpha, prevDstAlpha;

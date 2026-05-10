@@ -156,6 +156,7 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPipeline.cpp" />
     <ClCompile Include="render_passes\BasicRenderPass.cpp" />
+    <ClCompile Include="render_passes\BlurRenderPass.cpp" />
     <ClCompile Include="render_passes\PBRRenderPass.cpp" />
     <ClCompile Include="render_passes\ShadowRenderPass.cpp" />
     <ClCompile Include="render_passes\TransparencyRenderPass.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="RenderPipeline.h" />
     <ClInclude Include="render_passes\BasicRenderPass.h" />
+    <ClInclude Include="render_passes\BlurRenderPass.h" />
     <ClInclude Include="render_passes\PBRRenderPass.h" />
     <ClInclude Include="render_passes\ShadowRenderPass.h" />
     <ClInclude Include="render_passes\TransparencyRenderPass.h" />

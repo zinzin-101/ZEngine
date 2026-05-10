@@ -11,19 +11,23 @@
 #include "../render_passes/PBRRenderPass.h"
 #include "../render_passes/BasicRenderPass.h"
 #include "../render_passes/TransparencyRenderPass.h"
+#include "../render_passes/BlurRenderPass.h"
 
-PBRRenderPipeline::PBRRenderPipeline():
-	pbrShader("shaders/pbr/2.2.2.pbr.vs", "shaders/pbr/2.2.2.pbr.fs"),
-	equirectangularToCubemapShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.equirectangular_to_cubemap.fs"),
-	irradianceShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.irradiance_convolution.fs"),
-	prefilterShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.prefilter.fs"),
-	brdfShader("shaders/pbr/2.2.2.brdf.vs", "shaders/pbr/2.2.2.brdf.fs"),
-	backgroundShader("shaders/pbr/2.2.2.background.vs", "shaders/pbr/2.2.2.background.fs"),
-	depthShader("shaders/pbr/3.1.3.shadow_mapping_depth.vs", "shaders/pbr/3.1.3.shadow_mapping_depth.fs"),
-	debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"),
+PBRRenderPipeline::PBRRenderPipeline() :
+    pbrShader("shaders/pbr/2.2.2.pbr.vs", "shaders/pbr/2.2.2.pbr.fs"),
+    equirectangularToCubemapShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.equirectangular_to_cubemap.fs"),
+    irradianceShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.irradiance_convolution.fs"),
+    prefilterShader("shaders/pbr/2.2.2.cubemap.vs", "shaders/pbr/2.2.2.prefilter.fs"),
+    brdfShader("shaders/pbr/2.2.2.brdf.vs", "shaders/pbr/2.2.2.brdf.fs"),
+    backgroundShader("shaders/pbr/2.2.2.background.vs", "shaders/pbr/2.2.2.background.fs"),
+    depthShader("shaders/pbr/3.1.3.shadow_mapping_depth.vs", "shaders/pbr/3.1.3.shadow_mapping_depth.fs"),
+    debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"), 
+    blurShader("shaders/7.blur.vs", "shaders/7.blur.fs"),
+    blurFinalShader("shaders/blur_final.vs", "shaders/blur_final.fs"),
     cubeVAO(0), cubeVBO(0),
     quadVAO(0), quadVBO(0),
-    envMapPath("resources/textures/hdr/puresky_2k.hdr")
+    envMapPath("resources/textures/hdr/puresky_2k.hdr"),
+    useDepthOfField(true)
 {}
 
 PBRRenderPipeline::~PBRRenderPipeline() {}
@@ -66,6 +70,17 @@ void PBRRenderPipeline::setEnvironmentMap(std::string path) {
     init();
 }
 
+void PBRRenderPipeline::setUseDepthOfField(bool value) {
+    useDepthOfField = value;
+    FrameData dofData = FrameData();
+    dofData.buffer = (unsigned int)useDepthOfField;
+    frameData["useDepthOfField"] = dofData;
+}
+
+bool PBRRenderPipeline::isUsingDepthOfField() const {
+    return useDepthOfField;
+}
+
 void PBRRenderPipeline::init() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -79,6 +94,8 @@ void PBRRenderPipeline::init() {
     addShader(&backgroundShader, "backgroundShader");
     addShader(&depthShader, "depthShader");
     addShader(&debugDepthQuad, "debugDepthQuad");
+    addShader(&blurShader, "blurShader");
+    addShader(&blurFinalShader, "blurFinalShader");
 
 	pbrShader.use();
 	pbrShader.setInt("irradianceMap", 0);
@@ -97,6 +114,13 @@ void PBRRenderPipeline::init() {
 
 	backgroundShader.use();
 	backgroundShader.setInt("environmentMap", 0);
+
+    blurFinalShader.use();
+    blurFinalShader.setInt("scene", 0);
+    blurFinalShader.setInt("blur", 1);
+
+    blurShader.use();
+    blurShader.setInt("image", 0);
 
 	// pbr: setup framebuffer
 	unsigned int captureFBO = 0;
@@ -347,13 +371,79 @@ void PBRRenderPipeline::init() {
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 
+    unsigned int sceneFBO;
+    glGenFramebuffers(1, &sceneFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+    unsigned int sceneColorBuffers[2];
+    glGenTextures(2, sceneColorBuffers);
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, sceneColorBuffers[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // attach texture to framebuffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, sceneColorBuffers[i], 0);
+    }
+
+    addFrameData(sceneFBO, "sceneFBO", FrameData::Type::FRAME_BUFFER);
+    addFrameData(sceneColorBuffers[0], "sceneColorBuffers0", FrameData::Type::TEXTURE);
+    addFrameData(sceneColorBuffers[1], "sceneColorBuffers1", FrameData::Type::TEXTURE);
+
+    // render buffer for depth of field
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, scrWidth, scrHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, attachments);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Framebuffer is incomplete" << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    addFrameData(rboDepth, "rboDepth", FrameData::Type::RENDER_BUFFER);
+
+    // ping-pong frame buffer for blurring
+    unsigned int pingpongFBOs[2];
+    unsigned int pingpongColorBuffers[2];
+    glGenFramebuffers(2, pingpongFBOs);
+    glGenTextures(2, pingpongColorBuffers);
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs[i]);
+        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // attach to frame buffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers[i], 0);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "Framebuffer is incomplete" << std::endl;
+        }
+    }
+    addFrameData(pingpongFBOs[0], "pingpongFBO0", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongFBOs[1], "pingpongFBO1", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongColorBuffers[0], "pingpongColorBuffers0", FrameData::Type::TEXTURE);
+    addFrameData(pingpongColorBuffers[1], "pingpongColorBuffers1", FrameData::Type::TEXTURE);
+
     addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO);
     addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO);
+
+    FrameData dofData = FrameData();
+    dofData.buffer = (unsigned int)useDepthOfField;
+    frameData["useDepthOfField"] = dofData;
 
     addRenderPass(new ShadowRenderPass());
     addRenderPass(new PBRRenderPass());
     addRenderPass(new BasicRenderPass());
     addRenderPass(new TransparencyRenderPass());
+    addRenderPass(new BlurRenderPass());
 }
 
 void PBRRenderPipeline::renderCube() {

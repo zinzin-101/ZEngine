@@ -6,7 +6,7 @@
 
 using namespace RendererOperation;
 
-void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*> shaders, std::vector<Object*>& objects) {
+void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) {
 	glm::vec3 lightPosition = glm::vec3(2.5f, 0.5f, 2.0f); // change later
     const unsigned int SHADOW_WIDTH = 4096;
     const unsigned int SHADOW_HEIGHT = 4096;

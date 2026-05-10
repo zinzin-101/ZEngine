@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <algorithm>
 #include <map>
+#include "render_pipelines/PBRRenderPipeline.h"
 
 using namespace SoftBodyVectorOperation;
 
@@ -435,6 +436,11 @@ void GeneralSoftBodyMesh::render() {
 
     if (renderAsWireframe) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+    if (pbrPipeline != nullptr) {
+        shader->setBool("useDepthOfField", pbrPipeline->isUsingDepthOfField());
     }
 
     glEnable(GL_CULL_FACE);
