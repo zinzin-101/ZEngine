@@ -49,7 +49,7 @@ void Mesh::draw(Shader& shader) {
         glBindTexture(GL_TEXTURE_2D, defaultTex[i]);
     }
 
-    unsigned int slot = 0;
+    unsigned int slot = STARTING_TEXTURE_INDEX;
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
@@ -93,7 +93,7 @@ void Mesh::draw(Shader& shader) {
             name = "aoMap";
             slot = AO_SLOT;
             number = std::to_string(aoNrPBR++);
-        }  
+        }
 
         glActiveTexture(GL_TEXTURE0 + slot);
         glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), slot);

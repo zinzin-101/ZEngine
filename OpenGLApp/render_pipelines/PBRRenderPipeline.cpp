@@ -266,7 +266,6 @@ void PBRRenderPipeline::init() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    std::cout << "brdf init: " << brdfLUTTexture << std::endl;
     addFrameData(brdfLUTTexture, "brdfLUTTexture", FrameData::Type::TEXTURE);
 
     // shadow map: configure FBO
