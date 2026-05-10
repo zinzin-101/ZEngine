@@ -408,6 +408,10 @@ void GeneralSoftBodyMesh::update() {
 }
 
 void GeneralSoftBodyMesh::render() {
+    render(shader);
+}
+
+void GeneralSoftBodyMesh::render(Shader* shader) {
     shader->use();
     Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
     glm::vec3 position = transform->getGlobalPosition();

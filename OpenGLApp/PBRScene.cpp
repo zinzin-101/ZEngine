@@ -9,6 +9,7 @@
 #include "SmokeSim.h"
 #include "Model.h"
 #include "render_pipelines/PBRRenderPipeline.h"
+#include "GeneralSoftBodyMesh.h"
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include <iostream>
@@ -65,6 +66,23 @@ void PBRScene::setup() {
 	ground->transform.setParent(&root->transform);
 	sword->transform.setParent(&root->transform);
 	//cam->transform.setParent(&root->transform);
+
+	Object* smoke = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+
+	Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody->transform.scale = glm::vec3(1.0f);
+	GeneralSoftBodyMesh* softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	softbodymesh->groundHeight = 0.0f;
+
+	Object* softbody1 = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	softbody->transform.scale = glm::vec3(1.0f);
+	softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	softbodymesh->groundHeight = 0.0f;
 
 	//Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
 	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));

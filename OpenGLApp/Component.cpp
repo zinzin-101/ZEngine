@@ -29,6 +29,10 @@ void Component::update() {}
 void Component::postUpdate() {}
 void Component::render() {}
 
+void Component::render(Shader* shader) {
+	render();
+}
+
 bool compareComponentPriority(const Component* const c1, const Component* const c2) {
 	return c1->getComponentPriority() < c2->getComponentPriority();
 }

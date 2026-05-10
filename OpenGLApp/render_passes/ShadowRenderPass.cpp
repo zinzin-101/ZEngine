@@ -17,8 +17,8 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glm::mat4 lightView;
     glm::mat4 lightSpaceMatrix;
     float nearPlane = 2.0f;
-    float farPlane = 12.0f;
-    lightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, nearPlane, farPlane);
+    float farPlane = 32.0f;
+    lightProjection = glm::ortho(-7.5f, 7.5f, -7.5f, 7.5f, nearPlane, farPlane);
     lightView = glm::lookAt(lightPosition, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     lightSpaceMatrix = lightProjection * lightView;
     Shader& depthShader = *shaders.at("depthShader");
@@ -57,7 +57,7 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
 void ShadowRenderPass::renderObjects(Shader& shader, std::vector<Object*>& objects) {
     for (Object* object : objects) {
         shader.setMat4("model", object->transform.getGlobalModelMatrix());
-        object->render();
+        object->render(&shader);
     }
 }
 

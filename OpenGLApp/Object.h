@@ -6,6 +6,7 @@
 #include <string>
 
 class Scene;
+class Shader;
 
 class Object {
 	private: 
@@ -27,6 +28,7 @@ class Object {
 		virtual void update(); // for updating component
 		virtual void postUpdate(); // for updating component
 		virtual void render(bool isRenderingTransparent = false); // for component that can render
+		virtual void render(Shader* shader);
 		void setCurrentScene(Scene* scene);
 		void addComponent(Component* component);
 
