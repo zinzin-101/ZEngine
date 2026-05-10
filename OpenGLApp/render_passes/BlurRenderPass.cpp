@@ -45,24 +45,6 @@ void BlurRenderPass::render(std::map<std::string, FrameData>& frameData, std::ma
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-	GLint currentFBO;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFBO);
-	std::cout << "BlurRenderPass final composite FBO: " << currentFBO << std::endl;
-	std::cout << "sceneColorBuffers[0]: " << sceneColorBuffers[0] << std::endl;
-	std::cout << "pingpongColorBuffers[!horizontal]: " << pingpongColorBuffers[!horizontal] << std::endl;
-
-	// sample sceneColorBuffer0 to verify it has skybox data
-	unsigned int testFBO;
-	glGenFramebuffers(1, &testFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, testFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneColorBuffers[0], 0);
-	float pixel[4] = { 0 };
-	glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, pixel);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDeleteFramebuffers(1, &testFBO);
-	std::cout << "sceneColorBuffers[0] pixel: " << pixel[0] << " " << pixel[1] << " " << pixel[2] << " " << pixel[3] << std::endl;
-
 	Shader& blurFinalShader = *shaders.at("blurFinalShader");
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	blurFinalShader.use();

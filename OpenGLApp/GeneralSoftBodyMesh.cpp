@@ -407,7 +407,7 @@ void GeneralSoftBodyMesh::update() {
     }
 }
 
-void GeneralSoftBodyMesh::render() {
+void GeneralSoftBodyMesh::render(Shader* shader) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
 
