@@ -8,6 +8,7 @@
 #include "PrimitiveMeshRenderer.h"
 #include "SmokeSim.h"
 #include "Model.h"
+#include "render_pipelines/PBRRenderPipeline.h"
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include <iostream>
@@ -137,5 +138,18 @@ void PBRScene::processInput() {
 
 	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_1)) {
+		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+		if (pbrPipeline) {
+			pbrPipeline->setEnvironmentMap("resources/textures/hdr/newport_loft.hdr");
+		}
+	}
+	else if (inputManager.getKeyDown(GLFW_KEY_2)) {
+		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+		if (pbrPipeline) {
+			pbrPipeline->setEnvironmentMap("resources/textures/hdr/studio.hdr");
+		}
 	}
 }

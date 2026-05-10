@@ -110,6 +110,10 @@ void Renderer::setCurrentRenderPipeline(RenderPipeline* pipeline) {
 	currentRenderPipeline = pipeline;
 }
 
+RenderPipeline* Renderer::getCurrentRenderPipeline() {
+	return currentRenderPipeline;
+}
+
 void Renderer::clear() {
 	clearMesh();
 	clearShader();

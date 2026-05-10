@@ -22,10 +22,49 @@ PBRRenderPipeline::PBRRenderPipeline():
 	depthShader("shaders/pbr/3.1.3.shadow_mapping_depth.vs", "shaders/pbr/3.1.3.shadow_mapping_depth.fs"),
 	debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"),
     cubeVAO(0), cubeVBO(0),
-    quadVAO(0), quadVBO(0)
+    quadVAO(0), quadVBO(0),
+    envMapPath("resources/textures/hdr/puresky_2k.hdr")
 {}
 
 PBRRenderPipeline::~PBRRenderPipeline() {}
+
+void PBRRenderPipeline::setEnvironmentMap(std::string path) {
+    envMapPath = path;
+
+    for (RenderPass* pass : renderPasses) {
+        delete pass;
+    }
+    renderPasses.clear();
+
+    for (const std::pair<std::string, FrameData>& nameToFrameData : frameData) {
+        FrameData data = nameToFrameData.second;
+        FrameData::Type type = data.type;
+        unsigned int buffer = data.buffer;
+        switch (type) {
+        case FrameData::Type::TEXTURE:
+            glDeleteTextures(1, &buffer);
+            break;
+
+        case FrameData::Type::FRAME_BUFFER:
+            glDeleteFramebuffers(1, &buffer);
+            break;
+
+        case FrameData::Type::RENDER_BUFFER:
+            glDeleteRenderbuffers(1, &buffer);
+            break;
+
+        // do not delete vao since it can be reused
+        //case FrameData::Type::VAO:
+        //    glDeleteVertexArrays(1, &buffer);
+        //    break;
+        }
+    }
+
+    frameData.clear();
+    shaders.clear();
+
+    init();
+}
 
 void PBRRenderPipeline::init() {
     glEnable(GL_DEPTH_TEST);
@@ -76,7 +115,7 @@ void PBRRenderPipeline::init() {
 	// pbr: load the HDR environment map
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float* data = stbi_loadf(FileSystem::getPath("resources/textures/hdr/puresky_2k.hdr").c_str(), &width, &height, &nrComponents, 0);
+	float* data = stbi_loadf(FileSystem::getPath(envMapPath).c_str(), &width, &height, &nrComponents, 0);
 
     unsigned int hdrTexture{};
 	if (data)

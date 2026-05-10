@@ -21,12 +21,16 @@ class PBRRenderPipeline : public RenderPipeline {
         unsigned int quadVBO;
         void renderQuad();
 
+        std::string envMapPath;
+
     protected:
 		virtual void init() override;
 
 	public:
         PBRRenderPipeline();
         ~PBRRenderPipeline();
+
+        void setEnvironmentMap(std::string path);
 
         static void renderCubeFromVAO(unsigned int vao);
         static void renderQuadFromVAO(unsigned int vao);

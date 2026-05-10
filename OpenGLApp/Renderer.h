@@ -63,6 +63,7 @@ class Renderer {
 		>& getTransparencyQueue();
 
 		void setCurrentRenderPipeline(RenderPipeline* pipeline);
+		RenderPipeline* getCurrentRenderPipeline();
 
 		void clear();
 
