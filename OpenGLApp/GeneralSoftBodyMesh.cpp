@@ -407,20 +407,11 @@ void GeneralSoftBodyMesh::update() {
     }
 }
 
-void GeneralSoftBodyMesh::render(Shader* shader) {
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, (unsigned int)renderVertices.size() / 6);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glCullFace(GL_BACK);
-    glDisable(GL_CULL_FACE);
+void GeneralSoftBodyMesh::render() {
+    render(shader);
 }
 
-void GeneralSoftBodyMesh::render() {
+void GeneralSoftBodyMesh::render(Shader* shader) {
     shader->use();
     Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
     glm::vec3 position = transform->getGlobalPosition();
