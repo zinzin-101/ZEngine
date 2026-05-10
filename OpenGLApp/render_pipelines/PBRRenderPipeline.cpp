@@ -33,6 +33,14 @@ PBRRenderPipeline::PBRRenderPipeline() :
 PBRRenderPipeline::~PBRRenderPipeline() {}
 
 void PBRRenderPipeline::loadIBL() {
+    std::cout << "loadIBL loading: " << envMapPath << std::endl;
+    std::cout << "Full path: " << FileSystem::getPath(envMapPath) << std::endl;
+    int t, tt, ttt;
+    float* testData = stbi_loadf(FileSystem::getPath(envMapPath).c_str(), &t, &tt, &ttt, 0);
+    std::cout << "stbi_loadf result: " << (testData ? "SUCCESS" : stbi_failure_reason()) << std::endl;
+    if (testData) stbi_image_free(testData);
+
+
     // pbr: setup framebuffer
     unsigned int captureFBO = 0;
     unsigned int captureRBO = 0;
@@ -111,6 +119,7 @@ void PBRRenderPipeline::loadIBL() {
 
     glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
     for (unsigned int i = 0; i < 6; ++i)
     {
         equirectangularToCubemapShader.setMat4("view", captureViews[i]);
@@ -124,6 +133,16 @@ void PBRRenderPipeline::loadIBL() {
     // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+    unsigned int testFBO;
+    glGenFramebuffers(1, &testFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, testFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, envCubemap, 0);
+    float pixel[3] = { 0, 0, 0 };
+    glReadPixels(0, 0, 1, 1, GL_RGB, GL_FLOAT, pixel);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &testFBO);
+    std::cout << "envCubemap sample: " << pixel[0] << " " << pixel[1] << " " << pixel[2] << std::endl;
 
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     unsigned int irradianceMap;
@@ -144,6 +163,7 @@ void PBRRenderPipeline::loadIBL() {
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
     // pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
     irradianceShader.use();
@@ -199,6 +219,7 @@ void PBRRenderPipeline::loadIBL() {
         unsigned int mipHeight = static_cast<unsigned int>(128 * std::pow(0.5, mip));
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
         glViewport(0, 0, mipWidth, mipHeight);
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
@@ -231,6 +252,7 @@ void PBRRenderPipeline::loadIBL() {
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
 
     glViewport(0, 0, 512, 512);
@@ -274,6 +296,9 @@ void PBRRenderPipeline::setEnvironmentMap(std::string path) {
     deleteRBO("captureRBO");
 
     loadIBL();
+
+    unsigned int env = frameData.at("envCubemap").buffer;
+    std::cout << "envCubemap ID after reload: " << env << std::endl;
 }
 
 void PBRRenderPipeline::setUseDepthOfField(bool value) {

@@ -81,7 +81,15 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
+    GLint currentFBO;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFBO);
+    std::cout << "FBO when skybox draws: " << currentFBO
+        << " sceneFBO: " << frameData.at("sceneFBO").buffer << std::endl;
+
     glDepthFunc(GL_LEQUAL);
     PBRRenderPipeline::renderCubeFromVAO(frameData.at("cubeVAO").buffer);
     glDepthFunc(GL_LESS);
+
+    envCubemap = frameData.at("envCubemap").buffer;
+    std::cout << "PBRRenderPass binding envCubemap: " << envCubemap << std::endl;
 }
