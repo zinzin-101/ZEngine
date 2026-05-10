@@ -74,6 +74,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     unsigned int envCubemap = frameData.at("envCubemap").buffer;
 
     backgroundShader.use();
+    backgroundShader.setBool("useDepthOfField", useDepthOfField);
     backgroundShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     backgroundShader.setMat4("model", model);

@@ -152,4 +152,11 @@ void PBRScene::processInput() {
 			pbrPipeline->setEnvironmentMap("resources/textures/hdr/studio.hdr");
 		}
 	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_T)) {
+		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+		if (pbrPipeline) {
+			pbrPipeline->setUseDepthOfField(!pbrPipeline->isUsingDepthOfField());
+		}
+	}
 }

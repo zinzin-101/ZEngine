@@ -9,6 +9,9 @@ using namespace RendererOperation;
 void BlurRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	bool useDepthOfField = (bool)frameData.at("useDepthOfField").buffer;
+	if (!useDepthOfField) return;
+
 	// blur with two-pass Gaussian blur
 	Shader& blurShader = *shaders.at("blurShader");
 	bool horizontal = true;

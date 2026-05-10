@@ -1,8 +1,18 @@
 #version 330 core
 out vec4 FragColor;
+out vec4 BlurColor;
 in vec3 WorldPos;
 
 uniform samplerCube environmentMap;
+uniform bool useDepthOfField;
+
+float LinearizeDepth(float depth) {
+    float far_plane = 1.0;
+    float near_plane = 0.01;
+
+    float z = depth * 2.0 - 1.0; // Back to NDC 
+    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
+}
 
 void main()
 {		
@@ -13,4 +23,16 @@ void main()
     envColor = pow(envColor, vec3(1.0/2.2)); 
     
     FragColor = vec4(envColor, 1.0);
+
+    if (!useDepthOfField) return;
+
+    float depth = LinearizeDepth(gl_FragCoord.z);
+    BlurColor = vec4(envColor, 1.0);
+    if (depth <= 0.5){
+        BlurColor = vec4(vec3(0.0), 1.0);
+    }
+    else{
+        FragColor = vec4(vec3(0.0), 1.0);
+    }
+
 }
