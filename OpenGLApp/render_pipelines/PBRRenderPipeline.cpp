@@ -379,12 +379,14 @@ void PBRRenderPipeline::init() {
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 
+    unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+
     unsigned int sceneFBO;
     glGenFramebuffers(1, &sceneFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
-    unsigned int sceneColorBuffers[2];
-    glGenTextures(2, sceneColorBuffers);
-    for (unsigned int i = 0; i < 2; i++)
+    unsigned int sceneColorBuffers[3];
+    glGenTextures(3, sceneColorBuffers);
+    for (unsigned int i = 0; i < 3; i++)
     {
         glBindTexture(GL_TEXTURE_2D, sceneColorBuffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -396,9 +398,12 @@ void PBRRenderPipeline::init() {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, sceneColorBuffers[i], 0);
     }
 
+    glDrawBuffers(3, attachments);
+
     addFrameData(sceneFBO, "sceneFBO", FrameData::Type::FRAME_BUFFER);
     addFrameData(sceneColorBuffers[0], "sceneColorBuffers0", FrameData::Type::TEXTURE);
     addFrameData(sceneColorBuffers[1], "sceneColorBuffers1", FrameData::Type::TEXTURE);
+    addFrameData(sceneColorBuffers[2], "sceneColorBuffers2", FrameData::Type::TEXTURE);
 
     // render buffer for depth of field
     unsigned int rboDepth;
@@ -406,8 +411,7 @@ void PBRRenderPipeline::init() {
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, scrWidth, scrHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, attachments);
+    
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer is incomplete" << std::endl;
     }

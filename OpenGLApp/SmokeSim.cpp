@@ -506,7 +506,6 @@ void SmokeSim::renderVolume(glm::mat4 projection, glm::mat4 view, glm::mat4 mode
 		volumeShader.setBool("useDepthOfField", pbrPipeline->isUsingDepthOfField());
 		volumeShader.setFloat("farPlane", camera.farPlane);
 		volumeShader.setFloat("nearPlane", camera.nearPlane);
-		volumeShader.setFloat("depthPercentage", pbrPipeline->getDepthPercentage());
 	}
 
 	glActiveTexture(GL_TEXTURE0);

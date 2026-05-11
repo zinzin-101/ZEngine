@@ -2,6 +2,7 @@
 
 out vec4 FragColor;
 out vec4 BlurColor;
+out vec4 DepthColor;
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -19,7 +20,6 @@ vec3 specular = vec3(0.6);
 uniform bool useDepthOfField;
 uniform float farPlane;
 uniform float nearPlane;
-uniform float depthPercentage;
 
 vec3 CalcDirLight(vec3 lightDir, vec3 normal, vec3 viewDir);
 float LinearizeDepth(float depth);
@@ -32,13 +32,8 @@ void main() {
     if (!useDepthOfField) return;
 
     float depth = LinearizeDepth(gl_FragCoord.z);
-    BlurColor = vec4(result, 1.0);
-    if (depth <= depthPercentage){
-        BlurColor = vec4(vec3(0.0), 1.0);
-    }
-    else{
-        FragColor = vec4(vec3(0.0), 1.0);
-    }
+    BlurColor = FragColor;
+    DepthColor = vec4(vec3(depth), 1.0);
 
     //FragColor = vec4(color, 1.0);
 

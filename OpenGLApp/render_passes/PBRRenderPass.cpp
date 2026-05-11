@@ -61,7 +61,6 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     pbrShader.setBool("useDepthOfField", useDepthOfField);
     pbrShader.setFloat("farPlane", camera.farPlane);
     pbrShader.setFloat("nearPlane", camera.nearPlane);
-    pbrShader.setFloat("depthPercentage", frameData.at("useDepthOfField").number);
     for (Object* object : objects) {
         Model* objectModel = object->getFirstComponentOfType<Model>();
         if (objectModel != nullptr) {
@@ -80,7 +79,6 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     backgroundShader.setBool("useDepthOfField", useDepthOfField);
     backgroundShader.setFloat("farPlane", camera.farPlane);
     backgroundShader.setFloat("nearPlane", camera.nearPlane);
-    backgroundShader.setFloat("depthPercentage", frameData.at("useDepthOfField").number);
     backgroundShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     backgroundShader.setMat4("model", model);

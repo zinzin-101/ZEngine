@@ -29,7 +29,8 @@ void BlurRenderPass::render(std::map<std::string, FrameData>& frameData, std::ma
 
 	unsigned int sceneColorBuffer0 = frameData.at("sceneColorBuffers0").buffer;
 	unsigned int sceneColorBuffer1 = frameData.at("sceneColorBuffers1").buffer;
-	unsigned int sceneColorBuffers[2] = {sceneColorBuffer0, sceneColorBuffer1};
+	unsigned int sceneColorBuffer2 = frameData.at("sceneColorBuffers2").buffer;
+	unsigned int sceneColorBuffers[3] = {sceneColorBuffer0, sceneColorBuffer1, sceneColorBuffer2 };
 
 	glDisable(GL_BLEND);
 	for (unsigned int i = 0; i < amount; i++) {
@@ -48,10 +49,16 @@ void BlurRenderPass::render(std::map<std::string, FrameData>& frameData, std::ma
 	Shader& blurFinalShader = *shaders.at("blurFinalShader");
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	blurFinalShader.use();
+	blurFinalShader.setInt("scene", 0);
+	blurFinalShader.setInt("blur", 1);
+	blurFinalShader.setInt("depth", 2);
+	blurFinalShader.setFloat("depthPercentage", frameData["useDepthOfField"].number);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, sceneColorBuffers[0]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers[!horizontal]);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, sceneColorBuffers[2]);
 	PBRRenderPipeline::renderQuadFromVAO(frameData.at("quadVAO").buffer);
 
 	glEnable(GL_BLEND);
