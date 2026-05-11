@@ -10,6 +10,7 @@ uniform sampler3D volume;
 uniform bool useDepthOfField;
 uniform float farPlane;
 uniform float nearPlane;
+uniform float depthPercentage;
 
 float LinearizeDepth(float depth) {
     float far_plane = farPlane;
@@ -28,9 +29,12 @@ void main() {
 	if (!useDepthOfField) return;
 	
 	float depth = LinearizeDepth(gl_FragCoord.z);
-	if (depth > 0.5){
+	if (depth > depthPercentage){
 		BlurColor = vec4(smokeColor, density);
 	}
 
 	//FragColor = vec4(1.0f);
+    //FragColor = vec4(vec3(depth), 1.0);
+    //BlurColor = FragColor;
+
 }

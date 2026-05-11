@@ -21,13 +21,14 @@ PBRRenderPipeline::PBRRenderPipeline() :
     brdfShader("shaders/pbr/2.2.2.brdf.vs", "shaders/pbr/2.2.2.brdf.fs"),
     backgroundShader("shaders/pbr/2.2.2.background.vs", "shaders/pbr/2.2.2.background.fs"),
     depthShader("shaders/pbr/3.1.3.shadow_mapping_depth.vs", "shaders/pbr/3.1.3.shadow_mapping_depth.fs"),
-    debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"), 
+    debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"),
     blurShader("shaders/7.blur.vs", "shaders/7.blur.fs"),
     blurFinalShader("shaders/blur_final.vs", "shaders/blur_final.fs"),
     cubeVAO(0), cubeVBO(0),
     quadVAO(0), quadVBO(0),
     envMapPath("resources/textures/hdr/puresky_2k.hdr"),
-    useDepthOfField(true)
+    useDepthOfField(true),
+    depthPercentage(0.1f)
 {}
 
 PBRRenderPipeline::~PBRRenderPipeline() {}
@@ -72,13 +73,20 @@ void PBRRenderPipeline::setEnvironmentMap(std::string path) {
 
 void PBRRenderPipeline::setUseDepthOfField(bool value) {
     useDepthOfField = value;
-    FrameData dofData = FrameData();
-    dofData.buffer = (unsigned int)useDepthOfField;
-    frameData["useDepthOfField"] = dofData;
+    frameData["useDepthOfField"].buffer = (unsigned int)useDepthOfField;
+}
+
+void PBRRenderPipeline::setDepthPercentage(float value) {
+    depthPercentage = value;
+    frameData["useDepthOfField"].number = depthPercentage;
 }
 
 bool PBRRenderPipeline::isUsingDepthOfField() const {
     return useDepthOfField;
+}
+
+float PBRRenderPipeline::getDepthPercentage() const {
+    return depthPercentage;
 }
 
 void PBRRenderPipeline::init() {
@@ -437,6 +445,7 @@ void PBRRenderPipeline::init() {
 
     FrameData dofData = FrameData();
     dofData.buffer = (unsigned int)useDepthOfField;
+    dofData.number = depthPercentage;
     frameData["useDepthOfField"] = dofData;
 
     addRenderPass(new ShadowRenderPass());

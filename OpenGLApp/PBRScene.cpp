@@ -179,4 +179,22 @@ void PBRScene::processInput() {
 			pbrPipeline->setUseDepthOfField(!pbrPipeline->isUsingDepthOfField());
 		}
 	}
+
+	if (inputManager.getKey(GLFW_KEY_UP)) {
+		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+		if (pbrPipeline) {
+			depthPercentage = pbrPipeline->getDepthPercentage();
+			depthPercentage += 0.5f * dt;
+		}
+		pbrPipeline->setDepthPercentage(depthPercentage);
+	}
+	else if (inputManager.getKey(GLFW_KEY_DOWN)) {
+		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+		if (pbrPipeline) {
+			depthPercentage = pbrPipeline->getDepthPercentage();
+			depthPercentage -= 0.5f * dt;
+		}
+		depthPercentage = std::clamp(depthPercentage, 0.0f, 1.0f);
+		pbrPipeline->setDepthPercentage(depthPercentage);
+	}
 }

@@ -4,6 +4,7 @@
 class PBRScene : public Scene {
 	private:
 		Object* root;
+		float depthPercentage;
 
 	protected:
 		virtual void loadMeshData() override;

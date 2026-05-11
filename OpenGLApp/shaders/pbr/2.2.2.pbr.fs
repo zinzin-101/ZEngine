@@ -39,6 +39,7 @@ uniform bool useCartoonShading;
 uniform bool useDepthOfField;
 uniform float farPlane;
 uniform float nearPlane;
+uniform float depthPercentage;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -292,12 +293,15 @@ void main()
 
     float depth = LinearizeDepth(gl_FragCoord.z);
     BlurColor = vec4(color, 1.0);
-    if (depth <= 0.5){
+    if (depth <= depthPercentage){
         BlurColor = vec4(vec3(0.0), 1.0);
     }
     else{
         FragColor = vec4(vec3(0.0), 1.0);
     }
+
+    //FragColor = vec4(vec3(depth), 1.0);
+    //BlurColor = FragColor;
 
     //FragColor = vec4(vec3(ShadowCalculation(FragPosLightSpace)),1.0);
     //float shadow = 1.0 - ShadowCalculation(FragPosLightSpace);

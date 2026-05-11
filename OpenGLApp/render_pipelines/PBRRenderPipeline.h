@@ -26,6 +26,7 @@ class PBRRenderPipeline : public RenderPipeline {
         std::string envMapPath;
 
         bool useDepthOfField;
+        float depthPercentage;
 
     protected:
 		virtual void init() override;
@@ -36,8 +37,10 @@ class PBRRenderPipeline : public RenderPipeline {
 
         void setEnvironmentMap(std::string path);
         void setUseDepthOfField(bool value);
+        void setDepthPercentage(float value);
 
         bool isUsingDepthOfField() const;
+        float getDepthPercentage() const;
 
         static void renderCubeFromVAO(unsigned int vao);
         static void renderQuadFromVAO(unsigned int vao);

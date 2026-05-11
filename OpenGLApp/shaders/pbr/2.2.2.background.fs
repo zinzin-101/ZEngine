@@ -7,6 +7,7 @@ uniform samplerCube environmentMap;
 uniform bool useDepthOfField;
 uniform float farPlane;
 uniform float nearPlane;
+uniform float depthPercentage;
 
 float LinearizeDepth(float depth) {
     float far_plane = farPlane;
@@ -31,7 +32,7 @@ void main()
 
     float depth = LinearizeDepth(gl_FragCoord.z);
     BlurColor = vec4(envColor, 1.0);
-    if (depth <= 0.5){
+    if (depth <= depthPercentage){
         BlurColor = vec4(vec3(0.0), 1.0);
     }
     else{

@@ -17,6 +17,7 @@ struct FrameData {
 	};
 
 	unsigned int buffer;
+	float number;
 	glm::mat4 matrix;
 	std::string name;
 	Type type;

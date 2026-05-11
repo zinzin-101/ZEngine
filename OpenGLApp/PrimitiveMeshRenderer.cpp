@@ -43,6 +43,7 @@ void PrimitiveMeshRenderer::render(Shader* shader) {
 		shader->setBool("useDepthOfField", pbrPipeline->isUsingDepthOfField());
 		shader->setFloat("farPlane", camera->farPlane);
 		shader->setFloat("nearPlane", camera->nearPlane);
+		shader->setFloat("depthPercentage", pbrPipeline->getDepthPercentage());
 	}
 
 	meshPrimitive->render();

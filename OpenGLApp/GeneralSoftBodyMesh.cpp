@@ -445,6 +445,9 @@ void GeneralSoftBodyMesh::render(Shader* shader) {
     PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
     if (pbrPipeline != nullptr) {
         shader->setBool("useDepthOfField", pbrPipeline->isUsingDepthOfField());
+        shader->setFloat("farPlane", camera->farPlane);
+        shader->setFloat("nearPlane", camera->nearPlane);
+        shader->setFloat("depthPercentage", pbrPipeline->getDepthPercentage());
     }
 
     glEnable(GL_CULL_FACE);
