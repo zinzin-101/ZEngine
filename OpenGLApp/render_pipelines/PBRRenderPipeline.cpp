@@ -126,8 +126,8 @@ void PBRRenderPipeline::init() {
 	backgroundShader.setInt("environmentMap", 0);
 
     blurFinalShader.use();
-    blurFinalShader.setInt("scene", 0);
-    blurFinalShader.setInt("blur", 1);
+    blurFinalShader.setInt("background", 0);
+    blurFinalShader.setInt("foreground", 1);
 
     blurShader.use();
     blurShader.setInt("image", 0);
@@ -381,6 +381,11 @@ void PBRRenderPipeline::init() {
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 
+    unsigned int attachments[4] = {
+        GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+        GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
+    };
+
     unsigned int sceneFBO;
     glGenFramebuffers(1, &sceneFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
@@ -396,7 +401,11 @@ void PBRRenderPipeline::init() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // attach texture to framebuffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, sceneColorBuffers[i], 0);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "Framebuffer is incomplete" << std::endl;
+        }
     }
+    glDrawBuffers(4, attachments);
 
     addFrameData(sceneFBO, "sceneFBO", FrameData::Type::FRAME_BUFFER);
     addFrameData(sceneColorBuffers[0], "sceneColorBuffers0", FrameData::Type::TEXTURE);
@@ -410,8 +419,7 @@ void PBRRenderPipeline::init() {
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, scrWidth, scrHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, attachments);
+
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer is incomplete" << std::endl;
     }
@@ -439,6 +447,7 @@ void PBRRenderPipeline::init() {
             std::cout << "Framebuffer is incomplete" << std::endl;
         }
     }
+
     addFrameData(pingpongFBOs[0], "pingpongFBO0", FrameData::Type::FRAME_BUFFER);
     addFrameData(pingpongFBOs[1], "pingpongFBO1", FrameData::Type::FRAME_BUFFER);
     addFrameData(pingpongColorBuffers[0], "pingpongColorBuffers0", FrameData::Type::TEXTURE);
@@ -447,7 +456,7 @@ void PBRRenderPipeline::init() {
     // frame buffer for combining blur amount with full image
     unsigned int combineFBO;
     unsigned int combineBuffers[2]; // 0: background, 1: foreground
-    glGenFramebuffers(2, &combineFBO);
+    glGenFramebuffers(1, &combineFBO);
     glGenTextures(2, combineBuffers);
     for (unsigned int i = 0; i < 2; i++)
     {
@@ -459,11 +468,19 @@ void PBRRenderPipeline::init() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // attach to frame buffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, combineBuffers[i], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, combineBuffers[i], 0);
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             std::cout << "Framebuffer is incomplete" << std::endl;
         }
     }
+
+    unsigned int combineAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, combineAttachments);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Framebuffer is incomplete" << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     addFrameData(combineFBO, "combineFBO", FrameData::Type::FRAME_BUFFER);
     addFrameData(combineBuffers[0], "combineBuffers0", FrameData::Type::TEXTURE);
     addFrameData(combineBuffers[1], "combineBuffers1", FrameData::Type::TEXTURE);

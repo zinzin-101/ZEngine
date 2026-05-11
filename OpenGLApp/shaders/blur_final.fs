@@ -3,14 +3,13 @@ out vec4 FragColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D scene;
-uniform sampler2D blur;
+uniform sampler2D background;
+uniform sampler2D foreground;
 
 void main()
 {             
-    const float gamma = 2.2;
-    vec3 sceneColor = texture(scene, TexCoords).rgb;      
-    vec3 bloomColor = texture(blur, TexCoords).rgb;
-    sceneColor += bloomColor; // additive blending
-    FragColor = vec4(sceneColor, 1.0);
+    vec3 backgroundColor = texture(background, TexCoords).rgb;
+    vec3 foregroundColor = texture(foreground, TexCoords).rgb;      
+    vec3 final = backgroundColor + foregroundColor;
+    FragColor = vec4(final, 1.0);
 }
