@@ -18,13 +18,21 @@ void BlurRenderPass::render(std::map<std::string, FrameData>& frameData, std::ma
 	bool isFirstIteration = true;
 	unsigned int amount = 10;
 
-	unsigned int pingpongFBO0 = frameData.at("pingpongFBO0").buffer;
-	unsigned int pingpongFBO1 = frameData.at("pingpongFBO1").buffer;
-	unsigned int pingpongFBOs[2] = { pingpongFBO0, pingpongFBO1 };
+	unsigned int pingpongFBO10 = frameData.at("pingpongFBO10").buffer;
+	unsigned int pingpongFBO11 = frameData.at("pingpongFBO11").buffer;
+	unsigned int pingpongFBOs1[2] = { pingpongFBO10, pingpongFBO11 };
 
-	unsigned int pingpongColorBuffers0 = frameData.at("pingpongColorBuffers0").buffer;
-	unsigned int pingpongColorBuffers1 = frameData.at("pingpongColorBuffers1").buffer;
-	unsigned int pingpongColorBuffers[2] = { pingpongColorBuffers0, pingpongColorBuffers1 };
+	unsigned int pingpongColorBuffers10 = frameData.at("pingpongColorBuffers10").buffer;
+	unsigned int pingpongColorBuffers11 = frameData.at("pingpongColorBuffers11").buffer;
+	unsigned int pingpongColorBuffers1[2] = { pingpongColorBuffers10, pingpongColorBuffers11 };
+
+	unsigned int pingpongFBO20 = frameData.at("pingpongFBO20").buffer;
+	unsigned int pingpongFBO21 = frameData.at("pingpongFBO21").buffer;
+	unsigned int pingpongFBOs2[2] = { pingpongFBO20, pingpongFBO21 };
+
+	unsigned int pingpongColorBuffers20 = frameData.at("pingpongColorBuffers20").buffer;
+	unsigned int pingpongColorBuffers21 = frameData.at("pingpongColorBuffers21").buffer;
+	unsigned int pingpongColorBuffers2[2] = { pingpongColorBuffers20, pingpongColorBuffers21 };
 
 	unsigned int sceneColorBuffer0 = frameData.at("sceneColorBuffers0").buffer;
 	unsigned int sceneColorBuffer1 = frameData.at("sceneColorBuffers1").buffer;
@@ -60,36 +68,35 @@ void BlurRenderPass::render(std::map<std::string, FrameData>& frameData, std::ma
 	blurShader.use();
 	glDisable(GL_BLEND);
 	for (unsigned int i = 0; i < amount; i++) {
-		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs[horizontal]);
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs1[horizontal]);
 		blurShader.setInt("horizontal", horizontal);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, isFirstIteration ? combineBuffers0 : pingpongColorBuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+		glBindTexture(GL_TEXTURE_2D, isFirstIteration ? combineBuffers0 : pingpongColorBuffers1[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
 		PBRRenderPipeline::renderQuadFromVAO(frameData.at("quadVAO").buffer);
 		horizontal = !horizontal;
 		if (isFirstIteration) {
 			isFirstIteration = false;
 		}
 	}
-	unsigned int blurredBackground = pingpongColorBuffers[!horizontal];
+	unsigned int blurredBackground = pingpongColorBuffers1[!horizontal];
 
 	// blend foreground
 	horizontal = true;
 	isFirstIteration = true;
 	for (unsigned int i = 0; i < amount; i++) {
-		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs[horizontal]);
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs2[horizontal]);
 		blurShader.setInt("horizontal", horizontal);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, isFirstIteration ? combineBuffers1 : pingpongColorBuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+		glBindTexture(GL_TEXTURE_2D, isFirstIteration ? combineBuffers1 : pingpongColorBuffers2[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
 		PBRRenderPipeline::renderQuadFromVAO(frameData.at("quadVAO").buffer);
 		horizontal = !horizontal;
 		if (isFirstIteration) {
 			isFirstIteration = false;
 		}
 	}
-	unsigned int blurredForeground = pingpongColorBuffers[!horizontal];
+	unsigned int blurredForeground = pingpongColorBuffers2[!horizontal];
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 
 	// combine everything
 	Shader& blurFinalShader = *shaders.at("blurFinalShader");

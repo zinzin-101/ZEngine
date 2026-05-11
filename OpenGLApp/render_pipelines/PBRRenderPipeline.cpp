@@ -428,30 +428,55 @@ void PBRRenderPipeline::init() {
     addFrameData(rboDepth, "rboDepth", FrameData::Type::RENDER_BUFFER);
 
     // ping-pong frame buffer for blurring
-    unsigned int pingpongFBOs[2];
-    unsigned int pingpongColorBuffers[2];
-    glGenFramebuffers(2, pingpongFBOs);
-    glGenTextures(2, pingpongColorBuffers);
+    unsigned int pingpongFBOs1[2];
+    unsigned int pingpongColorBuffers1[2];
+    glGenFramebuffers(2, pingpongFBOs1);
+    glGenTextures(2, pingpongColorBuffers1);
     for (unsigned int i = 0; i < 2; i++)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs[i]);
-        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers[i]);
+        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs1[i]);
+        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers1[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // attach to frame buffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers[i], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers1[i], 0);
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             std::cout << "Framebuffer is incomplete" << std::endl;
         }
     }
 
-    addFrameData(pingpongFBOs[0], "pingpongFBO0", FrameData::Type::FRAME_BUFFER);
-    addFrameData(pingpongFBOs[1], "pingpongFBO1", FrameData::Type::FRAME_BUFFER);
-    addFrameData(pingpongColorBuffers[0], "pingpongColorBuffers0", FrameData::Type::TEXTURE);
-    addFrameData(pingpongColorBuffers[1], "pingpongColorBuffers1", FrameData::Type::TEXTURE);
+    addFrameData(pingpongFBOs1[0], "pingpongFBO10", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongFBOs1[1], "pingpongFBO11", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongColorBuffers1[0], "pingpongColorBuffers10", FrameData::Type::TEXTURE);
+    addFrameData(pingpongColorBuffers1[1], "pingpongColorBuffers11", FrameData::Type::TEXTURE);
+
+    unsigned int pingpongFBOs2[2];
+    unsigned int pingpongColorBuffers2[2];
+    glGenFramebuffers(2, pingpongFBOs2);
+    glGenTextures(2, pingpongColorBuffers2);
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs2[i]);
+        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers2[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // attach to frame buffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers2[i], 0);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            std::cout << "Framebuffer is incomplete" << std::endl;
+        }
+    }
+
+    addFrameData(pingpongFBOs2[0], "pingpongFBO20", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongFBOs2[1], "pingpongFBO21", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongColorBuffers2[0], "pingpongColorBuffers20", FrameData::Type::TEXTURE);
+    addFrameData(pingpongColorBuffers2[1], "pingpongColorBuffers21", FrameData::Type::TEXTURE);
 
     // frame buffer for combining blur amount with full image
     unsigned int combineFBO;

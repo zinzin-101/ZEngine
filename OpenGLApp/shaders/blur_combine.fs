@@ -15,7 +15,19 @@ void main()
     //BackgroundColor = vec4(texture(image, TexCoords).rgb * texture(backgroundBlur, TexCoords).rgb, 1.0);
     //ForegroundColor = vec4(texture(image, TexCoords).rgb * texture(foregroundBlur, TexCoords).rgb, 1.0);
 
-    BackgroundColor = vec4((texture(backgroundBlur, TexCoords).r), 0.0, 0.0, 1.0);
-    ForegroundColor = vec4(0.0, (texture(foregroundBlur, TexCoords).r), 0.0, 1.0);
+    float blurAmount = texture(backgroundBlur, TexCoords).r;
+    BackgroundColor = vec4(vec3(0.0), 1.0);
+    ForegroundColor = vec4(vec3(0.0), 1.0);
+    if (blurAmount < 0.1) {
+        BackgroundColor = vec4(texture(image, TexCoords).rgb, 1.0);
+    }
+
+    blurAmount = texture(foregroundBlur, TexCoords).r;
+    if (blurAmount < 0.1) {
+        ForegroundColor = vec4(texture(image, TexCoords).rgb, 1.0);
+    }
+
+    //BackgroundColor = vec4((texture(backgroundBlur, TexCoords).r), 0.0, 0.0, 1.0);
+    //ForegroundColor = vec4(0.0, (texture(foregroundBlur, TexCoords).r), 0.0, 1.0);
 
 }
