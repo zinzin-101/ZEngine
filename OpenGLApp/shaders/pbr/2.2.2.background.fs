@@ -1,6 +1,8 @@
 #version 330 core
 out vec4 FragColor;
-out vec4 BlurColor;
+out vec4 ForegroundBlur;
+out vec4 BackgroundBlur;
+out vec4 DepthColor;
 in vec3 WorldPos;
 
 uniform samplerCube environmentMap;
@@ -30,13 +32,24 @@ void main()
 
     if (!useDepthOfField) return;
 
+    // float depth = LinearizeDepth(gl_FragCoord.z);
+    // BlurColor = vec4(envColor, 1.0);
+    // if (depth <= depthPercentage){
+    //     BlurColor = vec4(vec3(0.0), 1.0);
+    // }
+    // else{
+    //     FragColor = vec4(vec3(0.0), 1.0);
+    // }
     float depth = LinearizeDepth(gl_FragCoord.z);
-    BlurColor = vec4(envColor, 1.0);
+    DepthColor = vec4(vec3(depth), 1.0);
     if (depth <= depthPercentage){
-        BlurColor = vec4(vec3(0.0), 1.0);
+        float blur = ((depth - 0.9) / (0.9 - depthPercentage)) + 1.0;
+        ForegroundBlur = vec4(vec3(blur), 1.0);
+        BackgroundBlur = vec4(vec3(0.0), 1.0);
     }
-    else{
-        FragColor = vec4(vec3(0.0), 1.0);
+    else if (depth > depthPercentage){
+        float blur = ((-depth + 0.1) / (depthPercentage - 0.1)) + 1.0;
+        ForegroundBlur = vec4(vec3(0.0), 1.0);
+        BackgroundBlur = vec4(vec3(blur), 1.0);
     }
-
 }

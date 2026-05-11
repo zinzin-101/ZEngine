@@ -1,6 +1,8 @@
 #version 330 core
 out vec4 FragColor;
-out vec4 BlurColor;
+out vec4 ForegroundBlur;
+out vec4 BackgroundBlur;
+out vec4 DepthColor;
 
 in vec2 TexCoords;
 in vec3 WorldPos;
@@ -291,30 +293,26 @@ void main()
 
     if (!useDepthOfField) return;
 
+    // float depth = LinearizeDepth(gl_FragCoord.z);
+    // BlurColor = vec4(color, 1.0);
+    // if (depth <= depthPercentage){
+    //     BlurColor = vec4(vec3(0.0), 1.0);
+    // }
+    // else{
+    //     FragColor = vec4(vec3(0.0), 1.0);
+    // }
+
     float depth = LinearizeDepth(gl_FragCoord.z);
-    BlurColor = vec4(color, 1.0);
+    DepthColor = vec4(vec3(depth), 1.0);
     if (depth <= depthPercentage){
-        BlurColor = vec4(vec3(0.0), 1.0);
+        float blur = ((depth - 0.9) / (0.9 - depthPercentage)) + 1.0;
+        ForegroundBlur = vec4(vec3(blur), 1.0);
+        BackgroundBlur = vec4(vec3(0.0), 1.0);
     }
-    else{
-        FragColor = vec4(vec3(0.0), 1.0);
+    else if (depth > depthPercentage){
+        float blur = ((-depth + 0.1) / (depthPercentage - 0.1)) + 1.0;
+        ForegroundBlur = vec4(vec3(0.0), 1.0);
+        BackgroundBlur = vec4(vec3(blur), 1.0);
     }
 
-    //FragColor = vec4(vec3(depth), 1.0);
-    //BlurColor = FragColor;
-
-    //FragColor = vec4(vec3(ShadowCalculation(FragPosLightSpace)),1.0);
-    //float shadow = 1.0 - ShadowCalculation(FragPosLightSpace);
-    //FragColor = vec4(vec3(shadow), 1.0);
-    //vec3 projCoords = FragPosLightSpace.xyz / FragPosLightSpace.w;
-    //FragColor = vec4(vec3(texture(shadowMap, projCoords.xy).r), 1.0);
-    //FragColor = vec4(projCoords, 1.0);
-    //float depth = texture(shadowMap, TexCoords).r;
-    //float z = depth * 2.0 - 1.0; 
-    //float near = 0.1;
-    //float far = 50.0;
-    //float linearDepth = (2.0 * near * far) / (far + near - z * (far - near));
-    //FragColor = vec4(vec3(linearDepth / far), 1.0);
-    //FragColor = vec4(vec3(depth), 1.0);
-    //FragColor = vec4(vec3(ShadowCalculation(FragPosLightSpace)), 1.0);
 }

@@ -1,7 +1,9 @@
 #version 330 core
 
 layout(location = 0) out vec4 FragColor;
-layout(location = 1) out vec4 BlurColor;
+layout(location = 1) out vec4 ForegroundBlur;
+layout(location = 2) out vec4 BackgroundBlur;
+layout(location = 3) out vec4 DepthColor;
 
 in vec3 uvw;
 
@@ -28,13 +30,21 @@ void main() {
 	
 	if (!useDepthOfField) return;
 	
+	//float depth = LinearizeDepth(gl_FragCoord.z);
+	//if (depth > depthPercentage){
+	//	BlurColor = vec4(smokeColor, density);
+	//}
+
 	float depth = LinearizeDepth(gl_FragCoord.z);
-	if (depth > depthPercentage){
-		BlurColor = vec4(smokeColor, density);
-	}
-
-	//FragColor = vec4(1.0f);
-    //FragColor = vec4(vec3(depth), 1.0);
-    //BlurColor = FragColor;
-
+    DepthColor = vec4(vec3(depth), 1.0);
+    if (depth <= depthPercentage){
+        float blur = ((depth - 0.9) / (0.9 - depthPercentage)) + 1.0;
+        ForegroundBlur = vec4(vec3(blur), 1.0);
+        BackgroundBlur = vec4(vec3(0.0), 1.0);
+    }
+    else if (depth > depthPercentage){
+        float blur = ((-depth + 0.1) / (depthPercentage - 0.1)) + 1.0;
+        ForegroundBlur = vec4(vec3(0.0), 1.0);
+        BackgroundBlur = vec4(vec3(blur), 1.0);
+    }
 }
