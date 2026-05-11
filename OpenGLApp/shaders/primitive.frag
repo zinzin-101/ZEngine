@@ -17,6 +17,9 @@ vec3 diffuse = vec3(0.9);
 vec3 specular = vec3(0.6);
 
 uniform bool useDepthOfField;
+uniform float farPlane;
+uniform float nearPlane;
+
 
 vec3 CalcDirLight(vec3 lightDir, vec3 normal, vec3 viewDir);
 float LinearizeDepth(float depth);
@@ -41,11 +44,12 @@ void main() {
 }
 
 float LinearizeDepth(float depth) {
-    float far_plane = 1.0;
-    float near_plane = 0.01;
+    float far_plane = farPlane;
+    float near_plane = nearPlane;
 
     float z = depth * 2.0 - 1.0; // Back to NDC 
-    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
+    float linearDepth = (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
+    return linearDepth / far_plane;
 }
 
 vec3 CalcDirLight(vec3 lightDirection, vec3 normal, vec3 viewDirection) {

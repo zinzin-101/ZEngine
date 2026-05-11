@@ -32,7 +32,9 @@ void PBRScene::setup() {
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
 	Object* cam = instantiateObject(glm::vec3(0.0f));
-	cam->addComponent<Camera>();
+	Camera* camera = cam->addComponent<Camera>();
+	//camera->farPlane = 10.0f;
+
 	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
 	//Object* cube = createObject(glm::vec3(0.0f, 0.0f, -5.0f));

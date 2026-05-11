@@ -37,6 +37,8 @@ uniform vec3 camPos;
 uniform bool useCartoonShading;
 
 uniform bool useDepthOfField;
+uniform float farPlane;
+uniform float nearPlane;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -158,11 +160,12 @@ vec3 GetSaturation(vec3 rgb, float adjustment) {
 }
 
 float LinearizeDepth(float depth) {
-    float far_plane = 1.0;
-    float near_plane = 0.01;
+    float far_plane = farPlane;
+    float near_plane = nearPlane;
 
     float z = depth * 2.0 - 1.0; // Back to NDC 
-    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
+    float linearDepth = (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
+    return linearDepth / far_plane;	
 }
 
 void main()
@@ -295,7 +298,6 @@ void main()
     else{
         FragColor = vec4(vec3(0.0), 1.0);
     }
-
 
     //FragColor = vec4(vec3(ShadowCalculation(FragPosLightSpace)),1.0);
     //float shadow = 1.0 - ShadowCalculation(FragPosLightSpace);

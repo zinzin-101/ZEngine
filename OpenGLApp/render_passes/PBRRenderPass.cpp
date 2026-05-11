@@ -59,6 +59,8 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     pbrShader.setMat4("envMapRotation", glm::mat4(1.0f));
     pbrShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     pbrShader.setBool("useDepthOfField", useDepthOfField);
+    pbrShader.setFloat("farPlane", camera.farPlane);
+    pbrShader.setFloat("nearPlane", camera.nearPlane);
     for (Object* object : objects) {
         Model* objectModel = object->getFirstComponentOfType<Model>();
         if (objectModel != nullptr) {
@@ -75,6 +77,8 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
 
     backgroundShader.use();
     backgroundShader.setBool("useDepthOfField", useDepthOfField);
+    backgroundShader.setFloat("farPlane", camera.farPlane);
+    backgroundShader.setFloat("nearPlane", camera.nearPlane);
     backgroundShader.setMat4("view", view);
     model = glm::mat4(1.0f);
     backgroundShader.setMat4("model", model);
