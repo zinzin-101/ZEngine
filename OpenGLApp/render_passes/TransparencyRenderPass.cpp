@@ -6,17 +6,19 @@
 using namespace RendererOperation;
 
 void TransparencyRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) {
-	unsigned int sceneFBO = frameData.at("sceneFBO").buffer;
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, sceneFBO);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	bool useDepthOfField = (bool)frameData.at("useDepthOfField").buffer;
+	if (useDepthOfField) {
+		unsigned int sceneFBO = frameData.at("sceneFBO").buffer;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, sceneFBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-	// Copy depth buffer to screen
-	glm::vec2 screenDimension = Engine::getInstance()->getScreenDimension();
-	int width = (int)screenDimension.x;
-	int height = (int)screenDimension.y;
-	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		// Copy depth buffer to screen
+		glm::vec2 screenDimension = Engine::getInstance()->getScreenDimension();
+		int width = (int)screenDimension.x;
+		int height = (int)screenDimension.y;
+		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// save previous GL states
