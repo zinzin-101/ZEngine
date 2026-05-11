@@ -14,7 +14,6 @@ class PBRRenderPipeline : public RenderPipeline {
         Shader debugDepthQuad;
         Shader blurShader;
         Shader blurFinalShader;
-        Shader blurCombineShader;
 
         unsigned int cubeVAO;
         unsigned int cubeVBO;
