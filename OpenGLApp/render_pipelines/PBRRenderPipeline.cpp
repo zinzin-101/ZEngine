@@ -24,7 +24,6 @@ PBRRenderPipeline::PBRRenderPipeline() :
     debugDepthQuad("shaders/pbr/3.1.3.debug_quad.vs", "shaders/pbr/3.1.3.debug_quad_depth.fs"),
     blurShader("shaders/7.blur.vs", "shaders/7.blur.fs"),
     blurFinalShader("shaders/blur_final.vs", "shaders/blur_final.fs"),
-    blurCombineShader("shaders/7.blur.vs", "shaders/blur_combine.fs"),
     cubeVAO(0), cubeVBO(0),
     quadVAO(0), quadVBO(0),
     envMapPath("resources/textures/hdr/puresky_2k.hdr"),
@@ -105,7 +104,6 @@ void PBRRenderPipeline::init() {
     addShader(&debugDepthQuad, "debugDepthQuad");
     addShader(&blurShader, "blurShader");
     addShader(&blurFinalShader, "blurFinalShader");
-    addShader(&blurCombineShader, "blurCombineShader");
 
 	pbrShader.use();
 	pbrShader.setInt("irradianceMap", 0);
@@ -126,8 +124,8 @@ void PBRRenderPipeline::init() {
 	backgroundShader.setInt("environmentMap", 0);
 
     blurFinalShader.use();
-    blurFinalShader.setInt("background", 0);
-    blurFinalShader.setInt("foreground", 1);
+    blurFinalShader.setInt("scene", 0);
+    blurFinalShader.setInt("blur", 1);
 
     blurShader.use();
     blurShader.setInt("image", 0);
@@ -381,17 +379,14 @@ void PBRRenderPipeline::init() {
     glfwGetFramebufferSize(Engine::getInstance()->getWindow(), &scrWidth, &scrHeight);
     glViewport(0, 0, scrWidth, scrHeight);
 
-    unsigned int attachments[4] = {
-        GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
-        GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3
-    };
+    unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 
     unsigned int sceneFBO;
     glGenFramebuffers(1, &sceneFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
-    unsigned int sceneColorBuffers[4];
-    glGenTextures(4, sceneColorBuffers);
-    for (unsigned int i = 0; i < 4; i++)
+    unsigned int sceneColorBuffers[3];
+    glGenTextures(3, sceneColorBuffers);
+    for (unsigned int i = 0; i < 3; i++)
     {
         glBindTexture(GL_TEXTURE_2D, sceneColorBuffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -401,17 +396,14 @@ void PBRRenderPipeline::init() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // attach texture to framebuffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, sceneColorBuffers[i], 0);
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Framebuffer is incomplete" << std::endl;
-        }
     }
-    glDrawBuffers(4, attachments);
+
+    glDrawBuffers(3, attachments);
 
     addFrameData(sceneFBO, "sceneFBO", FrameData::Type::FRAME_BUFFER);
     addFrameData(sceneColorBuffers[0], "sceneColorBuffers0", FrameData::Type::TEXTURE);
     addFrameData(sceneColorBuffers[1], "sceneColorBuffers1", FrameData::Type::TEXTURE);
     addFrameData(sceneColorBuffers[2], "sceneColorBuffers2", FrameData::Type::TEXTURE);
-    addFrameData(sceneColorBuffers[3], "sceneColorBuffers3", FrameData::Type::TEXTURE);
 
     // render buffer for depth of field
     unsigned int rboDepth;
@@ -419,7 +411,7 @@ void PBRRenderPipeline::init() {
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, scrWidth, scrHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-
+    
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer is incomplete" << std::endl;
     }
@@ -428,87 +420,29 @@ void PBRRenderPipeline::init() {
     addFrameData(rboDepth, "rboDepth", FrameData::Type::RENDER_BUFFER);
 
     // ping-pong frame buffer for blurring
-    unsigned int pingpongFBOs1[2];
-    unsigned int pingpongColorBuffers1[2];
-    glGenFramebuffers(2, pingpongFBOs1);
-    glGenTextures(2, pingpongColorBuffers1);
+    unsigned int pingpongFBOs[2];
+    unsigned int pingpongColorBuffers[2];
+    glGenFramebuffers(2, pingpongFBOs);
+    glGenTextures(2, pingpongColorBuffers);
     for (unsigned int i = 0; i < 2; i++)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs1[i]);
-        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers1[i]);
+        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs[i]);
+        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         // attach to frame buffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers1[i], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers[i], 0);
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             std::cout << "Framebuffer is incomplete" << std::endl;
         }
     }
-
-    addFrameData(pingpongFBOs1[0], "pingpongFBO10", FrameData::Type::FRAME_BUFFER);
-    addFrameData(pingpongFBOs1[1], "pingpongFBO11", FrameData::Type::FRAME_BUFFER);
-    addFrameData(pingpongColorBuffers1[0], "pingpongColorBuffers10", FrameData::Type::TEXTURE);
-    addFrameData(pingpongColorBuffers1[1], "pingpongColorBuffers11", FrameData::Type::TEXTURE);
-
-    unsigned int pingpongFBOs2[2];
-    unsigned int pingpongColorBuffers2[2];
-    glGenFramebuffers(2, pingpongFBOs2);
-    glGenTextures(2, pingpongColorBuffers2);
-    for (unsigned int i = 0; i < 2; i++)
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBOs2[i]);
-        glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers2[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        // attach to frame buffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorBuffers2[i], 0);
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Framebuffer is incomplete" << std::endl;
-        }
-    }
-
-    addFrameData(pingpongFBOs2[0], "pingpongFBO20", FrameData::Type::FRAME_BUFFER);
-    addFrameData(pingpongFBOs2[1], "pingpongFBO21", FrameData::Type::FRAME_BUFFER);
-    addFrameData(pingpongColorBuffers2[0], "pingpongColorBuffers20", FrameData::Type::TEXTURE);
-    addFrameData(pingpongColorBuffers2[1], "pingpongColorBuffers21", FrameData::Type::TEXTURE);
-
-    // frame buffer for combining blur amount with full image
-    unsigned int combineFBO;
-    unsigned int combineBuffers[2]; // 0: background, 1: foreground
-    glGenFramebuffers(1, &combineFBO);
-    glGenTextures(2, combineBuffers);
-    for (unsigned int i = 0; i < 2; i++)
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, combineFBO);
-        glBindTexture(GL_TEXTURE_2D, combineBuffers[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, scrWidth, scrHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // clamp to the edge as the blur filter would sample repeated texture values
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        // attach to frame buffer
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, combineBuffers[i], 0);
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            std::cout << "Framebuffer is incomplete" << std::endl;
-        }
-    }
-
-    unsigned int combineAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, combineAttachments);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "Framebuffer is incomplete" << std::endl;
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    addFrameData(combineFBO, "combineFBO", FrameData::Type::FRAME_BUFFER);
-    addFrameData(combineBuffers[0], "combineBuffers0", FrameData::Type::TEXTURE);
-    addFrameData(combineBuffers[1], "combineBuffers1", FrameData::Type::TEXTURE);
+    addFrameData(pingpongFBOs[0], "pingpongFBO0", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongFBOs[1], "pingpongFBO1", FrameData::Type::FRAME_BUFFER);
+    addFrameData(pingpongColorBuffers[0], "pingpongColorBuffers0", FrameData::Type::TEXTURE);
+    addFrameData(pingpongColorBuffers[1], "pingpongColorBuffers1", FrameData::Type::TEXTURE);
 
     addFrameData(cubeVAO, "cubeVAO", FrameData::Type::VAO);
     addFrameData(quadVAO, "quadVAO", FrameData::Type::VAO);
@@ -521,8 +455,8 @@ void PBRRenderPipeline::init() {
     addRenderPass(new ShadowRenderPass());
     addRenderPass(new PBRRenderPass());
     addRenderPass(new BasicRenderPass());
-    addRenderPass(new TransparencyRenderPass());
     addRenderPass(new BlurRenderPass());
+    addRenderPass(new TransparencyRenderPass());
 }
 
 void PBRRenderPipeline::renderCube() {

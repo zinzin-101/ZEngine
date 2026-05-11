@@ -185,17 +185,19 @@ void PBRScene::processInput() {
 		if (pbrPipeline) {
 			depthPercentage = pbrPipeline->getDepthPercentage();
 			depthPercentage += 0.5f * dt;
+			depthPercentage = std::clamp(depthPercentage, 0.0f, 1.0f);
+			pbrPipeline->setDepthPercentage(depthPercentage);
+			std::cout << depthPercentage << std::endl;
 		}
-		pbrPipeline->setDepthPercentage(depthPercentage);
-		std::cout << "depth: " << depthPercentage << std::endl;
 	}
 	else if (inputManager.getKey(GLFW_KEY_DOWN)) {
 		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
 		if (pbrPipeline) {
 			depthPercentage = pbrPipeline->getDepthPercentage();
 			depthPercentage -= 0.5f * dt;
+			depthPercentage = std::clamp(depthPercentage, 0.0f, 1.0f);
+			pbrPipeline->setDepthPercentage(depthPercentage);
+			std::cout << depthPercentage << std::endl;
 		}
-		depthPercentage = std::clamp(depthPercentage, 0.0f, 1.0f);
-		std::cout << "depth: " << depthPercentage << std::endl;
 	}
 }
