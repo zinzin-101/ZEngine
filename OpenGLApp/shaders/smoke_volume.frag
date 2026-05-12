@@ -30,7 +30,7 @@ void main() {
 	
     float depth = LinearizeDepth(gl_FragCoord.z);
     BlurColor = FragColor;
-    DepthColor = vec4(vec3(depth), 1.0);
+    //DepthColor = vec4(vec3(depth), 1.0);
 
 	//FragColor = vec4(1.0f);
     //FragColor = vec4(vec3(depth), 1.0);

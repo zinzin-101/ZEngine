@@ -455,8 +455,8 @@ void PBRRenderPipeline::init() {
     addRenderPass(new ShadowRenderPass());
     addRenderPass(new PBRRenderPass());
     addRenderPass(new BasicRenderPass());
-    addRenderPass(new BlurRenderPass());
     addRenderPass(new TransparencyRenderPass());
+    addRenderPass(new BlurRenderPass());
 }
 
 void PBRRenderPipeline::renderCube() {
