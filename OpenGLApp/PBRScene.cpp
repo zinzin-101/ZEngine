@@ -69,8 +69,13 @@ void PBRScene::setup() {
 	sword->transform.setParent(&root->transform);
 	////cam->transform.setParent(&root->transform);
 
-	//Object* smoke = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
-	//smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	Object* smoke1 = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
+	smoke1->transform.scale = glm::vec3(16.0f, 32.0f, 16.0f);
+	smoke1->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+
+	//Object* smoke2 = createObject(glm::vec3(0.0f, 0.2f, -2.0f));
+	//smoke2->transform.scale = glm::vec3(4.0f, 32.0f, 4.0f);
+	//smoke2->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
 	//Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
@@ -86,10 +91,21 @@ void PBRScene::setup() {
 	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	//softbodymesh->groundHeight = 0.0f;
 
-	Object* mountain1 = createObject(glm::vec3(2.0f, 0.0f, 2.0f));
+	Object* mountain1 = createObject(glm::vec3(-4.0f, 0.0f, -3.0f));
 	mountain1->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
 	mountain1->transform.scale = glm::vec3(0.005f);
+	mountain1->transform.eulerRotation.y = -180.0f;
 	mountain1->transform.setParent(&root->transform);
+
+	Object* mountain2 = createObject(glm::vec3(-4.0f, 0.0f, 0.0f));
+	mountain2->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountain2->transform.scale = glm::vec3(0.005f);
+	mountain2->transform.eulerRotation.y = -150.0f;
+
+	Object* mountain3 = createObject(glm::vec3(-4.0f, 0.0f, 3.0f));
+	mountain3->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountain3->transform.scale = glm::vec3(0.005f);
+	mountain3->transform.eulerRotation.y = -210.0f;
 
 	//Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
 	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));
