@@ -10,8 +10,10 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glEnable(GL_DEPTH_CLAMP);
 
     Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
-    glm::vec3 lightDir = glm::normalize(-glm::vec3(2.5f, 0.5f, 2.0f));
+    glm::vec3 lightDir = glm::normalize(-glm::vec3(2.5f, 2.5f, 2.0f));
     glm::vec3 lightTarget = camera->getTransform()->getGlobalPosition();
+    float camLookAhead = 4.0f;
+    lightTarget = lightTarget + (camLookAhead * camera->getFoward());
     float lightDistance = 8.0f;
     glm::vec3 lightPosition = lightTarget - (lightDir * lightDistance);
     const unsigned int SHADOW_WIDTH = 4096;
