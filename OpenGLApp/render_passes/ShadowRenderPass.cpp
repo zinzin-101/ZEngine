@@ -7,7 +7,13 @@
 using namespace RendererOperation;
 
 void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::map<std::string, Shader*>& shaders, std::vector<Object*>& objects) {
-	glm::vec3 lightPosition = glm::vec3(2.5f, 0.5f, 2.0f); // change later
+    glEnable(GL_DEPTH_CLAMP);
+
+    Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
+    glm::vec3 lightDir = glm::normalize(-glm::vec3(2.5f, 0.5f, 2.0f));
+    glm::vec3 lightTarget = camera->getTransform()->getGlobalPosition();
+    float lightDistance = 8.0f;
+    glm::vec3 lightPosition = lightTarget - (lightDir * lightDistance);
     const unsigned int SHADOW_WIDTH = 4096;
     const unsigned int SHADOW_HEIGHT = 4096;
 	/////////////////////////////////////////////////
@@ -18,8 +24,24 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glm::mat4 lightSpaceMatrix;
     float nearPlane = 2.0f;
     float farPlane = 32.0f;
-    lightProjection = glm::ortho(-7.5f, 7.5f, -7.5f, 7.5f, nearPlane, farPlane);
-    lightView = glm::lookAt(lightPosition, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    //float shadowSize = 7.5f;
+    //float shadowSize = 15.0f;
+    //float shadowSize = 50.0f;
+    float shadowSize = 25.0f;
+    lightProjection = glm::ortho(-shadowSize, shadowSize, -shadowSize, shadowSize, nearPlane, farPlane);
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    if (glm::abs(glm::dot(lightDir, up)) > 0.99f) up = glm::vec3(0.0f, 0.0f, 1.0f);
+    lightView = glm::lookAt(lightPosition, lightTarget, up);
+    //glm::vec3 minCorners{};
+    //glm::vec3 maxCorners{};
+    //camera->getMinMaxShadowCorners(lightView, minCorners, maxCorners);
+    //float paddingXY = 1.0f;
+    //lightProjection = glm::ortho(
+    //    minCorners.x - paddingXY, maxCorners.x + paddingXY,
+    //    minCorners.y - paddingXY, maxCorners.y + paddingXY,
+    //    nearPlane, farPlane
+    //);
+    //lightView = glm::lookAt(lightPosition, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f)); 
     lightSpaceMatrix = lightProjection * lightView;
     Shader& depthShader = *shaders.at("depthShader");
     depthShader.use();
@@ -52,6 +74,8 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     frameData["lightSpaceMatrix"] = FrameData("lightSpaceMatrix", lightSpaceMatrix);
+
+    glDisable(GL_DEPTH_CLAMP);
 }
 
 void ShadowRenderPass::renderObjects(Shader& shader, std::vector<Object*>& objects) {

@@ -270,6 +270,9 @@ void main()
 
     vec3 color = ambientDiffuse + ambientSpecular + Lo;
     
+    float brightness = 4.2;
+    color *= brightness;
+
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct

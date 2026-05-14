@@ -29,6 +29,7 @@ class Camera : public Component {
 		glm::vec3 getFoward() const;
 		glm::vec3 getRight() const;
 		glm::vec3 getUp() const;
+		void getMinMaxShadowCorners(const glm::mat4& lightView, glm::vec3& min, glm::vec3& max) const;
 
 		virtual void init() override;
 		virtual void update() override;

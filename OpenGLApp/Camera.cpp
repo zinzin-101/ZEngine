@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <limits>
 
 using namespace CameraConfig;
 
@@ -41,6 +42,40 @@ glm::vec3 Camera::getRight() const {
 
 glm::vec3 Camera::getUp() const {
 	return up;
+}
+
+void Camera::getMinMaxShadowCorners(const glm::mat4& lightView, glm::vec3& min, glm::vec3& max) const {
+	glm::vec3 minCorner = glm::vec3((std::numeric_limits<float>::max)());
+	glm::vec3 maxCorner = glm::vec3((std::numeric_limits<float>::lowest)());
+
+	// calculate each corners
+	int idx = 0;
+	glm::mat4 invVP = glm::inverse(getProjectionMatrix() * getViewMatrix());
+	for (int x = 0; x < 2; x++) {
+		for (int y = 0; y < 2; y++) {
+			for (int z = 0; z < 2; z++) {
+				glm::vec4 pt = invVP * glm::vec4(
+					2.0f * x - 1.0f,
+					2.0f * y - 1.0f,
+					2.0f * z - 1.0f,
+					1.0f
+				);
+				glm::vec3 corner = glm::vec3(pt) / pt.w;
+				glm::vec3 lightSpaceCorner = glm::vec3(lightView * glm::vec4(corner, 1.0f));
+
+				minCorner.x = (glm::min)(minCorner.x, lightSpaceCorner.x);
+				minCorner.y = (glm::min)(minCorner.y, lightSpaceCorner.y);
+				minCorner.z = (glm::min)(minCorner.z, lightSpaceCorner.z);
+
+				maxCorner.x = (glm::max)(maxCorner.x, lightSpaceCorner.x);
+				maxCorner.y = (glm::max)(maxCorner.y, lightSpaceCorner.y);
+				maxCorner.z = (glm::max)(maxCorner.z, lightSpaceCorner.z);
+			}
+		}
+	}
+
+	min = minCorner;
+	max = maxCorner;
 }
 
 void Camera::updateCameraVector() {

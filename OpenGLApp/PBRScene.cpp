@@ -55,7 +55,7 @@ void PBRScene::setup() {
 
 	Object* ground = createObject(glm::vec3(0.0f, -0.1f, 0.0f));
 	ground->addComponent<Model>(FileSystem::getPath("resources/objects/stone_ground/scene.gltf"));
-	ground->transform.scale = glm::vec3(1.05f, 0.25f, 1.05f);
+	ground->transform.scale = glm::vec3(2.25f, 0.25f, 2.25f);
 	ground->transform.eulerRotation.x = -90.0f;
 
 	Object* sword = createObject(glm::vec3(1.0f, 0.4f, 0.0f));
@@ -67,24 +67,29 @@ void PBRScene::setup() {
 	scythe->transform.setParent(&root->transform);
 	ground->transform.setParent(&root->transform);
 	sword->transform.setParent(&root->transform);
-	//cam->transform.setParent(&root->transform);
+	////cam->transform.setParent(&root->transform);
 
-	Object* smoke = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
-	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	//Object* smoke = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
+	//smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
-	Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
-	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody->transform.scale = glm::vec3(1.0f);
-	GeneralSoftBodyMesh* softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
-	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
-	softbodymesh->groundHeight = 0.0f;
+	//Object* softbody = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->transform.scale = glm::vec3(1.0f);
+	//GeneralSoftBodyMesh* softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	//softbodymesh->groundHeight = 0.0f;
 
-	Object* softbody1 = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
-	softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody1->transform.scale = glm::vec3(1.0f);
-	softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
-	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
-	softbodymesh->groundHeight = 0.0f;
+	//Object* softbody1 = createObject(glm::vec3(0.0f, 5.0f, 0.0f));
+	//softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody1->transform.scale = glm::vec3(1.0f);
+	//softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	//softbodymesh->groundHeight = 0.0f;
+
+	Object* mountain1 = createObject(glm::vec3(2.0f, 0.0f, 2.0f));
+	mountain1->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountain1->transform.scale = glm::vec3(0.005f);
+	mountain1->transform.setParent(&root->transform);
 
 	//Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
 	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));
@@ -156,7 +161,7 @@ void PBRScene::processInput() {
 		Engine::getInstance()->setEnableCursor(true);
 	}
 
-	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
+	if (inputManager.getKeyDown(GLFW_KEY_R)) {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
 	}
 
