@@ -46,6 +46,7 @@ class SmokeSim : public Component {
 		unsigned int newSmokeTexture;
 
 		// simulation
+		float simulationTimer;
 		void integrate(float dt, float acceleration);
 		void applyVorticity(float dt);
 		void solveIncompressibility(float dt, int iterations);

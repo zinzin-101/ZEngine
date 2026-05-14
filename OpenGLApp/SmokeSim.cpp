@@ -151,6 +151,8 @@ SmokeSim::SmokeSim(SmokeSimInfo smokeSimInfo):
 	glBindVertexArray(0);
 
 	isTransparent = true;
+
+	simulationTimer = 0.0f;
 }
 
 SmokeSim::~SmokeSim() {
@@ -166,13 +168,29 @@ SmokeSim::~SmokeSim() {
 }
 
 void SmokeSim::update() {
-	float dt = simulationDeltaTime;
-	integrate(dt, smokeAcceleration);
-	applyVorticity(dt);
-	solveIncompressibility(dt, simulationIterations);
-	extrapolate();
-	advectVelocity(dt);
-	advectSmoke(dt);
+	float deltaTime = Engine::getInstance()->getTime()->getDeltaTime();
+	simulationTimer += deltaTime;
+	if (simulationTimer < simulationDeltaTime) return;
+
+	const int MAX_STEPS = 5;
+	int steps = (int)(simulationTimer / simulationDeltaTime);
+	if (steps > MAX_STEPS) {
+		steps = MAX_STEPS;
+		simulationTimer = 0.0f;
+	}
+	else {
+		simulationTimer -= simulationDeltaTime * (float)steps;
+	}
+
+	for (int i = 0; i < steps; i++) {
+		float dt = simulationDeltaTime;
+		integrate(dt, smokeAcceleration);
+		applyVorticity(dt);
+		solveIncompressibility(dt, simulationIterations);
+		extrapolate();
+		advectVelocity(dt);
+		advectSmoke(dt);
+	}
 }
 
 void SmokeSim::render() {

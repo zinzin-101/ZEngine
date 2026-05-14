@@ -71,7 +71,7 @@ void PBRScene::setup() {
 	sword->transform.setParent(&root->transform);
 	////cam->transform.setParent(&root->transform);
 
-	Object* smoke1 = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
+	Object* smoke1 = createObject(glm::vec3(0.0f, 2.5f, 0.0f));
 	smoke1->transform.scale = glm::vec3(2.0f, 8.0f, 2.0f);
 	smoke1->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
@@ -131,6 +131,11 @@ void PBRScene::processInput() {
 	InputManager& inputManager = *Engine::getInstance()->getInputManager();
 	if (inputManager.getKeyDown(GLFW_KEY_ESCAPE)) {
 		Engine::getInstance()->terminate();
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
+		float timeScale = Engine::getInstance()->getTime()->timeScale;
+		Engine::getInstance()->getTime()->timeScale = timeScale > 0.5f ? 0.0f : 1.0f;
 	}
 
 	float dt = Engine::getInstance()->getTime()->getDeltaTime();

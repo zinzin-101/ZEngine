@@ -180,6 +180,8 @@ GeneralSoftBodyMesh::GeneralSoftBodyMesh(std::string filepath) : tempVerticesDat
     glBindVertexArray(0);
 
     color = glm::vec3(1.0f);
+
+    simulationTimer = 0.0f;
 }
 
 void GeneralSoftBodyMesh::reset() {
@@ -395,15 +397,29 @@ void GeneralSoftBodyMesh::update() {
     float dt = Engine::getInstance()->getTime()->getDeltaTime();
     if (dt <= 0.001f || pauseSimulation) return;
 
-    dt = Engine::getInstance()->getTime()->getFixedDeltaTime();
+    float fixedDeltaTime = Engine::getInstance()->getTime()->getFixedDeltaTime();
+    simulationTimer += dt;
+    if (simulationTimer < fixedDeltaTime) return;
+
+    const int MAX_STEPS = 2;
+    int steps = (int)(simulationTimer / fixedDeltaTime);
+    if (steps > MAX_STEPS) {
+        steps = MAX_STEPS;
+        simulationTimer = 0.0f;
+    }
+    else {
+        simulationTimer -= fixedDeltaTime * (float)steps;
+    }
 
     glm::vec3 gravity = glm::vec3(0.0f, -9.81f, 0.0f);
     //glm::vec3 gravity = glm::vec3(0.0f, -1.0f, 0.0f);
-    float subDt = dt / substeps;
-    for (unsigned int i = 0; i < substeps; i++) {
-        preSolve(subDt, gravity);
-        solve(subDt);
-        postSolve(subDt);
+    for (int step = 0; step < steps; step++) {
+        float subDt = fixedDeltaTime / substeps;
+        for (unsigned int i = 0; i < substeps; i++) {
+            preSolve(subDt, gravity);
+            solve(subDt);
+            postSolve(subDt);
+        }
     }
 }
 

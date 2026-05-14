@@ -10,7 +10,7 @@ in vec3 Normal;
 uniform vec3 color;
 uniform vec3 camPos;
 
-vec3 lightDir = normalize(vec3(-0.0, -1.0, -0.0));
+vec3 lightDir = -normalize(vec3(2.5f, 2.5f, 2.0f));
 
 float shininess = 48;
 vec3 ambient = vec3(0.3);

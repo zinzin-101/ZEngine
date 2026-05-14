@@ -22,6 +22,8 @@ private:
 	void solveVolumes(float compliance, float dt);
 	void updateMesh();
 
+	float simulationTimer;
+
 public:
 	GeneralSoftBodyMesh(std::string filepath);
 	virtual void reset() override;
