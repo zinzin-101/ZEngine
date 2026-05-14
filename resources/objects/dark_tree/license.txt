@@ -1,0 +1,11 @@
+Model Information:
+* title:	Mossy old tree log
+* source:	https://sketchfab.com/3d-models/mossy-old-tree-log-c65a00ca4a174653beb4c59cb42b9143
+* author:	Julian Malik (https://sketchfab.com/julianmalik)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Mossy old tree log" (https://sketchfab.com/3d-models/mossy-old-tree-log-c65a00ca4a174653beb4c59cb42b9143) by Julian Malik (https://sketchfab.com/julianmalik) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

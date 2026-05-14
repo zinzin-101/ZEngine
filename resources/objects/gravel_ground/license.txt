@@ -1,0 +1,11 @@
+Model Information:
+* title:	Gravel Ground
+* source:	https://sketchfab.com/3d-models/gravel-ground-7e5a3aefba274aa1977d06a7aa710c76
+* author:	Rosh_ (https://sketchfab.com/Rosh_)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Gravel Ground" (https://sketchfab.com/3d-models/gravel-ground-7e5a3aefba274aa1977d06a7aa710c76) by Rosh_ (https://sketchfab.com/Rosh_) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

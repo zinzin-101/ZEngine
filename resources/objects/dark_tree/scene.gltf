@@ -1,0 +1,337 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        9.863752365112305,
+        14.07265567779541,
+        18.01238250732422
+      ],
+      "min": [
+        -13.19637680053711,
+        1.2857539653778076,
+        -23.516464233398438
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 154020,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        0.9999845027923584,
+        0.9999392032623291,
+        0.9998289346694946
+      ],
+      "min": [
+        -0.9999562501907349,
+        -0.9998891353607178,
+        -0.9995118379592896
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        0.9980216026306152,
+        0.999992847442627,
+        0.999993085861206,
+        1.0
+      ],
+      "min": [
+        -0.9999581575393677,
+        -0.9997254014015198,
+        -0.9999964237213135,
+        1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        0.9850342869758606,
+        0.9992793202400208
+      ],
+      "min": [
+        0.0007206553127616644,
+        0.0007206553127616644
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 102680,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        0.9850342869758606,
+        0.9992793202400208
+      ],
+      "min": [
+        0.0007206553127616644,
+        0.0007206553127616644
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 205360,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        0.9850342869758606,
+        0.9992793202400208
+      ],
+      "min": [
+        0.0007206553127616644,
+        0.0007206553127616644
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 308040,
+      "componentType": 5126,
+      "count": 12835,
+      "max": [
+        0.9850342869758606,
+        0.9992793202400208
+      ],
+      "min": [
+        0.0007206553127616644,
+        0.0007206553127616644
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 61170,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Julian Malik (https://sketchfab.com/julianmalik)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mossy-old-tree-log-c65a00ca4a174653beb4c59cb42b9143",
+      "title": "Mossy old tree log"
+    },
+    "generator": "Sketchfab-12.66.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 244680,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 410720,
+      "byteOffset": 244680,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 308040,
+      "byteOffset": 655400,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 205360,
+      "byteOffset": 963440,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1168800,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/ForestLogMedium_1_baseColor.jpeg"
+    },
+    {
+      "uri": "textures/ForestLogMedium_1_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/ForestLogMedium_1_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "name": "ForestLogMedium_1",
+      "normalTexture": {
+        "index": 2
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4,
+            "TEXCOORD_2": 5,
+            "TEXCOORD_3": 6
+          },
+          "indices": 7,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        0.540592610836029,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.2003567269847727e-16,
+        -0.540592610836029,
+        0.0,
+        0.0,
+        0.540592610836029,
+        1.2003567269847727e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "root"
+    },
+    {
+      "children": [
+        3
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "GLTF_SceneRootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        -0.024035341041573677,
+        0.004152855875161916,
+        -0.052863132841907225,
+        0.0,
+        0.006744878762594619,
+        0.05780815532850672,
+        0.00147462838379936,
+        0.0,
+        0.0525952843691651,
+        -0.005515592920850651,
+        -0.02434685555445324,
+        0.0,
+        0.4699999988079071,
+        0.0,
+        3.380000114440918,
+        1.0
+      ],
+      "name": "ForestLogMedium_0"
+    },
+    {
+      "children": [
+        5
+      ],
+      "name": "ForestLogMedium_1"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_5"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9729,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ]
+}
