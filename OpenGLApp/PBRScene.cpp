@@ -70,7 +70,7 @@ void PBRScene::setup() {
 	////cam->transform.setParent(&root->transform);
 
 	Object* smoke1 = createObject(glm::vec3(0.0f, 0.2f, 0.0f));
-	smoke1->transform.scale = glm::vec3(16.0f, 32.0f, 16.0f);
+	smoke1->transform.scale = glm::vec3(2.0f, 8.0f, 2.0f);
 	smoke1->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
 	//Object* smoke2 = createObject(glm::vec3(0.0f, 0.2f, -2.0f));

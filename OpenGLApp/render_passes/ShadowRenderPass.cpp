@@ -65,7 +65,7 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     }
 
     renderObjects(depthShader, objects);
-    renderTransparentObjects(depthShader, objects);
+    //renderTransparentObjects(depthShader, objects);
 
     glCullFace(GL_BACK);
     glDisable(GL_CULL_FACE);

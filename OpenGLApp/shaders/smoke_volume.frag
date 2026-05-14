@@ -25,6 +25,8 @@ void main() {
 	float density = texture(volume, uvw).r;
 	vec3 smokeColor = vec3(1.0, 1.0, 1.0);
 	FragColor = vec4(smokeColor, density);
+    BlurColor = vec4(0.0);
+    DepthColor = vec4(0.0); 
 	
 	if (!useDepthOfField) return;
 	

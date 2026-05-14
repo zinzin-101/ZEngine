@@ -484,8 +484,8 @@ void SmokeSim::renderVolume(glm::mat4 projection, glm::mat4 view, glm::mat4 mode
 			intersection[5] = vecStart[11] + dL[11] * vecDir[11];
 		}
 
-		for (int i = 0; i < 12; i++) {
-			volumeSlices[totalSliceVertices++] = intersection[indices[i]];
+		for (int k = 0; k < 12; k++) {
+			volumeSlices[totalSliceVertices++] = intersection[indices[k]];
 		}
 
 	}
