@@ -15,9 +15,11 @@ uniform mat3 normalMatrix;
 
 uniform mat4 lightSpaceMatrix;
 
+uniform vec2 tiling;
+
 void main()
 {
-    TexCoords = aTexCoords;
+    TexCoords = aTexCoords * tiling;    
     WorldPos = vec3(model * vec4(aPos, 1.0));
     Normal = normalize(normalMatrix * aNormal);
 

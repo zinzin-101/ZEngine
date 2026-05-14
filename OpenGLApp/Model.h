@@ -20,6 +20,8 @@ class Model : public Component {
 		std::vector<Texture> loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string typeName);
 
 	public:
+		glm::vec2 tiling;
+
 		Model(const std::string& path, bool gamma = false);
 		void draw(Shader& shader);
 		void drawGeometry();

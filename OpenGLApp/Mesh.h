@@ -48,6 +48,6 @@ class Mesh {
 
 	public:
 		Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-		void draw(Shader& shader);
+		void draw(Shader& shader, glm::vec2 tiling = glm::vec2(1.0f));
 		void drawGeometry();
 };

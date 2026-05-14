@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Transform.h"
 
 using namespace MeshConfig;
 
@@ -22,7 +23,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
-void Mesh::draw(Shader& shader) {
+void Mesh::draw(Shader& shader, glm::vec2 tiling) {
     // bind textures
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
@@ -49,24 +50,32 @@ void Mesh::draw(Shader& shader) {
         glBindTexture(GL_TEXTURE_2D, defaultTex[i]);
     }
 
-    unsigned int slot = STARTING_TEXTURE_INDEX;
+    unsigned int slot = 0;
 
     for (unsigned int i = 0; i < textures.size(); i++)
     {
         std::string number;
         std::string name = textures[i].type;
         if (name == "texture_diffuse") {
-            number = std::to_string(diffuseNr++);
+            //number = std::to_string(diffuseNr++);
+            name = "albedoMap";
+            slot = ALBEDO_SLOT;
+            number = std::to_string(diffuseNrPBR++);
         }
         else if (name == "texture_specular") {
-            number = std::to_string(specularNr++);
+            name = "metallicMap";
+            slot = METALLIC_SLOT;
+            number = std::to_string(metallicNrPBR++);
         }
         else if (name == "texture_normal") {
-            number = std::to_string(normalNr++);
-            
+            name = "normalMap";
+            slot = NORMAL_SLOT;
+            number = std::to_string(normalNrPBR++);
         }
         else if (name == "texture_height") {
-            number = std::to_string(heightNr++);
+            name = "roughnessMap";
+            slot = ROUGHNESS_SLOT;
+            number = std::to_string(roughnessNrPBR++);
         }
         // PBR
         else if (name == "texture_PBR_diffuse") {
@@ -95,9 +104,15 @@ void Mesh::draw(Shader& shader) {
             number = std::to_string(aoNrPBR++);
         }
 
+        if (slot < STARTING_TEXTURE_INDEX) {
+            std::cout << "Texture type is incompatible with Mesh::Draw()" << std::endl;
+            continue;
+        }
+
         glActiveTexture(GL_TEXTURE0 + slot);
         glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), slot);
         glUniform1i(glGetUniformLocation(shader.ID, "useMR"), (metallicNrPBR != 1 && roughnessNrPBR == 1) ? 1 : 0);
+        glUniform2fv(glGetUniformLocation(shader.ID, "tiling"), 1, &tiling[0]);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
