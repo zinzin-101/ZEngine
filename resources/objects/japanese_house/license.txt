@@ -1,0 +1,11 @@
+Model Information:
+* title:	Japanese House
+* source:	https://sketchfab.com/3d-models/japanese-house-771899f2af8a4b57aa98b1ca1ae83034
+* author:	Daniel Stringer (https://sketchfab.com/DanielStringer)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Japanese House" (https://sketchfab.com/3d-models/japanese-house-771899f2af8a4b57aa98b1ca1ae83034) by Daniel Stringer (https://sketchfab.com/DanielStringer) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
