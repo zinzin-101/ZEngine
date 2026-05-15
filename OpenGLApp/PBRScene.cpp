@@ -119,14 +119,9 @@ void PBRScene::setup() {
 	tree->transform.scale = glm::vec3(0.15f);
 	tree->addComponent<Model>(FileSystem::getPath("resources/objects/dark_tree/scene.gltf"));
 
-	Object* house1 = createObject(glm::vec3(6.0f, 0.0f, 6.0f));
-	house1->addComponent<Model>(FileSystem::getPath("resources/objects/japanese_house/scene.gltf"));
+	Object* house1 = createObject(glm::vec3(-6.0f, 0.0f, 10.0f));
+	house1->addComponent<Model>(FileSystem::getPath("resources/objects/traditional_japanese_house/scene.gltf"));
 	house1->transform.scale = glm::vec3(0.015f);
-	house1->transform.eulerRotation.x = -90.0f;
-
-	Object* house2 = createObject(glm::vec3(-6.0f, 0.0f, 10.0f));
-	house2->addComponent<Model>(FileSystem::getPath("resources/objects/feudal_japanese_house/scene.gltf"));
-	house2->transform.scale = glm::vec3(0.015f);
 
 	//Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
 	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));

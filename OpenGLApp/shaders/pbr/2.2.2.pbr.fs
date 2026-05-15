@@ -173,9 +173,14 @@ void main()
 {	
     // material properties
     vec3 albedo = pow(texture(albedoMap1, TexCoords).rgb, vec3(2.2));
-    float metallic = texture(metallicMap1, TexCoords).r;
-    float roughness = useMR ? texture(metallicMap1, TexCoords).g : texture(roughnessMap1, TexCoords).g;
-    float ao = texture(aoMap1, TexCoords).r;
+    //float metallic = texture(metallicMap1, TexCoords).r;
+    //float roughness = useMR ? texture(metallicMap1, TexCoords).g : texture(roughnessMap1, TexCoords).g;
+    //float ao = texture(aoMap1, TexCoords).r;
+
+    float metallic = texture(metallicMap1, TexCoords).b;
+    float roughness = texture(metallicMap1, TexCoords).g;
+    float ao = texture(metallicMap1, TexCoords).r;
+
     // input lighting data
     //vec3 N = getNormalFromMap();
     vec3 N = getNormalFromMap();

@@ -12,6 +12,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
 	Shader& pbrShader = *shaders.at("pbrShader");
     pbrShader.use();
     pbrShader.setInt("numOfLights", 0);
+    /// Each light position must be multiplied by invEnvRotMat if used
     pbrShader.setVec3("lightPositions[0]", glm::vec3(2.5f, 0.5f, 2.0f));
     pbrShader.setVec3("lightPositions[1]", glm::vec3(2.5f, 0.5f, 2.0f));
     pbrShader.setVec3("lightPositions[2]", glm::vec3(2.5f, 0.5f, 2.0f));
@@ -57,7 +58,8 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     }
     glm::mat4 lightSpaceMatrix = frameData.at("lightSpaceMatrix").matrix;
     //pbrShader.setMat4("envMapRotation", glm::mat4(1.0f));
-    pbrShader.setMat4("envMapRotation", frameData.at("envMapRotation").matrix);
+    glm::mat4 envRotMat = glm::rotate(model, glm::radians(frameData.at("envMapRotation").number), glm::vec3(0.0f, 1.0f, 0.0f));
+    pbrShader.setMat4("envMapRotation", envRotMat);
     pbrShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     pbrShader.setBool("useDepthOfField", useDepthOfField);
     pbrShader.setFloat("farPlane", camera.farPlane);
@@ -82,7 +84,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     backgroundShader.setFloat("nearPlane", camera.nearPlane);
     backgroundShader.setMat4("view", view);
     model = glm::mat4(1.0f);
-    backgroundShader.setMat4("model", frameData.at("envMapRotation").matrix * model);
+    backgroundShader.setMat4("model", envRotMat * model);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 
