@@ -11,6 +11,9 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
 
     Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
     glm::vec3 lightDir = glm::normalize(-glm::vec3(2.5f, 2.5f, 2.0f));
+    glm::mat4 envRotMat = glm::rotate(glm::mat4(1.0f), -glm::radians(frameData.at("envMapRotation").number), glm::vec3(0.0f, 1.0f, 0.0f));
+    lightDir = envRotMat * glm::vec4(lightDir, 0.0f);
+    frameData["envMapRotation"].matrix = envRotMat;
     glm::vec3 lightTarget = camera->getTransform()->getGlobalPosition();
     float camLookAhead = 4.0f;
     lightTarget = lightTarget + (camLookAhead * camera->getFoward());

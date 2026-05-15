@@ -28,7 +28,8 @@ PBRRenderPipeline::PBRRenderPipeline() :
     quadVAO(0), quadVBO(0),
     envMapPath("resources/textures/hdr/puresky_2k.hdr"),
     useDepthOfField(true),
-    depthPercentage(0.1f)
+    depthPercentage(0.1f),
+    backgroundRotateAngle(0.0f)
 {}
 
 PBRRenderPipeline::~PBRRenderPipeline() {}
@@ -81,12 +82,21 @@ void PBRRenderPipeline::setDepthPercentage(float value) {
     frameData["useDepthOfField"].number = depthPercentage;
 }
 
+void PBRRenderPipeline::setBackgroundRotateAngle(float value) {
+    backgroundRotateAngle = value;
+    frameData["envMapRotation"].number = backgroundRotateAngle;
+}
+
 bool PBRRenderPipeline::isUsingDepthOfField() const {
     return useDepthOfField;
 }
 
 float PBRRenderPipeline::getDepthPercentage() const {
     return depthPercentage;
+}
+
+float PBRRenderPipeline::getBackgroundRotateAngle() const {
+    return backgroundRotateAngle;
 }
 
 void PBRRenderPipeline::init() {
@@ -451,6 +461,10 @@ void PBRRenderPipeline::init() {
     dofData.buffer = (unsigned int)useDepthOfField;
     dofData.number = depthPercentage;
     frameData["useDepthOfField"] = dofData;
+
+    FrameData envMapRotationData = FrameData();
+    envMapRotationData.number = backgroundRotateAngle;
+    frameData["envMapRotation"] = envMapRotationData;
 
     addRenderPass(new ShadowRenderPass());
     addRenderPass(new PBRRenderPass());

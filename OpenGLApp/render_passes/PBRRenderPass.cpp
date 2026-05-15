@@ -56,7 +56,8 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     glm::mat4 lightSpaceMatrix = frameData.at("lightSpaceMatrix").matrix;
-    pbrShader.setMat4("envMapRotation", glm::mat4(1.0f));
+    //pbrShader.setMat4("envMapRotation", glm::mat4(1.0f));
+    pbrShader.setMat4("envMapRotation", frameData.at("envMapRotation").matrix);
     pbrShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
     pbrShader.setBool("useDepthOfField", useDepthOfField);
     pbrShader.setFloat("farPlane", camera.farPlane);
@@ -81,7 +82,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     backgroundShader.setFloat("nearPlane", camera.nearPlane);
     backgroundShader.setMat4("view", view);
     model = glm::mat4(1.0f);
-    backgroundShader.setMat4("model", model);
+    backgroundShader.setMat4("model", frameData.at("envMapRotation").matrix * model);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 

@@ -28,19 +28,24 @@ class PBRRenderPipeline : public RenderPipeline {
         bool useDepthOfField;
         float depthPercentage;
 
+        float backgroundRotateAngle;
+
     protected:
 		virtual void init() override;
 
 	public:
+
         PBRRenderPipeline();
         ~PBRRenderPipeline();
 
         void setEnvironmentMap(std::string path);
         void setUseDepthOfField(bool value);
         void setDepthPercentage(float value);
+        void setBackgroundRotateAngle(float value);
 
         bool isUsingDepthOfField() const;
         float getDepthPercentage() const;
+        float getBackgroundRotateAngle() const;
 
         static void renderCubeFromVAO(unsigned int vao);
         static void renderQuadFromVAO(unsigned int vao);
