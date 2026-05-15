@@ -12,7 +12,7 @@ unsigned int Mesh::defaultAO = 0;
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
     if (defaultAlbedo == 0) defaultAlbedo = createDefaultTexture(255, 255, 255);
     if (defaultNormal == 0) defaultNormal = createDefaultTexture(128, 128, 255);
-    if (defaultMetallic == 0) defaultMetallic = createDefaultTexture(0, 0, 0);
+    if (defaultMetallic == 0) defaultMetallic = createDefaultTexture(255, 255, 0);
     if (defaultRoughness == 0) defaultRoughness = createDefaultTexture(255, 255, 255);
     if (defaultAO == 0) defaultAO = createDefaultTexture(255, 255, 255);
 
