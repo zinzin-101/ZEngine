@@ -28,7 +28,7 @@ void main()
         return;
     }
 
-    float t = (z - (lower)) / 0.2;
+    float t = (z - (lower)) / 0.04;
     vec3 color = mix(sceneColor, blurColor, t);
     
     FragColor = vec4(color, 1.0);
