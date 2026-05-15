@@ -56,7 +56,7 @@ void PBRScene::setup() {
 	Object* ground = createObject(glm::vec3(0.0f, -0.1f, 0.0f));
 	//ground->addComponent<Model>(FileSystem::getPath("resources/objects/stone_ground/scene.gltf"));
 	ground->transform.scale = glm::vec3(0.5f, 1.0f, 0.5f);
-	ground->addComponent<Model>(FileSystem::getPath("resources/objects/gravel_ground/scene.gltf"))->tiling = glm::vec2(10.0f / ground->transform.scale);
+	ground->addComponent<Model>(FileSystem::getPath("resources/objects/gravel_ground/scene.gltf"))->tiling = glm::vec2(10.0f / ground->transform.scale.x);
 	//ground->transform.scale = glm::vec3(2.25f, 0.25f, 2.25f);
 	//ground->transform.eulerRotation.x = -90.0f;
 
@@ -208,6 +208,12 @@ void PBRScene::processInput() {
 		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
 		if (pbrPipeline) {
 			pbrPipeline->setEnvironmentMap("resources/textures/hdr/studio.hdr");
+		}
+	}
+	else if (inputManager.getKeyDown(GLFW_KEY_3)) {
+		PBRRenderPipeline* pbrPipeline = dynamic_cast<PBRRenderPipeline*>(Engine::getInstance()->getRenderer()->getCurrentRenderPipeline());
+		if (pbrPipeline) {
+			pbrPipeline->setEnvironmentMap("resources/textures/hdr/morning_2k.hdr");
 		}
 	}
 
