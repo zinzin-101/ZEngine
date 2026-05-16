@@ -8,8 +8,11 @@ Object::Object(std::string name): currentScene(nullptr), transform(this), name(n
 
 Object::~Object() {
 	for (Component* component : components) {
-		delete component;
+		if (component->autoDeleteOnDestroy) {
+			delete component;
+		}
 	}
+	components.clear();
 }
 
 void Object::init() {

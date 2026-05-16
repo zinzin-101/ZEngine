@@ -10,7 +10,7 @@ bool Component::getIsTransparent() const {
 	return isTransparent;
 }
 
-Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr), isTransparent(false), isActive(true) {}
+Component::Component(): priority(DEFAULT_PRIORITY), transform(nullptr), isTransparent(false), isActive(true), autoDeleteOnDestroy(true) {}
 Component::~Component() {}
 
 void Component::setTransform(Transform* transform) {

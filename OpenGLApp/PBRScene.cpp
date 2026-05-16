@@ -18,6 +18,13 @@
 const std::string CUBE_MESH_NAME = "cube";
 const std::string SHADER_NAME = "primitive_shader";
 
+PBRScene::~PBRScene() {
+	delete modelPtr;
+	modelPtr = nullptr;
+
+	std::cout << "cleaning PBR scene" << std::endl;
+}
+
 void PBRScene::loadMeshData() {
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
@@ -94,18 +101,19 @@ void PBRScene::setup() {
 	softbodymesh->groundHeight = 0.0f;
 
 	Object* mountain1 = createObject(glm::vec3(-4.0f, 0.0f, -3.0f));
-	mountain1->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	Model* mountainModel = mountain1->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountainModel->autoDeleteOnDestroy = false;
 	mountain1->transform.scale = glm::vec3(0.005f);
 	mountain1->transform.eulerRotation.y = -180.0f;
 	mountain1->transform.setParent(&root->transform);
 
 	Object* mountain2 = createObject(glm::vec3(-4.0f, 0.0f, 0.0f));
-	mountain2->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountain2->addComponent(mountainModel);
 	mountain2->transform.scale = glm::vec3(0.005f);
 	mountain2->transform.eulerRotation.y = -150.0f;
 
 	Object* mountain3 = createObject(glm::vec3(-4.0f, 0.0f, 3.0f));
-	mountain3->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountain3->addComponent(mountainModel);
 	mountain3->transform.scale = glm::vec3(0.005f);
 	mountain3->transform.eulerRotation.y = -210.0f;
 
@@ -127,6 +135,8 @@ void PBRScene::setup() {
 	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));
 	//chisa->transform.eulerRotation.x = -90.0f;
 	//chisa->transform.scale = glm::vec3(0.0075f);
+
+	modelPtr = mountainModel;
 }
 
 void PBRScene::processInput() {

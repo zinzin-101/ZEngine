@@ -16,6 +16,7 @@ class Component {
 
 	public:
 		bool isActive;
+		bool autoDeleteOnDestroy;
 
 		Component();
 		virtual ~Component();
