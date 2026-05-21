@@ -76,12 +76,11 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
         for (Component* component : allComponents) {
             if (skeletalModel == nullptr) {
                 skeletalModel = dynamic_cast<SkeletalModel*>(component);
-                continue;
             }
             if (skeletalAnimator == nullptr) {
                 skeletalAnimator = dynamic_cast<SkeletalAnimator*>(component);
-                continue;
             }
+            if (skeletalModel && skeletalAnimator) break;
         }
         if (skeletalModel != nullptr) {
             if (skeletalAnimator != nullptr) {

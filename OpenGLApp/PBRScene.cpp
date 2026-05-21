@@ -58,10 +58,10 @@ void PBRScene::setup() {
 
 	stbi_set_flip_vertically_on_load(false);
 
-	Object* scythe = createObject(glm::vec3(0.0f, 0.5f, 0.0f));
-	scythe->addComponent<Model>(FileSystem::getPath("resources/objects/scythe/scene.gltf"));
-	scythe->transform.eulerRotation.x = -90.0f;
-	scythe->transform.scale = glm::vec3(0.0075f);
+	//Object* scythe = createObject(glm::vec3(0.0f, 0.5f, 0.0f));
+	//scythe->addComponent<Model>(FileSystem::getPath("resources/objects/scythe/scene.gltf"));
+	//scythe->transform.eulerRotation.x = -90.0f;
+	//scythe->transform.scale = glm::vec3(0.0075f);
 
 	Object* ground = createObject(glm::vec3(0.0f, -0.1f, 0.0f));
 	//ground->addComponent<Model>(FileSystem::getPath("resources/objects/stone_ground/scene.gltf"));
@@ -70,75 +70,76 @@ void PBRScene::setup() {
 	//ground->transform.scale = glm::vec3(2.25f, 0.25f, 2.25f);
 	//ground->transform.eulerRotation.x = -90.0f;
 
-	Object* sword = createObject(glm::vec3(1.0f, 0.4f, 0.0f));
-	sword->addComponent<Model>(FileSystem::getPath("resources/objects/sword/scene.gltf"));
-	sword->transform.scale = glm::vec3(0.065f);
-	sword->transform.eulerRotation.y = -90.0f;
+	//Object* sword = createObject(glm::vec3(1.0f, 0.4f, 0.0f));
+	//sword->addComponent<Model>(FileSystem::getPath("resources/objects/sword/scene.gltf"));
+	//sword->transform.scale = glm::vec3(0.065f);
+	//sword->transform.eulerRotation.y = -90.0f;
 
-	root = createObject(glm::vec3());
-	scythe->transform.setParent(&root->transform);
-	ground->transform.setParent(&root->transform);
-	sword->transform.setParent(&root->transform);
+	//root = createObject(glm::vec3());
+	//scythe->transform.setParent(&root->transform);
+	//ground->transform.setParent(&root->transform);
+	//sword->transform.setParent(&root->transform);
 	////cam->transform.setParent(&root->transform);
 
-	Object* smoke1 = createObject(glm::vec3(0.0f, 2.5f, 0.0f));
-	smoke1->transform.scale = glm::vec3(2.0f, 8.0f, 2.0f);
-	smoke1->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	//Object* smoke1 = createObject(glm::vec3(0.0f, 2.5f, 0.0f));
+	//smoke1->transform.scale = glm::vec3(2.0f, 8.0f, 2.0f);
+	//smoke1->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
 	//Object* smoke2 = createObject(glm::vec3(0.0f, 0.2f, -2.0f));
 	//smoke2->transform.scale = glm::vec3(4.0f, 32.0f, 4.0f);
 	//smoke2->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
-	Object* softbody = createObject(glm::vec3(6.0f, 5.0f, 5.0f));
-	softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody->transform.scale = glm::vec3(1.0f);
-	GeneralSoftBodyMesh* softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
-	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
-	softbodymesh->groundHeight = 0.0f;
+	//Object* softbody = createObject(glm::vec3(6.0f, 5.0f, 5.0f));
+	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody->transform.scale = glm::vec3(1.0f);
+	//GeneralSoftBodyMesh* softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	//softbodymesh->groundHeight = 0.0f;
 
-	Object* softbody1 = createObject(glm::vec3(3.0f, 5.0f, 5.0f));
-	softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
-	softbody1->transform.scale = glm::vec3(1.0f);
-	softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
-	softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
-	softbodymesh->groundHeight = 0.0f;
+	//Object* softbody1 = createObject(glm::vec3(3.0f, 5.0f, 5.0f));
+	//softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+	//softbody1->transform.scale = glm::vec3(1.0f);
+	//softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	//softbodymesh->groundHeight = 0.0f;
 
 	Object* mountain1 = createObject(glm::vec3(-4.0f, 0.0f, -3.0f));
 	Model* mountainModel = mountain1->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
 	mountainModel->autoDeleteOnDestroy = false;
 	mountain1->transform.scale = glm::vec3(0.005f);
 	mountain1->transform.eulerRotation.y = -180.0f;
-	mountain1->transform.setParent(&root->transform);
+	//mountain1->transform.setParent(&root->transform);
 
-	Object* mountain2 = createObject(glm::vec3(-4.0f, 0.0f, 0.0f));
-	mountain2->addComponent(mountainModel);
-	mountain2->transform.scale = glm::vec3(0.005f);
-	mountain2->transform.eulerRotation.y = -150.0f;
+	//Object* mountain2 = createObject(glm::vec3(-4.0f, 0.0f, 0.0f));
+	//mountain2->addComponent(mountainModel);
+	//mountain2->transform.scale = glm::vec3(0.005f);
+	//mountain2->transform.eulerRotation.y = -150.0f;
 
-	Object* mountain3 = createObject(glm::vec3(-4.0f, 0.0f, 3.0f));
-	mountain3->addComponent(mountainModel);
-	mountain3->transform.scale = glm::vec3(0.005f);
-	mountain3->transform.eulerRotation.y = -210.0f;
+	//Object* mountain3 = createObject(glm::vec3(-4.0f, 0.0f, 3.0f));
+	//mountain3->addComponent(mountainModel);
+	//mountain3->transform.scale = glm::vec3(0.005f);
+	//mountain3->transform.eulerRotation.y = -210.0f;
 
 	stbi_set_flip_vertically_on_load(true);
-	Object* vampire = createObject(glm::vec3(4.0f, 0.0f, 4.0f));
-	vampire->transform.scale = glm::vec3(0.005f);
+	Object* vampire = createObject(glm::vec3(0.0f, 0.0f, 0.0f));
+	//vampire->transform.scale = glm::vec3(0.005f);
+	vampire->transform.scale = glm::vec3(1.0f);
 	SkeletalModel* vampireModel = vampire->addComponent<SkeletalModel>(FileSystem::getPath("resources/objects/vampire/vampire.dae"));
 	SkeletalAnimator* vampireAnimator = vampire->addComponent<SkeletalAnimator>();
-	vampireAnimator->addAnimation("idle", FileSystem::getPath("resources/objects/mixamo/Running.dae"), vampireModel);
+	vampireAnimator->addAnimation("idle", FileSystem::getPath("resources/objects/mixamo/idle.dae"), vampireModel);
 	SkeletalAnimation* idleAnim = vampireAnimator->getAnimation("idle");
-	vampireAnimator->playAnimation(idleAnim, idleAnim, 0.0f, 0.0f, 0.0f);
+	vampireAnimator->playAnimation(idleAnim, nullptr, 0.0f, 0.0f, 0.0f);
 	stbi_set_flip_vertically_on_load(false);
 
-	Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
-	Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));
-	tree->transform.setParent(&treeHolder->transform);
-	tree->transform.scale = glm::vec3(0.15f);
-	tree->addComponent<Model>(FileSystem::getPath("resources/objects/dark_tree/scene.gltf"));
+	//Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
+	//Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));
+	//tree->transform.setParent(&treeHolder->transform);
+	//tree->transform.scale = glm::vec3(0.15f);
+	//tree->addComponent<Model>(FileSystem::getPath("resources/objects/dark_tree/scene.gltf"));
 
-	Object* house1 = createObject(glm::vec3(-6.0f, 0.0f, 10.0f));
-	house1->addComponent<Model>(FileSystem::getPath("resources/objects/traditional_japanese_house/scene.gltf"));
-	house1->transform.scale = glm::vec3(0.015f);
+	//Object* house1 = createObject(glm::vec3(-6.0f, 0.0f, 10.0f));
+	//house1->addComponent<Model>(FileSystem::getPath("resources/objects/traditional_japanese_house/scene.gltf"));
+	//house1->transform.scale = glm::vec3(0.015f);
 
 	//Object* chisa = createObject(glm::vec3(-2.0f, 0.0f, 0.0f));
 	//chisa->addComponent<Model>(FileSystem::getPath("resources/objects/chisa/scene.gltf"));

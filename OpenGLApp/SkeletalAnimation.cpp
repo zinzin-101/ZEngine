@@ -76,7 +76,7 @@ void SkeletalAnimation::readMissingBones(const aiAnimation* animation, SkeletalM
 			boneInfoMap[channel->mNodeName.data].id, channel));
 	}
 
-	boneInfoMap = boneInfoMap;
+	this->boneInfoMap = boneInfoMap;
 }
 
 void SkeletalAnimation::readHierarchyData(AssimpNodeData& dest, const aiNode* src)
