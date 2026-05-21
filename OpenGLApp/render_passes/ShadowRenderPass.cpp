@@ -2,6 +2,7 @@
 #include "../Engine.h"
 #include "../Object.h"
 #include "../Model.h"
+#include "../SkeletalModel.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
@@ -63,6 +64,15 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
             glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
             depthShader.setMat4("model", modelMat);
             objectModel->drawGeometry();
+            continue;
+        }
+
+        SkeletalModel* objectSkeletalModel = object->getFirstComponentOfType<SkeletalModel>();
+        if (objectSkeletalModel != nullptr) {
+            glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+            depthShader.setMat4("model", modelMat);
+            objectSkeletalModel->drawGeometry();
+            continue;
         }
     }
 

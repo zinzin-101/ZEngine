@@ -120,6 +120,18 @@
     <ClCompile Include="PBRScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render_passes\BlurRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalAnimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.model_loading.fs" />
@@ -233,6 +245,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PBRScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render_passes\BlurRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalAnimation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalAnimator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -164,6 +164,9 @@
     <ClCompile Include="render_pipelines\SimpleRenderPipeline.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SkeletalAnimation.cpp" />
+    <ClCompile Include="SkeletalAnimator.cpp" />
+    <ClCompile Include="SkeletalModel.cpp" />
     <ClCompile Include="SmokeSim.cpp" />
     <ClCompile Include="SoftBodyMesh.cpp" />
     <ClCompile Include="SoftBodyTestScene.cpp" />
@@ -183,6 +186,7 @@
     <None Include="shaders\primitive.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SkeletalAnimation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComputeShader.h" />
@@ -211,6 +215,8 @@
     <ClInclude Include="render_pipelines\SimpleRenderPipeline.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SkeletalAnimator.h" />
+    <ClInclude Include="SkeletalModel.h" />
     <ClInclude Include="SmokeSim.h" />
     <ClInclude Include="SmokeSimConfig.h" />
     <ClInclude Include="SoftBodyMesh.h" />

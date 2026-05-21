@@ -3,6 +3,7 @@
 #include "../Engine.h"
 #include "../Object.h"
 #include "../Model.h"
+#include "../SkeletalModel.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
@@ -71,6 +72,16 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
             pbrShader.setMat4("model", modelMat);
             pbrShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(modelMat))));
             objectModel->draw(pbrShader);
+            continue;
+        }
+
+        SkeletalModel* objectSkeletalModel = object->getFirstComponentOfType<SkeletalModel>();
+        if (objectSkeletalModel != nullptr) {
+            glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+            pbrShader.setMat4("model", modelMat);
+            pbrShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(modelMat))));
+            objectSkeletalModel->draw(pbrShader);
+            continue;
         }
     }
 

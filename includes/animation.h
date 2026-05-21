@@ -1,13 +1,15 @@
 #pragma once
+#define ANIMATION_H
+#ifndef ANIMATION_H
 
 #include <vector>
 #include <map>
 #include <glm/glm.hpp>
 #include <assimp/scene.h>
-#include <learnopengl/bone.h>
+#include <bone.h>
 #include <functional>
-#include <learnopengl/animdata.h>
-#include <learnopengl/model_animation.h>
+#include <animdata.h>
+#include <model_animation.h>
 
 struct AssimpNodeData
 {
@@ -109,3 +111,4 @@ private:
 	std::map<std::string, BoneInfo> m_BoneInfoMap;
 };
 
+#endif

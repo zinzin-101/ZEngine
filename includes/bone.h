@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-#include <learnopengl/assimp_glm_helpers.h>
+#include <assimp_glm_helpers.h>
 
 struct KeyPosition
 {
@@ -42,7 +42,7 @@ public:
 		for (int positionIndex = 0; positionIndex < m_NumPositions; ++positionIndex)
 		{
 			aiVector3D aiPosition = channel->mPositionKeys[positionIndex].mValue;
-			float timeStamp = channel->mPositionKeys[positionIndex].mTime;
+			float timeStamp = (float)channel->mPositionKeys[positionIndex].mTime;
 			KeyPosition data;
 			data.position = AssimpGLMHelpers::GetGLMVec(aiPosition);
 			data.timeStamp = timeStamp;
@@ -53,7 +53,7 @@ public:
 		for (int rotationIndex = 0; rotationIndex < m_NumRotations; ++rotationIndex)
 		{
 			aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
-			float timeStamp = channel->mRotationKeys[rotationIndex].mTime;
+			float timeStamp = (float)channel->mRotationKeys[rotationIndex].mTime;
 			KeyRotation data;
 			data.orientation = AssimpGLMHelpers::GetGLMQuat(aiOrientation);
 			data.timeStamp = timeStamp;
@@ -64,25 +64,27 @@ public:
 		for (int keyIndex = 0; keyIndex < m_NumScalings; ++keyIndex)
 		{
 			aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
-			float timeStamp = channel->mScalingKeys[keyIndex].mTime;
+			float timeStamp = (float)channel->mScalingKeys[keyIndex].mTime;
 			KeyScale data;
 			data.scale = AssimpGLMHelpers::GetGLMVec(scale);
 			data.timeStamp = timeStamp;
 			m_Scales.push_back(data);
 		}
 	}
-	
+
 	void Update(float animationTime)
 	{
-		glm::mat4 translation = InterpolatePosition(animationTime);
-		glm::mat4 rotation = InterpolateRotation(animationTime);
-		glm::mat4 scale = InterpolateScaling(animationTime);
+		glm::vec3 tmp;
+		glm::quat tmpR;
+		glm::mat4 translation = InterpolatePosition(animationTime, tmp);
+		glm::mat4 rotation = InterpolateRotation(animationTime, tmpR);
+		glm::mat4 scale = InterpolateScaling(animationTime, tmp);
 		m_LocalTransform = translation * rotation * scale;
 	}
 	glm::mat4 GetLocalTransform() { return m_LocalTransform; }
 	std::string GetBoneName() const { return m_Name; }
 	int GetBoneID() { return m_ID; }
-	
+
 
 
 	int GetPositionIndex(float animationTime)
@@ -116,7 +118,7 @@ public:
 	}
 
 
-private:
+	//private:
 
 	float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 	{
@@ -127,7 +129,7 @@ private:
 		return scaleFactor;
 	}
 
-	glm::mat4 InterpolatePosition(float animationTime)
+	glm::mat4 InterpolatePosition(float animationTime, glm::vec3& finalPos)
 	{
 		if (1 == m_NumPositions)
 			return glm::translate(glm::mat4(1.0f), m_Positions[0].position);
@@ -138,10 +140,11 @@ private:
 			m_Positions[p1Index].timeStamp, animationTime);
 		glm::vec3 finalPosition = glm::mix(m_Positions[p0Index].position, m_Positions[p1Index].position
 			, scaleFactor);
+		finalPos = finalPosition;
 		return glm::translate(glm::mat4(1.0f), finalPosition);
 	}
 
-	glm::mat4 InterpolateRotation(float animationTime)
+	glm::mat4 InterpolateRotation(float animationTime, glm::quat& finalQuat)
 	{
 		if (1 == m_NumRotations)
 		{
@@ -156,11 +159,12 @@ private:
 		glm::quat finalRotation = glm::slerp(m_Rotations[p0Index].orientation, m_Rotations[p1Index].orientation
 			, scaleFactor);
 		finalRotation = glm::normalize(finalRotation);
+		finalQuat = finalRotation;
 		return glm::toMat4(finalRotation);
 
 	}
 
-	glm::mat4 InterpolateScaling(float animationTime)
+	glm::mat4 InterpolateScaling(float animationTime, glm::vec3& finalScaling)
 	{
 		if (1 == m_NumScalings)
 			return glm::scale(glm::mat4(1.0f), m_Scales[0].scale);
@@ -171,6 +175,7 @@ private:
 			m_Scales[p1Index].timeStamp, animationTime);
 		glm::vec3 finalScale = glm::mix(m_Scales[p0Index].scale, m_Scales[p1Index].scale
 			, scaleFactor);
+		finalScaling = finalScale;
 		return glm::scale(glm::mat4(1.0f), finalScale);
 	}
 
