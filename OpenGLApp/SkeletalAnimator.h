@@ -11,6 +11,10 @@
 #include "SkeletalAnimation.h"
 
 class SkeletalAnimator : public Component {
+	private:
+		std::map<std::string, SkeletalAnimation> nameToAnimation;
+		void getAllNodesNamesHelper(const AssimpNodeData* node, std::vector<std::string>& names);
+
 	public:
 		std::vector<glm::mat4> m_FinalBoneMatrices;
 		SkeletalAnimation* m_CurrentAnimation;
@@ -22,6 +26,7 @@ class SkeletalAnimator : public Component {
 
 		std::map<std::string, glm::mat4> m_BoneGlobalTransform;
 
+		SkeletalAnimator();
 		SkeletalAnimator(SkeletalAnimation* animation);
 
 		virtual void update() override;
@@ -32,6 +37,6 @@ class SkeletalAnimator : public Component {
 		std::vector<glm::mat4> getFinalBoneMatrices();
 		std::vector<std::string> getAllNodeNames();
 
-	private:
-		void getAllNodesNamesHelper(const AssimpNodeData* node, std::vector<std::string>& names);
+		void addAnimation(std::string name, std::string path, SkeletalModel* model);
+		SkeletalAnimation* getAnimation(std::string name);
 };

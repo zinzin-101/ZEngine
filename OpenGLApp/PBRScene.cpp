@@ -8,6 +8,9 @@
 #include "PrimitiveMeshRenderer.h"
 #include "SmokeSim.h"
 #include "Model.h"
+#include "SkeletalModel.h"
+#include "SkeletalAnimation.h"
+#include "SkeletalAnimator.h"
 #include "render_pipelines/PBRRenderPipeline.h"
 #include "GeneralSoftBodyMesh.h"
 #include "GLFW/glfw3.h"
@@ -117,9 +120,15 @@ void PBRScene::setup() {
 	mountain3->transform.scale = glm::vec3(0.005f);
 	mountain3->transform.eulerRotation.y = -210.0f;
 
+	stbi_set_flip_vertically_on_load(true);
 	Object* vampire = createObject(glm::vec3(4.0f, 0.0f, 4.0f));
 	vampire->transform.scale = glm::vec3(0.005f);
-	vampire->addComponent<Model>(FileSystem::getPath("resources/objects/vampire/vampire.dae"));
+	SkeletalModel* vampireModel = vampire->addComponent<SkeletalModel>(FileSystem::getPath("resources/objects/vampire/vampire.dae"));
+	SkeletalAnimator* vampireAnimator = vampire->addComponent<SkeletalAnimator>();
+	vampireAnimator->addAnimation("idle", FileSystem::getPath("resources/objects/mixamo/Running.dae"), vampireModel);
+	SkeletalAnimation* idleAnim = vampireAnimator->getAnimation("idle");
+	vampireAnimator->playAnimation(idleAnim, idleAnim, 0.0f, 0.0f, 0.0f);
+	stbi_set_flip_vertically_on_load(false);
 
 	Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
 	Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));

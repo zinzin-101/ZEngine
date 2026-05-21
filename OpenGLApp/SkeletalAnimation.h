@@ -32,8 +32,8 @@ class SkeletalAnimation {
 		const std::map<std::string, BoneInfo>& getBoneIDMap();
 
 	private:
-		float duration;
-		int ticksPerSecond;
+		float duration{};
+		int ticksPerSecond{};
 		std::vector<Bone> bones;
 		AssimpNodeData rootNode;
 		std::map<std::string, BoneInfo> boneInfoMap;

@@ -93,6 +93,11 @@ void Object::addComponent(Component* component) {
 	std::sort(components.begin(), components.end(), compareComponentPriority);
 }
 
+const std::vector<Component*>& Object::getAllComponents() const {
+	return components;
+}
+
+
 void Object::removeComponent(Component* component) {
 	for (std::vector<Component*>::iterator itr = components.end(); itr != components.begin();) {
 		itr--;

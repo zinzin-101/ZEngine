@@ -4,6 +4,7 @@
 #include "../Object.h"
 #include "../Model.h"
 #include "../SkeletalModel.h"
+#include "../SkeletalAnimator.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
@@ -68,6 +69,7 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
     for (Object* object : objects) {
         Model* objectModel = object->getFirstComponentOfType<Model>();
         if (objectModel != nullptr) {
+            pbrShader.use();
             glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
             pbrShader.setMat4("model", modelMat);
             pbrShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(modelMat))));
@@ -75,12 +77,45 @@ void PBRRenderPass::render(std::map<std::string, FrameData>& frameData, std::map
             continue;
         }
 
-        SkeletalModel* objectSkeletalModel = object->getFirstComponentOfType<SkeletalModel>();
-        if (objectSkeletalModel != nullptr) {
-            glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
-            pbrShader.setMat4("model", modelMat);
-            pbrShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(modelMat))));
-            objectSkeletalModel->draw(pbrShader);
+        const std::vector<Component*>& allComponents = object->getAllComponents();
+        SkeletalModel* skeletalModel = nullptr;
+        SkeletalAnimator* skeletalAnimator = nullptr;
+        for (Component* component : allComponents) {
+            if (skeletalModel == nullptr) {
+                skeletalModel = dynamic_cast<SkeletalModel*>(component);
+                continue;
+            }
+            if (skeletalAnimator == nullptr) {
+                skeletalAnimator = dynamic_cast<SkeletalAnimator*>(component);
+                continue;
+            }
+        }
+
+        if (skeletalModel != nullptr) {
+            if (skeletalAnimator != nullptr) {
+                Shader* skeletalShader = skeletalModel->skeletalShader;
+                skeletalShader->use();
+                skeletalShader->setBool("useDepthOfField", useDepthOfField);
+                skeletalShader->setMat4("projection", camera.getProjectionMatrix());
+                skeletalShader->setMat4("view", view);
+                skeletalShader->setFloat("farPlane", camera.farPlane);
+                skeletalShader->setFloat("nearPlane", camera.nearPlane);
+                auto transforms = skeletalAnimator->getFinalBoneMatrices();
+                for (int i = 0; i < transforms.size(); i++) {
+                    skeletalShader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+                }
+                glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+                skeletalShader->setMat4("model", modelMat);
+                skeletalModel->draw(*skeletalShader);
+            }
+            else {
+                pbrShader.use();
+                glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+                pbrShader.setMat4("model", modelMat);
+                pbrShader.setMat3("normalMatrix", glm::transpose(glm::inverse(glm::mat3(modelMat))));
+                skeletalModel->draw(pbrShader);
+            }
+
             continue;
         }
     }

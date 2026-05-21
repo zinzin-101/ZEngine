@@ -32,6 +32,8 @@ class Object {
 		void setCurrentScene(Scene* scene);
 		void addComponent(Component* component);
 
+		const std::vector<Component*>& getAllComponents() const;
+
 		template <class T>
 		T* addComponent();
 

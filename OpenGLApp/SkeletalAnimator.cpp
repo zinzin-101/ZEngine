@@ -1,11 +1,17 @@
 #include "SkeletalAnimator.h"
+#include "SkeletalModel.h"
 #include "Engine.h"
 
+SkeletalAnimator::SkeletalAnimator(): SkeletalAnimator(nullptr) {}
+
 SkeletalAnimator::SkeletalAnimator(SkeletalAnimation* animation) {
-	m_CurrentTime = 0.0;
+	m_CurrentTime = 0.0f;
+	m_CurrentTime2 = 0.0f;
 	m_CurrentAnimation = animation;
 	m_CurrentAnimation2 = NULL;
-	m_blendAmount = 0;
+	m_blendAmount = 0.0f;
+
+	m_DeltaTime = 0.0f;
 
 	m_FinalBoneMatrices.reserve(100);
 
@@ -112,6 +118,15 @@ std::vector<std::string> SkeletalAnimator::getAllNodeNames() {
 	std::vector<std::string> names;
 	getAllNodesNamesHelper(node, names);
 	return names;
+}
+
+void SkeletalAnimator::addAnimation(std::string name, std::string path, SkeletalModel* model) {
+	nameToAnimation[name] = SkeletalAnimation(path, model);
+}
+
+SkeletalAnimation* SkeletalAnimator::getAnimation(std::string name) {
+	if (!nameToAnimation.contains(name)) return nullptr;
+	return &nameToAnimation.at(name);
 }
 
 void SkeletalAnimator::getAllNodesNamesHelper(const AssimpNodeData* node, std::vector<std::string>& names) {

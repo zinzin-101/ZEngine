@@ -3,6 +3,7 @@
 #include "../Object.h"
 #include "../Model.h"
 #include "../SkeletalModel.h"
+#include "../SkeletalAnimator.h"
 #include <glad/glad.h>
 
 using namespace RendererOperation;
@@ -60,18 +61,49 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
 
     for (Object* object : objects) {
         Model* objectModel = object->getFirstComponentOfType<Model>();
+
         if (objectModel != nullptr) {
+            depthShader.use();
             glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
             depthShader.setMat4("model", modelMat);
             objectModel->drawGeometry();
             continue;
         }
 
-        SkeletalModel* objectSkeletalModel = object->getFirstComponentOfType<SkeletalModel>();
-        if (objectSkeletalModel != nullptr) {
-            glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
-            depthShader.setMat4("model", modelMat);
-            objectSkeletalModel->drawGeometry();
+        const std::vector<Component*>& allComponents = object->getAllComponents();
+        SkeletalModel* skeletalModel = nullptr;
+        SkeletalAnimator* skeletalAnimator = nullptr;
+        for (Component* component : allComponents) {
+            if (skeletalModel == nullptr) {
+                skeletalModel = dynamic_cast<SkeletalModel*>(component);
+                continue;
+            }
+            if (skeletalAnimator == nullptr) {
+                skeletalAnimator = dynamic_cast<SkeletalAnimator*>(component);
+                continue;
+            }
+        }
+        if (skeletalModel != nullptr) {
+            if (skeletalAnimator != nullptr) {
+                Shader* skeletalShader = skeletalModel->skeletalShader;
+                skeletalShader->use();
+                skeletalShader->setMat4("projection", lightSpaceMatrix);
+                skeletalShader->setMat4("view", glm::mat4(1.0f));
+                auto transforms = skeletalAnimator->getFinalBoneMatrices();
+                for (int i = 0; i < transforms.size(); i++) {
+                    skeletalShader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+                }
+                glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+                skeletalShader->setMat4("model", modelMat);
+                skeletalModel->draw(*skeletalShader);
+            }
+            else {
+                depthShader.use();
+                glm::mat4 modelMat = object->transform.getGlobalModelMatrix();
+                depthShader.setMat4("model", modelMat);
+                skeletalModel->drawGeometry();
+            }
+
             continue;
         }
     }
