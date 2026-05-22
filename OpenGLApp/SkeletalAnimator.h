@@ -32,6 +32,7 @@ class SkeletalAnimator : public Component {
 		virtual void update() override;
 
 		void playAnimation(SkeletalAnimation* pAnimation, SkeletalAnimation* pAnimation2, float time1, float time2, float blend);
+		void playAnimation(std::string animationName1, std::string animationName2, float time1, float time2, float blend);
 		glm::mat4 updateBlend(Bone* Bone1, Bone* Bone2);
 		void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 		std::vector<glm::mat4> getFinalBoneMatrices();

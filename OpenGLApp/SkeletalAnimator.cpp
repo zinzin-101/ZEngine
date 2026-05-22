@@ -56,6 +56,12 @@ void SkeletalAnimator::playAnimation(SkeletalAnimation* pAnimation, SkeletalAnim
 	m_blendAmount = blend;
 }
 
+void SkeletalAnimator::playAnimation(std::string animationName1, std::string animationName2, float time1, float time2, float blend) {
+	SkeletalAnimation* anim1 = animationName1 == "" ? nullptr : getAnimation(animationName1);
+	SkeletalAnimation* anim2 = animationName2 == "" ? nullptr : getAnimation(animationName2);
+	playAnimation(anim1, anim2, time1, time2, blend);
+}
+
 glm::mat4 SkeletalAnimator::updateBlend(Bone* Bone1, Bone* Bone2) {
 	glm::vec3 bonePos1, bonePos2, finalPos;
 	glm::vec3 boneScale1, boneScale2, finalScale;

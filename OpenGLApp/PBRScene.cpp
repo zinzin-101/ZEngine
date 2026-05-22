@@ -127,8 +127,7 @@ void PBRScene::setup() {
 	SkeletalModel* vampireModel = vampire->addComponent<SkeletalModel>(FileSystem::getPath("resources/objects/vampire/vampire.dae"));
 	SkeletalAnimator* vampireAnimator = vampire->addComponent<SkeletalAnimator>();
 	vampireAnimator->addAnimation("idle", FileSystem::getPath("resources/objects/mixamo/idle.dae"), vampireModel);
-	SkeletalAnimation* idleAnim = vampireAnimator->getAnimation("idle");
-	vampireAnimator->playAnimation(idleAnim, nullptr, 0.0f, 0.0f, 0.0f);
+	vampireAnimator->playAnimation("idle", "", 0.0f, 0.0f, 0.0f);
 	stbi_set_flip_vertically_on_load(false);
 
 	//Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
