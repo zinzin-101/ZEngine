@@ -29,11 +29,11 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glm::mat4 lightView;
     glm::mat4 lightSpaceMatrix;
     float nearPlane = 2.0f;
-    float farPlane = 32.0f;
+    float farPlane = 64.0f;
     //float shadowSize = 7.5f;
     //float shadowSize = 15.0f;
     //float shadowSize = 50.0f;
-    float shadowSize = 32.0f;
+    float shadowSize = 64.0f;
     lightProjection = glm::ortho(-shadowSize, shadowSize, -shadowSize, shadowSize, nearPlane, farPlane);
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
     if (glm::abs(glm::dot(lightDir, up)) > 0.99f) up = glm::vec3(0.0f, 0.0f, 1.0f);

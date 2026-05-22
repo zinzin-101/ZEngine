@@ -130,6 +130,16 @@ void PBRScene::setup() {
 	vampireAnimator->playAnimation("idle", "", 0.0f, 0.0f, 0.0f);
 	stbi_set_flip_vertically_on_load(false);
 
+	//Object* castle = createObject(glm::vec3(0.0f));
+	//castle->addComponent<Model>(FileSystem::getPath("resources/objects/castle_church/scene.gltf"));
+	//castle->transform.scale = glm::vec3(1.0f);
+	//castle->transform.eulerRotation.x = -90.0f;
+
+	Object* village = createObject(glm::vec3(0.0f));
+	village->addComponent<Model>(FileSystem::getPath("resources/objects/medieval_scenery/scene.gltf"));
+	village->transform.scale = glm::vec3(0.1f);
+	//village->transform.eulerRotation.x = -90.0f;
+
 	//Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
 	//Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));
 	//tree->transform.setParent(&treeHolder->transform);
