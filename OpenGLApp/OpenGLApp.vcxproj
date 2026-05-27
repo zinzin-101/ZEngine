@@ -140,6 +140,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CubePrimitive.cpp" />
+    <ClCompile Include="custom\PlayerController.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GeneralSoftBodyMesh.cpp" />
     <ClCompile Include="glad.c" />
@@ -186,6 +187,7 @@
     <None Include="shaders\primitive.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="custom\PlayerController.h" />
     <ClInclude Include="SkeletalAnimation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />

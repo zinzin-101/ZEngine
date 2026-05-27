@@ -13,6 +13,7 @@
 #include "SkeletalAnimator.h"
 #include "render_pipelines/PBRRenderPipeline.h"
 #include "GeneralSoftBodyMesh.h"
+#include "custom/PlayerController.h"
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include <iostream>
@@ -42,8 +43,12 @@ void PBRScene::setup() {
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
 	Object* cam = instantiateObject(glm::vec3(0.0f));
-	Camera* camera = cam->addComponent<Camera>();
+	freeCam = cam->addComponent<Camera>();
+	currentCamera = freeCam;
 	//camera->farPlane = 10.0f;
+
+	Object* plrCam = instantiateObject(glm::vec3(0.0f));
+	playerCam = plrCam->addComponent<Camera>();
 
 	//currentCamera = cam->getFirstComponentOfType<Camera>();
 
@@ -124,21 +129,22 @@ void PBRScene::setup() {
 	Object* vampire = createObject(glm::vec3(0.0f, 0.0f, 0.0f));
 	//vampire->transform.scale = glm::vec3(0.005f);
 	vampire->transform.scale = glm::vec3(1.0f);
+	vampire->transform.eulerRotation.y = 90.0f;
 	SkeletalModel* vampireModel = vampire->addComponent<SkeletalModel>(FileSystem::getPath("resources/objects/vampire/vampire.dae"));
 	SkeletalAnimator* vampireAnimator = vampire->addComponent<SkeletalAnimator>();
-	vampireAnimator->addAnimation("idle", FileSystem::getPath("resources/objects/mixamo/idle.dae"), vampireModel);
-	vampireAnimator->playAnimation("idle", "", 0.0f, 0.0f, 0.0f);
+	player = vampire->addComponent<PlayerController>();
+	playerCam->getTransform()->position = vampire->transform.position;
+	player->camera = playerCam;
+
+	//vampireAnimator->addAnimation("idle", FileSystem::getPath("resources/objects/mixamo/idle.dae"), vampireModel);
+	//vampireAnimator->playAnimation("idle", "", 0.0f, 0.0f, 0.0f);
 	stbi_set_flip_vertically_on_load(false);
 
-	//Object* castle = createObject(glm::vec3(0.0f));
-	//castle->addComponent<Model>(FileSystem::getPath("resources/objects/castle_church/scene.gltf"));
-	//castle->transform.scale = glm::vec3(1.0f);
-	//castle->transform.eulerRotation.x = -90.0f;
+	Object* castle = createObject(glm::vec3(0.0f));
+	castle->addComponent<Model>(FileSystem::getPath("resources/objects/castle_church/scene.gltf"));
+	castle->transform.scale = glm::vec3(1.0f);
+	castle->transform.eulerRotation.x = -90.0f;
 
-	Object* village = createObject(glm::vec3(0.0f));
-	village->addComponent<Model>(FileSystem::getPath("resources/objects/medieval_scenery/scene.gltf"));
-	village->transform.scale = glm::vec3(0.1f);
-	//village->transform.eulerRotation.x = -90.0f;
 
 	//Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
 	//Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));
@@ -159,6 +165,8 @@ void PBRScene::setup() {
 }
 
 void PBRScene::processInput() {
+	std::cout << "current cam: " << (currentCamera == freeCam ? "free" : "player") << std::endl;
+
 	//std::cout << "from test scene input" << std::endl;
 
 	InputManager& inputManager = *Engine::getInstance()->getInputManager();
@@ -173,17 +181,22 @@ void PBRScene::processInput() {
 
 	float dt = Engine::getInstance()->getTime()->getDeltaTime();
 	glm::vec3 movement(0.0f);
+	glm::vec2 playerMovement(0.0f);
 	if (inputManager.getKey(GLFW_KEY_W)) {
 		movement += currentCamera->getFoward() * 2.5f * dt;
+		playerMovement.y += 1.0f;
 	}
 	if (inputManager.getKey(GLFW_KEY_S)) {
 		movement += -currentCamera->getFoward() * 2.5f * dt;
+		playerMovement.y -= 1.0f;
 	}
 	if (inputManager.getKey(GLFW_KEY_A)) {
 		movement += -currentCamera->getRight() * 2.5f * dt;
+		playerMovement.x -= 1.0f;
 	}
 	if (inputManager.getKey(GLFW_KEY_D)) {
 		movement += currentCamera->getRight() * 2.5f * dt;
+		playerMovement.x += 1.0f;
 	}
 	if (inputManager.getKey(GLFW_KEY_E)) {
 		movement += currentCamera->getUp() * 2.5f * dt;
@@ -192,11 +205,39 @@ void PBRScene::processInput() {
 		movement += -currentCamera->getUp() * 2.5f * dt;
 	}
 
-	if (inputManager.getKey(GLFW_KEY_LEFT_SHIFT)) {
-		currentCamera->getTransform()->position += movement * 2.0f;
+	if (currentCamera == playerCam) {
+		Engine::getInstance()->setEnableCursor(false);
+		glm::vec2 mouseOffset = inputManager.getMouseOffset();
+		currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * 5.0f * dt;
+		currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * 5.0f * dt;
+		if (currentCamera->getTransform()->eulerRotation.x > 89.0f)
+			currentCamera->getTransform()->eulerRotation.x = 89.0f;
+		if (currentCamera->getTransform()->eulerRotation.x < -89.0f)
+			currentCamera->getTransform()->eulerRotation.x = -89.0f;
+		player->move(playerMovement);
 	}
-	else {
-		currentCamera->getTransform()->position += movement;
+	else if (currentCamera == freeCam) {
+		if (inputManager.getKey(GLFW_KEY_LEFT_SHIFT)) {
+			currentCamera->getTransform()->position += movement * 2.0f;
+		}
+		else {
+			currentCamera->getTransform()->position += movement;
+		}
+
+		if (inputManager.getMouse(GLFW_MOUSE_BUTTON_RIGHT)) {
+			Engine::getInstance()->setEnableCursor(false);
+
+			glm::vec2 mouseOffset = inputManager.getMouseOffset();
+			currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * 5.0f * dt;
+			currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * 5.0f * dt;
+			if (currentCamera->getTransform()->eulerRotation.x > 89.0f)
+				currentCamera->getTransform()->eulerRotation.x = 89.0f;
+			if (currentCamera->getTransform()->eulerRotation.x < -89.0f)
+				currentCamera->getTransform()->eulerRotation.x = -89.0f;
+		}
+		else {
+			Engine::getInstance()->setEnableCursor(true);
+		}
 	}
 
 	if (inputManager.getKey(GLFW_KEY_RIGHT)) {
@@ -234,23 +275,15 @@ void PBRScene::processInput() {
 		}
 	}
 
-	if (inputManager.getMouse(GLFW_MOUSE_BUTTON_RIGHT)) {
-		Engine::getInstance()->setEnableCursor(false);
-
-		glm::vec2 mouseOffset = inputManager.getMouseOffset();
-		currentCamera->getTransform()->eulerRotation.x -= mouseOffset.y * 5.0f * dt;
-		currentCamera->getTransform()->eulerRotation.y += mouseOffset.x * 5.0f * dt;
-		if (currentCamera->getTransform()->eulerRotation.x > 89.0f)
-			currentCamera->getTransform()->eulerRotation.x = 89.0f;
-		if (currentCamera->getTransform()->eulerRotation.x < -89.0f)
-			currentCamera->getTransform()->eulerRotation.x = -89.0f;
-	}
-	else {
-		Engine::getInstance()->setEnableCursor(true);
-	}
-
 	if (inputManager.getKeyDown(GLFW_KEY_R)) {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_V)) {
+		Camera* lastCam = currentCamera;
+		currentCamera = currentCamera == playerCam ? freeCam : playerCam;
+		currentCamera->getTransform()->position = lastCam->getTransform()->position;
+		currentCamera->getTransform()->eulerRotation = lastCam->getTransform()->eulerRotation;
 	}
 
 	if (inputManager.getKeyDown(GLFW_KEY_1)) {

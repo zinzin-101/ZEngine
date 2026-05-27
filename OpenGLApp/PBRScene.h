@@ -2,12 +2,16 @@
 #include "Scene.h"
 
 class Model;
+class PlayerController;
+class Camera;
 
 class PBRScene : public Scene {
 	private:
-		Object* root;
 		float depthPercentage;
 		Model* modelPtr;
+		PlayerController* player;
+		Camera* playerCam;
+		Camera* freeCam;
 
 	protected:
 		virtual void loadMeshData() override;
