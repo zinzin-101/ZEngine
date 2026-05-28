@@ -1,0 +1,11 @@
+Model Information:
+* title:	Old Church Ruins
+* source:	https://sketchfab.com/3d-models/old-church-ruins-4c7284834ef748109276ba2138ca8123
+* author:	H.Foucault (https://sketchfab.com/H.Foucault)
+
+Model License:
+* license type:	CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+* requirements:	Author must be credited. Modified versions must have the same license. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Old Church Ruins" (https://sketchfab.com/3d-models/old-church-ruins-4c7284834ef748109276ba2138ca8123) by H.Foucault (https://sketchfab.com/H.Foucault) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
