@@ -16,9 +16,9 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glm::mat4 envRotMat = glm::rotate(glm::mat4(1.0f), glm::radians(frameData.at("envMapRotation").number), glm::vec3(0.0f, 1.0f, 0.0f));
     lightDir = envRotMat * glm::vec4(lightDir, 0.0f);
     glm::vec3 lightTarget = camera->getTransform()->getGlobalPosition();
-    float camLookAhead = 8.0f;
+    float camLookAhead = 16.0f;
     lightTarget = lightTarget + (camLookAhead * camera->getFoward());
-    float lightDistance = 16.0f;
+    float lightDistance = 32.0f;
     glm::vec3 lightPosition = lightTarget - (lightDir * lightDistance);
     const unsigned int SHADOW_WIDTH = 4096;
     const unsigned int SHADOW_HEIGHT = 4096;
@@ -29,11 +29,11 @@ void ShadowRenderPass::render(std::map<std::string, FrameData>& frameData, std::
     glm::mat4 lightView;
     glm::mat4 lightSpaceMatrix;
     float nearPlane = 2.0f;
-    float farPlane = 64.0f;
+    float farPlane = 96.0f;
     //float shadowSize = 7.5f;
     //float shadowSize = 15.0f;
     //float shadowSize = 50.0f;
-    float shadowSize = 64.0f;
+    float shadowSize = 96.0f;
     lightProjection = glm::ortho(-shadowSize, shadowSize, -shadowSize, shadowSize, nearPlane, farPlane);
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
     if (glm::abs(glm::dot(lightDir, up)) > 0.99f) up = glm::vec3(0.0f, 0.0f, 1.0f);
