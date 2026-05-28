@@ -28,6 +28,8 @@ class SmokeSim : public Component {
 		std::vector<float> freeSpace;
 		std::vector<float> smoke;
 
+		float resetTimer;
+
 		// compute shader
 		ComputeShader integrateShader;
 		ComputeShader vorticityShader;
@@ -67,6 +69,8 @@ class SmokeSim : public Component {
 		float smokeAcceleration;
 		float simulationDeltaTime;
 		int simulationIterations;
+
+		float resetInterval;
 
 		SmokeSim(SmokeSimInfo smokeSimInfo);
 		~SmokeSim();

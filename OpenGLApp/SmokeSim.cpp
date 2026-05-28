@@ -69,26 +69,28 @@ SmokeSimInfo::SmokeSimInfo(float density, int width, int height, int depth, floa
 {}
 
 
-SmokeSim::SmokeSim(SmokeSimInfo smokeSimInfo):
-    density(smokeSimInfo.density),
-    sizeX(smokeSimInfo.width + BORDER_SIZE),
+SmokeSim::SmokeSim(SmokeSimInfo smokeSimInfo) :
+	density(smokeSimInfo.density),
+	sizeX(smokeSimInfo.width + BORDER_SIZE),
 	sizeY(smokeSimInfo.height + BORDER_SIZE),
 	sizeZ(smokeSimInfo.depth + BORDER_SIZE),
-    spacing(smokeSimInfo.spacing),
-    obstacleRadius(smokeSimInfo.obstacleRadius),
-    obstacleX(0), obstacleY(0), obstacleZ(0),
-    integrateShader("compute_shaders/smoke_sim/integrate.comp"),
-    vorticityShader("compute_shaders/smoke_sim/vorticity.comp"),
-    incompressibilityShader("compute_shaders/smoke_sim/incompressibility.comp"),
-    extrapolateShader("compute_shaders/smoke_sim/extrapolate.comp"),
-    advectVelocityShader("compute_shaders/smoke_sim/advect_velocity.comp"),
-    advectSmokeShader("compute_shaders/smoke_sim/advect_smoke.comp"),
-    setObstacleShader("compute_shaders/smoke_sim/set_obstacle.comp"),
-    volumeShader("shaders/smoke_volume.vert", "shaders/smoke_volume.frag"),
-    velocityTexture(0), newVelocityTexture(0),
-    freeSpaceTexture(0), pressureTexture(0),
-    smokeTexture(0), newSmokeTexture(0),
-    vao(0), vbo(0)
+	spacing(smokeSimInfo.spacing),
+	obstacleRadius(smokeSimInfo.obstacleRadius),
+	obstacleX(0), obstacleY(0), obstacleZ(0),
+	resetTimer(0.0f),
+	integrateShader("compute_shaders/smoke_sim/integrate.comp"),
+	vorticityShader("compute_shaders/smoke_sim/vorticity.comp"),
+	incompressibilityShader("compute_shaders/smoke_sim/incompressibility.comp"),
+	extrapolateShader("compute_shaders/smoke_sim/extrapolate.comp"),
+	advectVelocityShader("compute_shaders/smoke_sim/advect_velocity.comp"),
+	advectSmokeShader("compute_shaders/smoke_sim/advect_smoke.comp"),
+	setObstacleShader("compute_shaders/smoke_sim/set_obstacle.comp"),
+	volumeShader("shaders/smoke_volume.vert", "shaders/smoke_volume.frag"),
+	velocityTexture(0), newVelocityTexture(0),
+	freeSpaceTexture(0), pressureTexture(0),
+	smokeTexture(0), newSmokeTexture(0),
+	vao(0), vbo(0),
+	resetInterval(1.0f)
 {
 	integrateShader.use();
 	integrateShader.setIVec3("gridSize", sizeX, sizeY, sizeZ);
@@ -169,6 +171,7 @@ SmokeSim::~SmokeSim() {
 
 void SmokeSim::update() {
 	float deltaTime = Engine::getInstance()->getTime()->getDeltaTime();
+
 	simulationTimer += deltaTime;
 	if (simulationTimer < simulationDeltaTime) return;
 
@@ -180,6 +183,13 @@ void SmokeSim::update() {
 	}
 	else {
 		simulationTimer -= simulationDeltaTime * (float)steps;
+	}
+
+	resetTimer += deltaTime;
+	if (resetTimer >= resetInterval) {
+		resetTimer = 0.0f;
+		//resetFlag = !resetFlag;
+		SmokeSim::setInitialObstacle(simulationDeltaTime, false);
 	}
 
 	for (int i = 0; i < steps; i++) {
