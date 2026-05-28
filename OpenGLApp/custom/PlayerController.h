@@ -8,13 +8,16 @@ class PlayerController : public Component {
 	private:
 		enum PlayerState {
 			IDLE,
-			JOG
+			IDLE_JOG,
+			JOG,
+			JOG_IDLE
 		};
 
 		PlayerState currentState;
 		float moveSpeed;
 		SkeletalAnimator* animator;
 		SkeletalModel* model;
+		float blendAmount;
 
 	public:
 		Camera* camera;

@@ -68,7 +68,7 @@ void PBRScene::setup() {
 	//scythe->transform.eulerRotation.x = -90.0f;
 	//scythe->transform.scale = glm::vec3(0.0075f);
 
-	Object* ground = createObject(glm::vec3(0.0f, -0.1f, 0.0f));
+	Object* ground = createObject(glm::vec3(0.0f, 0.05f, 0.0f));
 	//ground->addComponent<Model>(FileSystem::getPath("resources/objects/stone_ground/scene.gltf"));
 	ground->transform.scale = glm::vec3(0.5f, 1.0f, 0.5f);
 	ground->addComponent<Model>(FileSystem::getPath("resources/objects/gravel_ground/scene.gltf"))->tiling = glm::vec2(10.0f / ground->transform.scale.x);
