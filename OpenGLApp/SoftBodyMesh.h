@@ -45,6 +45,9 @@ class SoftBodyMesh : public Component {
 		void setInverseMass(int index, float mass);
 		float getInverseMass(int index) const;
 		const std::vector<float>& getParticlePositionsData() const;
+		std::vector<float>& getParticlePositionsDataRef();
+		std::vector<float>& getParticlePreviousPositionsDataRef();
+		std::vector<float>& getParticleVelocitiesDataRef();
 };
 
 namespace SoftBodyVectorOperation {

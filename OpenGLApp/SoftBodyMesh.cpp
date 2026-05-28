@@ -41,6 +41,18 @@ const std::vector<float>& SoftBodyMesh::getParticlePositionsData() const {
 	return particlePositions;
 }
 
+std::vector<float>& SoftBodyMesh::getParticlePositionsDataRef() {
+	return particlePositions;
+}
+
+std::vector<float>& SoftBodyMesh::getParticlePreviousPositionsDataRef() {
+	return previousParticlePositions;
+}
+
+std::vector<float>& SoftBodyMesh::getParticleVelocitiesDataRef() {
+	return particleVelocities;
+}
+
 namespace SoftBodyVectorOperation {
 	void vecSetZero(float* a, int anr){
 		anr *= 3;
