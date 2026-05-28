@@ -103,7 +103,11 @@ void Object::removeComponent(Component* component) {
 		itr--;
 		Component* currentComponent = *itr;
 		if (currentComponent == component) {
-			delete currentComponent;
+
+			if (currentComponent->autoDeleteOnDestroy) {
+				delete currentComponent;
+			}
+
 			components.erase(itr);
 			break;
 		}

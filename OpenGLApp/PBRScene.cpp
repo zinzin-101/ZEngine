@@ -14,6 +14,9 @@
 #include "render_pipelines/PBRRenderPipeline.h"
 #include "GeneralSoftBodyMesh.h"
 #include "custom/PlayerController.h"
+#include "custom/SoftBodyLauncher.h"
+#include "custom/SmokeMover.h"
+#include "custom/SoftBodyPlayerInteractor.h"
 #include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include <iostream>
@@ -23,8 +26,16 @@ const std::string CUBE_MESH_NAME = "cube";
 const std::string SHADER_NAME = "primitive_shader";
 
 PBRScene::~PBRScene() {
-	delete modelPtr;
-	modelPtr = nullptr;
+	for (Object* object : objects) {
+		object->removeComponent(mountainModelPtr);
+		object->removeComponent(churchModelPtr);
+	}
+
+	delete mountainModelPtr;
+	mountainModelPtr = nullptr;
+
+	delete churchModelPtr;
+	churchModelPtr = nullptr;
 
 	std::cout << "cleaning PBR scene" << std::endl;
 }
@@ -40,6 +51,8 @@ void PBRScene::loadMeshData() {
 }
 
 void PBRScene::setup() {
+	srand(time(NULL));
+
 	Renderer* renderer = Engine::getInstance()->getRenderer();
 
 	Object* cam = instantiateObject(glm::vec3(0.0f));
@@ -70,8 +83,8 @@ void PBRScene::setup() {
 
 	Object* ground = createObject(glm::vec3(0.0f, 0.05f, 0.0f));
 	//ground->addComponent<Model>(FileSystem::getPath("resources/objects/stone_ground/scene.gltf"));
-	ground->transform.scale = glm::vec3(0.5f, 1.0f, 0.5f);
-	ground->addComponent<Model>(FileSystem::getPath("resources/objects/gravel_ground/scene.gltf"))->tiling = glm::vec2(10.0f / ground->transform.scale.x);
+	ground->transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	ground->addComponent<Model>(FileSystem::getPath("resources/objects/gravel_ground/scene.gltf"))->tiling = glm::vec2(20.0f / ground->transform.scale.x);
 	//ground->transform.scale = glm::vec3(2.25f, 0.25f, 2.25f);
 	//ground->transform.eulerRotation.x = -90.0f;
 
@@ -86,13 +99,22 @@ void PBRScene::setup() {
 	//sword->transform.setParent(&root->transform);
 	////cam->transform.setParent(&root->transform);
 
-	//Object* smoke1 = createObject(glm::vec3(0.0f, 2.5f, 0.0f));
-	//smoke1->transform.scale = glm::vec3(2.0f, 8.0f, 2.0f);
-	//smoke1->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	Object* smoke = createObject(glm::vec3(0.0f, 2.5f, 5.0f));
+	smoke->transform.scale = glm::vec3(8.0f, 16.0f, 8.0f);
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	//smoke1->addComponent<SmokeMover>();
 
-	//Object* smoke2 = createObject(glm::vec3(0.0f, 0.2f, -2.0f));
-	//smoke2->transform.scale = glm::vec3(4.0f, 32.0f, 4.0f);
-	//smoke2->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+	smoke = createObject(glm::vec3(0.0f, 0.2f, -2.0f));
+	smoke->transform.scale = glm::vec3(4.0f, 16.0f, 4.0f);
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+
+	smoke = createObject(glm::vec3(2.0f, 0.2f, -2.0f));
+	smoke->transform.scale = glm::vec3(4.0f, 16.0f, 4.0f);
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
+
+	smoke = createObject(glm::vec3(2.0f, 0.2f, 2.0f));
+	smoke->transform.scale = glm::vec3(4.0f, 16.0f, 4.0f);
+	smoke->addComponent<SmokeSim>(SmokeSimInfo(128, 128, 128));
 
 	//Object* softbody = createObject(glm::vec3(6.0f, 5.0f, 5.0f));
 	//softbody->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/cow_tetra.obj"))->shader = renderer->getShader(SHADER_NAME);
@@ -100,19 +122,21 @@ void PBRScene::setup() {
 	//GeneralSoftBodyMesh* softbodymesh = softbody->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	//softbodymesh->groundHeight = 0.0f;
+	
+	//SoftBodyLauncher* launcher = softbody->addComponent<SoftBodyLauncher>();
+	//launcher->useUniformLaunch = true;
 
 	//Object* softbody1 = createObject(glm::vec3(3.0f, 5.0f, 5.0f));
 	//softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
 	//softbody1->transform.scale = glm::vec3(1.0f);
-	//softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
+	//GeneralSoftBodyMesh* softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
 	//softbodymesh->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	//softbodymesh->groundHeight = 0.0f;
 
-	Object* mountain1 = createObject(glm::vec3(-4.0f, 0.0f, -3.0f));
-	Model* mountainModel = mountain1->addComponent<Model>(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
-	mountainModel->autoDeleteOnDestroy = false;
-	mountain1->transform.scale = glm::vec3(0.005f);
-	mountain1->transform.eulerRotation.y = -180.0f;
+	//launcher = softbody1->addComponent<SoftBodyLauncher>();
+	//launcher->useUniformLaunch = false;
+	//launcher->upwardSpeed = 20.0f;
+
 	//mountain1->transform.setParent(&root->transform);
 
 	//Object* mountain2 = createObject(glm::vec3(-4.0f, 0.0f, 0.0f));
@@ -126,7 +150,7 @@ void PBRScene::setup() {
 	//mountain3->transform.eulerRotation.y = -210.0f;
 
 	stbi_set_flip_vertically_on_load(true);
-	Object* vampire = createObject(glm::vec3(0.0f, 0.0f, 0.0f));
+	Object* vampire = createObject(glm::vec3(0.0f, 0.0f, -0.5f));
 	//vampire->transform.scale = glm::vec3(0.005f);
 	vampire->transform.scale = glm::vec3(1.0f);
 	vampire->transform.eulerRotation.y = 90.0f;
@@ -140,17 +164,42 @@ void PBRScene::setup() {
 	//vampireAnimator->playAnimation("idle", "", 0.0f, 0.0f, 0.0f);
 	stbi_set_flip_vertically_on_load(false);
 
-	Object* castle = createObject(glm::vec3(0.0f));
-	castle->addComponent<Model>(FileSystem::getPath("resources/objects/castle_church/scene.gltf"));
-	castle->transform.scale = glm::vec3(1.0f);
-	castle->transform.eulerRotation.x = -90.0f;
+	churchModelPtr = new Model(FileSystem::getPath("resources/objects/castle_church/scene.gltf"));
+	churchModelPtr->autoDeleteOnDestroy = false;
 
+	for (int i = 0; i < 4; i++) {
+		float deg = (float)i * 90.0f;
+		float rad = glm::radians(deg);
+		float r = 25.0f;
+		float x = std::cos(rad) * r;
+		float z = std::sin(rad) * r;
+		Object* castle = createObject(glm::vec3(x, 0.0f, z));
+		castle->addComponent(churchModelPtr);
+		castle->transform.scale = glm::vec3(1.0f);
+		castle->transform.eulerRotation.x = -90.0f;
+		castle->transform.eulerRotation.y = deg + 90.0f;
+	}
 
-	//Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
-	//Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));
-	//tree->transform.setParent(&treeHolder->transform);
-	//tree->transform.scale = glm::vec3(0.15f);
-	//tree->addComponent<Model>(FileSystem::getPath("resources/objects/dark_tree/scene.gltf"));
+	mountainModelPtr = new Model(FileSystem::getPath("resources/objects/mountain/scene.gltf"));
+	mountainModelPtr->autoDeleteOnDestroy = false;
+
+	for (int i = 0; i < 24; i++) {
+		float deg = (float)i * (360.0f / 24.0f);
+		float rad = glm::radians(deg);
+		float r = 30.0f;
+		float x = std::cos(rad) * r;
+		float z = std::sin(rad) * r;
+		Object* mountain = createObject(glm::vec3(x, -0.1f + ((rand() / RAND_MAX) * 0.05f), z));
+		mountain->addComponent(mountainModelPtr);
+		mountain->transform.scale = glm::vec3(0.01f + ((rand() / RAND_MAX) * 0.005f));
+		mountain->transform.eulerRotation.y = deg - 180.0f;
+	}
+
+	Object* treeHolder = createObject(glm::vec3(2.0f, 0.0f, 4.0f));
+	Object* tree = createObject(glm::vec3(0.0f, -0.5f, 0.0f));
+	tree->transform.setParent(&treeHolder->transform);
+	tree->transform.scale = glm::vec3(0.15f);
+	tree->addComponent<Model>(FileSystem::getPath("resources/objects/dark_tree/scene.gltf"));
 
 	//Object* house1 = createObject(glm::vec3(-6.0f, 0.0f, 10.0f));
 	//house1->addComponent<Model>(FileSystem::getPath("resources/objects/traditional_japanese_house/scene.gltf"));
@@ -161,11 +210,32 @@ void PBRScene::setup() {
 	//chisa->transform.eulerRotation.x = -90.0f;
 	//chisa->transform.scale = glm::vec3(0.0075f);
 
-	modelPtr = mountainModel;
+	//SoftBodyPlayerInteractor* softBodyInteractor = softbody->addComponent<SoftBodyPlayerInteractor>();
+	//softBodyInteractor->playerTransform = &vampire->transform;
+	//softBodyInteractor->playerRadius = 1.0f;
+	//softBodyInteractor->pushForce = 20.0f;
+
+	for (int i = 0; i < 9; i++) {
+		float x = ((rand() / RAND_MAX) * 2.0f) - 4.0f;
+		float y = 4.0f;
+		float z = ((rand() / RAND_MAX) * 2.0f) - 4.0f;
+		Object* softbody1 = createObject(glm::vec3(0.0f + i * 0.1f, y, 0.0f));
+		softbody1->addComponent<GeneralSoftBodyMesh>(FileSystem::getPath("resources/objects/softbody/tetrahedralized_model/icosphere_.obj"))->shader = renderer->getShader(SHADER_NAME);
+		softbody1->transform.scale = glm::vec3(1.0f);
+		GeneralSoftBodyMesh* softbodymesh = softbody1->getFirstComponentOfType<GeneralSoftBodyMesh>();
+		softbodymesh->color = glm::vec3(0.8f, 0.8f, 0.8f);
+		softbodymesh->groundHeight = 0.0f;
+
+		SoftBodyPlayerInteractor* softBodyInteractor = softbody1->addComponent<SoftBodyPlayerInteractor>();
+		softBodyInteractor->playerTransform = &vampire->transform;
+		softBodyInteractor->playerRadius = 1.0f;
+		softBodyInteractor->pushForce = 20.0f;
+	}
+
 }
 
 void PBRScene::processInput() {
-	std::cout << "current cam: " << (currentCamera == freeCam ? "free" : "player") << std::endl;
+	//std::cout << "current cam: " << (currentCamera == freeCam ? "free" : "player") << std::endl;
 
 	//std::cout << "from test scene input" << std::endl;
 
@@ -218,7 +288,7 @@ void PBRScene::processInput() {
 	}
 	else if (currentCamera == freeCam) {
 		if (inputManager.getKey(GLFW_KEY_LEFT_SHIFT)) {
-			currentCamera->getTransform()->position += movement * 2.0f;
+			currentCamera->getTransform()->position += movement * 10.0f;
 		}
 		else {
 			currentCamera->getTransform()->position += movement;

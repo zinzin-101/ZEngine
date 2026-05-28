@@ -8,7 +8,8 @@ class Camera;
 class PBRScene : public Scene {
 	private:
 		float depthPercentage;
-		Model* modelPtr;
+		Model* mountainModelPtr;
+		Model* churchModelPtr;
 		PlayerController* player;
 		Camera* playerCam;
 		Camera* freeCam;
