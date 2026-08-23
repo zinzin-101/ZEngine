@@ -17,7 +17,7 @@ void BasicTerrainScene::loadMeshData() {
 	CubePrimitive* cubeMesh = new CubePrimitive();
 	renderer->addMesh(CUBE_MESH_NAME, cubeMesh);
 
-	Shader* shader = new Shader("shaders/primitive.vert", "shaders/primitive.frag");
+	Shader* shader = new Shader("shaders/terrain.vert", "shaders/terrain.frag");
 	renderer->addShader(SHADER_NAME, shader);
 }
 
@@ -39,8 +39,8 @@ void BasicTerrainScene::setup() {
 	//meshRenderer->shader = renderer->getShader(SHADER_NAME);
 	//meshRenderer->color = glm::vec3(0.65f, 0.16f, 0.16f);
 
-	Object* terrainObj = createObject(glm::vec3(0.0f));
-	terrainObj->addComponent<BasicEditableTerrain>(10, 10, 1.0f);
+	terrainObj = createObject(glm::vec3(0.0f));
+	terrainObj->addComponent<BasicEditableTerrain>(100, 100, 1.0f);
 	BasicEditableTerrain* terrain = terrainObj->getFirstComponentOfType<BasicEditableTerrain>();
 	terrain->shader = renderer->getShader(SHADER_NAME);
 }
@@ -98,6 +98,12 @@ void BasicTerrainScene::processInput() {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
 	}
 
+	//if (inputManager.getKey(GLFW_KEY_UP)) {
+	//	terrainObj->transform.position.y += 5.0f * dt;
+	//}
+	//else if (inputManager.getKey(GLFW_KEY_DOWN)) {
+	//	terrainObj->transform.position.y -= 5.0f * dt;
+	//}
 
 	//softbodymesh->volumeCompliance = glm::clamp(softbodymesh->volumeCompliance, 0.0f, 100.0f);
 	//softbodymesh->edgeCompliance = glm::clamp(softbodymesh->edgeCompliance, 0.0f, 100.0f);
