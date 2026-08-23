@@ -44,6 +44,9 @@ void PrimitiveMeshRenderer::render(Shader* shader) {
 		shader->setFloat("farPlane", camera->farPlane);
 		shader->setFloat("nearPlane", camera->nearPlane);
 	}
+	else {
+		shader->setBool("useDepthOfField", false);
+	}
 
 	meshPrimitive->render();
 }

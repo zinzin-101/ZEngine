@@ -8,37 +8,57 @@ CubePrimitive::CubePrimitive() {
 void CubePrimitive::init() {
 	float vertices[] = {
 		// positions          // normals
+		// Back (-Z)
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
+		// Front (+Z)
 		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+		// Right (+X)
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+		 // Left (-X)
+		 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		 -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		 -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+
+		 // Top (+Y)
+		 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		 -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+
+		 // Bottom (-Y)
+		 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		 -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
 	};
 
-	unsigned int indices[] = 
+	unsigned int indices[] =
 	{
-		// Right
-		1, 2, 6,
-		6, 5, 1,
-		// Left
-		0, 4, 7,
-		7, 3, 0,
-		// Top
-		4, 5, 6,
-		6, 7, 4,
-		// Bottom
-		0, 3, 2,
-		2, 1, 0,
 		// Back
-		0, 1, 5,
-		5, 4, 0,
+		0, 2, 1,  2, 0, 3,
 		// Front
-		3, 7, 6,
-		6, 2, 3
+		4, 5, 6,  6, 7, 4,
+		// Right
+		8, 9, 10,  10, 11, 8,
+		// Left
+		12, 13, 14,  14, 15, 12,
+		// Top
+		16, 17, 18,  18, 19, 16,
+		// Bottom
+		20, 22, 21,  22, 20, 23,
 	};
 
 	glGenVertexArrays(1, &vao);
@@ -49,7 +69,7 @@ void CubePrimitive::init() {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(
 		GL_ARRAY_BUFFER,
-		8 * sizeof(float) * 6,
+		sizeof(vertices),
 		vertices,
 		GL_STATIC_DRAW
 	);
@@ -67,7 +87,7 @@ void CubePrimitive::init() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(
 		GL_ELEMENT_ARRAY_BUFFER,
-		36 * sizeof(unsigned int),
+		sizeof(indices),
 		indices,
 		GL_STATIC_DRAW
 	);
