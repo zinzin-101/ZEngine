@@ -22,7 +22,7 @@ BasicEditableTerrain::~BasicEditableTerrain() {
 }
 
 void BasicEditableTerrain::init() {
-    computeShader.createShader("../compute_shaders/terrain/basic_terrain_grow_shrink.comp");
+    computeShader.createShader("compute_shaders/terrain/basic_terrain_grow_shrink.comp");
 
     std::vector<float> verts;
     float offsetX = static_cast<float>(width) / 2.0f;
