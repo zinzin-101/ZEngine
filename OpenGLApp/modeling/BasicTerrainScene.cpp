@@ -1,4 +1,5 @@
 #include "BasicTerrainScene.h"
+#include "BasicEditableTerrain.h"
 #include "../Camera.h"
 #include "../Engine.h"
 #include "../Object.h"
@@ -30,14 +31,18 @@ void BasicTerrainScene::setup() {
 	Object* cam = instantiateObject(glm::vec3(0.0f, 5.0f, 5.0f));
 	cam->transform.eulerRotation.x = -30.0f;
 	cam->addComponent<Camera>();
-	Object* cube = createObject(glm::vec3(0.0f, 0.0f, 0.0f));
-	cube->transform.scale = glm::vec3(50.0f, 1.0f, 50.0f);
-	cube->addComponent<PrimitiveMeshRenderer>();
-	PrimitiveMeshRenderer* meshRenderer = cube->getFirstComponentOfType<PrimitiveMeshRenderer>();
-	meshRenderer->meshPrimitive = renderer->getMesh(CUBE_MESH_NAME);
-	meshRenderer->shader = renderer->getShader(SHADER_NAME);
-	meshRenderer->shader->setBool("useDepthOfField", false);
-	meshRenderer->color = glm::vec3(0.65f, 0.16f, 0.16f);
+	//Object* cube = createObject(glm::vec3(0.0f, 0.0f, 0.0f));
+	//cube->transform.scale = glm::vec3(50.0f, 1.0f, 50.0f);
+	//cube->addComponent<PrimitiveMeshRenderer>();
+	//PrimitiveMeshRenderer* meshRenderer = cube->getFirstComponentOfType<PrimitiveMeshRenderer>();
+	//meshRenderer->meshPrimitive = renderer->getMesh(CUBE_MESH_NAME);
+	//meshRenderer->shader = renderer->getShader(SHADER_NAME);
+	//meshRenderer->color = glm::vec3(0.65f, 0.16f, 0.16f);
+
+	Object* terrainObj = createObject(glm::vec3(0.0f));
+	terrainObj->addComponent<BasicEditableTerrain>(10, 10, 1.0f);
+	BasicEditableTerrain* terrain = terrainObj->getFirstComponentOfType<BasicEditableTerrain>();
+	terrain->shader = renderer->getShader(SHADER_NAME);
 }
 
 void BasicTerrainScene::processInput() {
