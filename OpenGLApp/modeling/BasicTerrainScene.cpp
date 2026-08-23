@@ -41,8 +41,9 @@ void BasicTerrainScene::setup() {
 
 	terrainObj = createObject(glm::vec3(0.0f));
 	terrainObj->addComponent<BasicEditableTerrain>(100, 100, 1.0f);
-	BasicEditableTerrain* terrain = terrainObj->getFirstComponentOfType<BasicEditableTerrain>();
+	terrain = terrainObj->getFirstComponentOfType<BasicEditableTerrain>();
 	terrain->shader = renderer->getShader(SHADER_NAME);
+	terrain->color = glm::vec3(0.75f, 0.26f, 0.26f);
 }
 
 void BasicTerrainScene::processInput() {
@@ -98,12 +99,28 @@ void BasicTerrainScene::processInput() {
 		Engine::getInstance()->getSceneManager()->resetCurrentScene();
 	}
 
-	//if (inputManager.getKey(GLFW_KEY_UP)) {
-	//	terrainObj->transform.position.y += 5.0f * dt;
-	//}
-	//else if (inputManager.getKey(GLFW_KEY_DOWN)) {
-	//	terrainObj->transform.position.y -= 5.0f * dt;
-	//}
+	if (inputManager.getKey(GLFW_KEY_UP)) {
+		terrain->growAmount += 5.0f * dt;
+		std::cout << "grow amount: " << terrain->growAmount << std::endl;
+	}
+	else if (inputManager.getKey(GLFW_KEY_DOWN)) {
+		terrain->growAmount -= 5.0f * dt;
+		std::cout << "grow amount: " << terrain->growAmount << std::endl;
+	}
+
+	if (inputManager.getKey(GLFW_KEY_Z)) {
+		terrain->radius += 5.0f * dt;
+		std::cout << "radius: " << terrain->radius << std::endl;
+	}
+	else if (inputManager.getKey(GLFW_KEY_X)) {
+		terrain->radius -= 5.0f * dt;
+		std::cout << "radius: " << terrain->radius << std::endl;
+	}
+
+	if (inputManager.getKeyDown(GLFW_KEY_SPACE)) {
+		terrain->isGrowing = !terrain->isGrowing;
+		std::cout << "mode: " << (terrain->isGrowing ? "grow" : "shrink") << std::endl;
+	}
 
 	//softbodymesh->volumeCompliance = glm::clamp(softbodymesh->volumeCompliance, 0.0f, 100.0f);
 	//softbodymesh->edgeCompliance = glm::clamp(softbodymesh->edgeCompliance, 0.0f, 100.0f);

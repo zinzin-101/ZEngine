@@ -1,6 +1,7 @@
 #include "BasicEditableTerrain.h"
 #include "../Camera.h"
 #include "../Engine.h"
+#include "../Ray.h"
 #include "GLFW/glfw3.h"
 #include <glad/glad.h>
 #include <vector>
@@ -11,7 +12,7 @@ BasicEditableTerrain::BasicEditableTerrain(unsigned int width, unsigned int leng
     ssbo(0), vao(0), vbo(0), ebo(0), vertsCount(0),
     shader(nullptr),
     horizontalScale(1.0f), verticalScale(1.0f), color(1.0f), radius(5.0f),
-    isGrowing(true), growAmount(2.5f)
+    isGrowing(true), growAmount(10.0f)
 {}
 
 BasicEditableTerrain::~BasicEditableTerrain() {
@@ -91,7 +92,8 @@ void BasicEditableTerrain::update() {
     if (input->getMouse(GLFW_MOUSE_BUTTON_LEFT)) {
         Camera* camera = Engine::getInstance()->getCurrentScene()->getCurrentCamera();
         glm::vec3 camPos = camera->getTransform()->getGlobalPosition();
-        glm::vec3 camDir = camera->getFoward();
+        glm::vec3 camDir = Ray::getRayDirectionFromScreen(input->getMousePosition(), camera);
+
 
         float dt = Engine::getInstance()->getDeltaTime();
 
@@ -141,7 +143,7 @@ void BasicEditableTerrain::render() {
     shader->setMat4("view", view);
     shader->setMat4("projection", projection);
     shader->setVec3("color", color);
-    shader->setFloat("maxHeight", 5.0f); // for visualization purpose
+    shader->setFloat("maxHeight", static_cast<float>(width + length) * spacing * 0.0625); // for visualization purpose
 
     glBindVertexArray(vao);
     for (unsigned int i = 0; i < terrainStripCount; i++) {
