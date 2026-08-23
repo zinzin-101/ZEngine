@@ -3,23 +3,11 @@
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 layout(std430, binding = 0) buffer Vertices { float vertices[]; };
 
-uniform vec3 camPos;
-uniform vec3 camDir;
-uniform float rayDist;
+uniform uint closestId;
 uniform float radius;
 uniform uint vertsCount;
 uniform bool isGrow;
 uniform float growAmount;
-
-float getDistanceFromPoint(vec3 point) {
-	vec3 dir = normalize(camDir);
-	vec3 op = point - camPos;
-	float t = dot(op, dir);
-	t = clamp(t, 0.0, rayDist);
-
-	vec3 closest = camPos + (dir * t);
-	return distance(point, closest);
-}
 
 vec3 getVertexVec3(uint id) {
     uint base = id * 3;
@@ -37,8 +25,9 @@ void main(){
     uint id = gl_GlobalInvocationID.x;
     if (id >= vertsCount) return;
 
+    vec3 center = getVertexVec3(closestId);
     vec3 pos = getVertexVec3(id);
-    float dist = getDistanceFromPoint(pos);
+    float dist = distance(center, pos);
     if (dist > radius) return;
 
     if (isGrow){

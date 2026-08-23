@@ -25,7 +25,7 @@ BasicEditableTerrain::~BasicEditableTerrain() {
 void BasicEditableTerrain::init() {
     computeShader.createShader("compute_shaders/terrain/basic_terrain_grow_shrink.comp");
 
-    std::vector<float> verts;
+    verts.clear();
     float offsetX = static_cast<float>(width) / 2.0f;
     float offsetZ = static_cast<float>(length) / 2.0f;
     for (unsigned int x = 0; x < width; x++) {
@@ -94,20 +94,46 @@ void BasicEditableTerrain::update() {
         glm::vec3 camPos = camera->getTransform()->getGlobalPosition();
         glm::vec3 camDir = Ray::getRayDirectionFromScreen(input->getMousePosition(), camera);
 
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+        glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, verts.size() * sizeof(float), verts.data());
+
+        int closestId = -1;
+        float closestDist = FLT_MAX;
+
+        Ray ray = Ray(camPos, camDir, 1000.0f);
+
+        glm::vec3 position = transform->getGlobalPosition();
+        glm::vec3 rotation = transform->getGlobalEulerRotation();
+        glm::vec3 scale = transform->getGlobalScale();
+        glm::mat4 model(1.0f);
+        model = glm::translate(model, position);
+        model = glm::scale(model, scale);
+        model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, -1.0f));
+
+        int n = static_cast<int>(verts.size()) / 3;
+        for (int i = 0; i < n; i++) {
+            glm::vec4 vert = model * glm::vec4(verts[3 * i], verts[3 * i + 1], verts[3 * i + 2], 1.0f);
+            float dist = ray.getDistanceFromPoint(vert);
+            if (dist < closestDist && dist < radius) {
+                closestDist = dist;
+                closestId = i;
+            }
+        }
+
+        if (closestId == -1) return;
 
         float dt = Engine::getInstance()->getDeltaTime();
 
         computeShader.use();
-        computeShader.setVec3("camPos", camPos);
-        computeShader.setVec3("camDir", camDir);
-        computeShader.setFloat("rayDist", 1000.0f);
+        computeShader.setUInt("closestId", closestId);
         computeShader.setFloat("radius", radius);
         computeShader.setUInt("vertsCount", vertsCount);
         computeShader.setBool("isGrow", isGrowing);
         computeShader.setFloat("growAmount", growAmount * dt);
 
         unsigned int workSize = 256;
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
         glDispatchCompute((vertsCount + workSize - 1) / workSize, 1, 1);
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     }

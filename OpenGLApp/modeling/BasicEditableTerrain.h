@@ -5,6 +5,8 @@
 
 class BasicEditableTerrain : public Component {
 	private:
+		std::vector<float> verts;
+
 		unsigned int width;
 		unsigned int length;
 		float spacing;
