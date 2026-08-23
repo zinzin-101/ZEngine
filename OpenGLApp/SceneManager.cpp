@@ -2,6 +2,7 @@
 #include "TestScene.h"
 #include "SoftBodyTestScene.h"
 #include "PBRScene.h"
+#include "modeling/BasicTerrainScene.h"
 
 using namespace SceneManagerConfig;
 
@@ -37,6 +38,9 @@ void SceneManager::manageScene() {
 				break;
 			case SceneId::PBR_SCENE:
 				currentScene = new PBRScene();
+				break;
+			case SceneId::TERRAIN_SCENE:
+				currentScene = new BasicTerrainScene();
 				break;
 		}
 

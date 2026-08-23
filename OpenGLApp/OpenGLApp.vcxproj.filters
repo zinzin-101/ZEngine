@@ -144,6 +144,12 @@
     <ClCompile Include="custom\SoftBodyPlayerInteractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="modeling\BasicEditableTerrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="modeling\BasicTerrainScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.model_loading.fs" />
@@ -281,6 +287,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="custom\SoftBodyPlayerInteractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="modeling\BasicEditableTerrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="modeling\BasicTerrainScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

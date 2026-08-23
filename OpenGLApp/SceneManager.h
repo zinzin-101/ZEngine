@@ -6,6 +6,7 @@ namespace SceneManagerConfig {
 		TEST_SCENE,
 		SOFT_BODY_TEST_SCENE,
 		PBR_SCENE,
+		TERRAIN_SCENE,
 		NONE
 	};
 }

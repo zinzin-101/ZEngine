@@ -152,6 +152,8 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshPrimitive.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="modeling\BasicEditableTerrain.cpp" />
+    <ClCompile Include="modeling\BasicTerrainScene.cpp" />
     <ClCompile Include="PBRScene.cpp" />
     <ClCompile Include="PrimitiveMeshRenderer.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -194,6 +196,8 @@
     <ClInclude Include="custom\SmokeMover.h" />
     <ClInclude Include="custom\SoftBodyLauncher.h" />
     <ClInclude Include="custom\SoftBodyPlayerInteractor.h" />
+    <ClInclude Include="modeling\BasicEditableTerrain.h" />
+    <ClInclude Include="modeling\BasicTerrainScene.h" />
     <ClInclude Include="SkeletalAnimation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
